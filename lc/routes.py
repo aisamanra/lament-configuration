@@ -6,7 +6,7 @@ import lc.model as m
 
 LOADER = pystache.loader.Loader(
     extension='mustache',
-    search_dirs=[os.path.join(PROJ_ROOT, 'templates')],
+    search_dirs=['templates'],
 )
 
 app = flask.Flask(__name__)
