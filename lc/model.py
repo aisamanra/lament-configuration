@@ -56,20 +56,22 @@ class Tag(Model):
     '''
     name = peewee.TextField()
     parent = peewee.ForeignKeyField('self', null=True, backref='children')
+    user = peewee.ForeignKeyField(User, backref='tags')
 
     @staticmethod
-    def find_tag(tag_name: str):
-        if (t := Tag.get_or_none(Tag.name == tag_name)):
+    def find_tag(user: User, tag_name: str):
+        if (t := Tag.get_or_none(name=tag_name, user=user)):
             return t
 
         parent = None
         if '/' in tag_name:
             parent_name = tag_name[:tag_name.rindex('/')]
-            parent = Tag.find_tag(parent_name)
+            parent = Tag.find_tag(user, parent_name)
 
         return Tag.create(
             name=tag_name,
             parent=parent,
+            user=user,
         )
 
 
