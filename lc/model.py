@@ -1,6 +1,8 @@
+import datetime
 import peewee
 
 import lc.config
+import lc.requests as r
 
 class Model(peewee.Model):
     class Meta:
@@ -26,6 +28,26 @@ class Link(Model):
     created = peewee.DateTimeField()
     # is the field entirely private?
     private = peewee.BooleanField()
+    # owned by
+    user = peewee.ForeignKeyField(User, backref='all_links')
+
+    @staticmethod
+    def from_request(user: User, link: r.Link) -> 'Link':
+        l = Link.create(
+            url=link.url,
+            name=link.name,
+            description=link.description,
+            private=link.private,
+            created=datetime.datetime.now(),
+            user=user,
+        )
+        for tag_name in link.tags:
+            t = Tag.find_tag(tag_name)
+            HasTag.create(
+                link=l,
+                tag=t,
+            )
+        return l
 
 
 class Tag(Model):
@@ -34,6 +56,22 @@ class Tag(Model):
     '''
     name = peewee.TextField()
     parent = peewee.ForeignKeyField('self', null=True, backref='children')
+
+    @staticmethod
+    def find_tag(tag_name: str):
+        if (t := Tag.get_or_none(Tag.name == tag_name)):
+            return t
+
+        parent = None
+        if '/' in tag_name:
+            parent_name = tag_name[:tag_name.rindex('/')]
+            parent = Tag.find_tag(parent_name)
+
+        return Tag.create(
+            name=tag_name,
+            parent=parent,
+        )
+
 
 
 class HasTag(Model):
