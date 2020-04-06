@@ -2,7 +2,7 @@ import datetime
 import peewee
 
 import lc.config
-import lc.requests as r
+import lc.request as r
 
 
 class Model(peewee.Model):
@@ -17,6 +17,17 @@ class User(Model):
     """
 
     name = peewee.TextField()
+
+    @staticmethod
+    def from_request(user: r.User) -> "User":
+        return User.create(name=user.name)
+
+    @staticmethod
+    def by_slug(slug: str) -> "User":
+        return User.get(name=slug)
+
+    def base_url(self) -> str:
+        return f'/u/{self.name}'
 
 
 class Link(Model):
