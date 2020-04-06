@@ -1,3 +1,4 @@
+from datetime import datetime
 from invoke import task
 
 @task
@@ -17,3 +18,15 @@ def run(c, port=8080, host='127.0.0.1'):
 def install(c):
     '''Install the listed dependencies into a virtualenv'''
     c.run('poetry install')
+
+@task
+def fmt(c):
+    status = c.run('git status --porcelain', hide='stdout')
+    is_clean = status.stdout.strip() == ''
+    c.run("poetry run black $(find . -name '*.py')")
+
+    if is_clean:
+        date = datetime.now.isoformat()
+        c.run(f"git commit -a -m 'Automatic formatting commit: {date}'")
+    else:
+        print('Uncommitted change exist; skipping commit')
