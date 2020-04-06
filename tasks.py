@@ -25,6 +25,7 @@ def install(c):
 
 @task
 def fmt(c):
+    """Automatically format the source code, committing it if it is safe to do so."""
     status = c.run("git status --porcelain", hide="stdout")
     is_clean = status.stdout.strip() == ""
     c.run("poetry run black $(find . -name '*.py')")
