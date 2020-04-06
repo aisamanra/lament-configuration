@@ -8,16 +8,16 @@ import lc.request as r
 app = flask.Flask(__name__)
 loader = pystache.loader.Loader(extension="mustache", search_dirs=["templates"],)
 
+
 def render(name, **kwargs):
-    '''Load and use a Mustache template from the project root'''
+    """Load and use a Mustache template from the project root"""
     template = loader.load_name(name)
     return pystache.Renderer().render(template, kwargs)
 
 
-
 @app.route("/")
 def index():
-    return render('main', title='main', content='whoo')
+    return render("main", title="main", content="whoo")
 
 
 @app.route("/u", methods=["POST"])
@@ -30,7 +30,7 @@ def create_user():
 @app.route("/u/<string:user>", methods=["GET", "POST"])
 def get_user(user):
     u = m.User.by_slug(user)
-    return render('main', title=f'user {u.name}', content='stuff')
+    return render("main", title=f"user {u.name}", content="stuff")
 
 
 @app.route("/u/<string:user>/l", methods=["POST"])

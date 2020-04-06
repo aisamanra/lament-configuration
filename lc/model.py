@@ -27,7 +27,7 @@ class User(Model):
         return User.get(name=slug)
 
     def base_url(self) -> str:
-        return f'/u/{self.name}'
+        return f"/u/{self.name}"
 
 
 class Link(Model):
