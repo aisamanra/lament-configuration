@@ -26,7 +26,7 @@ def fmt(c):
     c.run("poetry run black $(find . -name '*.py')")
 
     if is_clean:
-        date = datetime.now.isoformat()
+        date = datetime.now().isoformat()
         c.run(f"git commit -a -m 'Automatic formatting commit: {date}'")
     else:
         print('Uncommitted change exist; skipping commit')
