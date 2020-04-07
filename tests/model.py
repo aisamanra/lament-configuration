@@ -25,22 +25,22 @@ class TestDB:
         assert named_user.id == u.id
         assert named_user.name == name
 
-    def test_find_tag(self):
+    def test_get_or_create_tag(self):
         tag_name = "food"
         u = m.User.create(name="gdritter")
-        t = m.Tag.find_tag(u, tag_name)
+        t = m.Tag.get_or_create_tag(u, tag_name)
 
         # we should be able to find the tag with the given name
         named_tags = m.Tag.select(m.Tag.user == u and m.Tag.name == tag_name)
         assert len(named_tags) == 1
 
-        # subsequent calls to find_tag should return the same db row
-        t2 = m.Tag.find_tag(u, tag_name)
+        # subsequent calls to get_or_create_tag should return the same db row
+        t2 = m.Tag.get_or_create_tag(u, tag_name)
         assert t.id == t2.id
 
     def test_find_hierarchy(self):
         u = m.User.create(name="gdritter")
-        t = m.Tag.find_tag(u, "food/bread/rye")
+        t = m.Tag.get_or_create_tag(u, "food/bread/rye")
 
         # this should have created three DB rows: for 'food', for
         # 'food/bread', and for 'food/bread/rye':
@@ -53,7 +53,7 @@ class TestDB:
 
         # creating a new hierarchical tag with a shared prefix should
         # only create the new child tag
-        t2 = m.Tag.find_tag(u, "food/bread/baguette")
+        t2 = m.Tag.get_or_create_tag(u, "food/bread/baguette")
         print([t.name for t in m.Tag.select()])
 
         assert len(m.Tag.select()) == 4
