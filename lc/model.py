@@ -103,7 +103,7 @@ class Tag(Model):
             parent_name = tag_name[: tag_name.rindex("/")]
             parent = Tag.get_or_create_tag(user, parent_name)
 
-        return Tag.create(name=tag_name, parent=parent, user=user,)
+        return Tag.create(name=tag_name, parent=parent, user=user)
 
 
 class HasTag(Model):

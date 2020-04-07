@@ -8,7 +8,7 @@ import lc.model as m
 import lc.request as r
 
 app = flask.Flask(__name__)
-loader = pystache.loader.Loader(extension="mustache", search_dirs=["templates"],)
+loader = pystache.loader.Loader(extension="mustache", search_dirs=["templates"])
 
 
 def render(name, **kwargs):
@@ -31,7 +31,7 @@ def create_user():
 
 
 @app.route("/u/<string:user>", methods=["GET", "POST"])
-def get_user(user):
+def get_user(user: str):
     u = m.User.by_slug(user)
     pg = int(flask.request.args.get("page", 0))
     links = u.get_links(page=pg)
@@ -41,17 +41,17 @@ def get_user(user):
 
 
 @app.route("/u/<string:user>/l", methods=["POST"])
-def create_link(user):
+def create_link(user: str):
     pass
 
 
 @app.route("/u/<string:user>/l/<string:link>", methods=["GET", "POST"])
-def link(user):
+def link(user: str, link: str):
     pass
 
 
 @app.route("/u/<string:user>/t/<path:tag>")
-def get_tagged_links(user, tag):
+def get_tagged_links(user: str, tag: str):
     u = m.User.by_slug(user)
     pg = int(flask.request.args.get("page", 0))
     t = u.get_tag(tag)
