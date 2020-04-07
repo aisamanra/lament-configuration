@@ -35,3 +35,9 @@ def fmt(c):
         c.run(f"git commit -a -m 'Automatic formatting commit: {date}'")
     else:
         print("Uncommitted change exist; skipping commit")
+
+
+@task
+def populate(c):
+    """Populate the test database with fake-ish data"""
+    c.run("PYTHONPATH=$(pwd) poetry run python3 ./scripts/populate.py")
