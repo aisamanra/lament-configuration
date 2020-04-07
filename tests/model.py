@@ -1,12 +1,14 @@
 import lc.config as c
 import lc.model as m
-import tempfile
 
 
 class TestDB:
     def setup_method(self, _):
         c.DB.init(":memory:")
         c.DB.create_tables(m.MODELS)
+
+    def teardown_method(self, _):
+        c.DB.close()
 
     def test_create_user(self):
         name = "gdritter"
@@ -63,6 +65,3 @@ class TestDB:
         # one already entered
         assert t.id == m.Tag.get(name="food/bread/rye").id
         assert t2.id == m.Tag.get(name="food/bread/baguette").id
-
-    def teardown_method(self, _):
-        c.DB.close()
