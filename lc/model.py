@@ -34,7 +34,7 @@ class User(Model):
         return Link.select().where(Link.user == self).paginate(page, c.PER_PAGE)
 
     def get_tag(self, tag_name: str) -> "Tag":
-        return Tag.get((Tag.user==self) & (Tag.name==tag_name))
+        return Tag.get((Tag.user == self) & (Tag.name == tag_name))
 
 
 class Link(Model):
@@ -86,7 +86,12 @@ class Tag(Model):
         return f"/u/{self.user.name}/t/{self.name}"
 
     def get_links(self, page: int) -> typing.List[Link]:
-        return [ ht.link for ht in HasTag.select().where((HasTag.tag == self)).paginate(page, c.PER_PAGE) ]
+        return [
+            ht.link
+            for ht in HasTag.select()
+            .where((HasTag.tag == self))
+            .paginate(page, c.PER_PAGE)
+        ]
 
     @staticmethod
     def get_or_create_tag(user: User, tag_name: str):
