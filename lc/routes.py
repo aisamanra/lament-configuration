@@ -12,7 +12,8 @@ loader = pystache.loader.Loader(extension="mustache", search_dirs=["templates"],
 def render(name, **kwargs):
     """Load and use a Mustache template from the project root"""
     template = loader.load_name(name)
-    return pystache.Renderer().render(template, kwargs)
+    renderer = pystache.Renderer(missing_tags="strict", search_dirs=["templates"])
+    return renderer.render(template, kwargs)
 
 
 @app.route("/")
@@ -30,7 +31,9 @@ def create_user():
 @app.route("/u/<string:user>", methods=["GET", "POST"])
 def get_user(user):
     u = m.User.by_slug(user)
-    return render("main", title=f"user {u.name}", content="stuff")
+    return render(
+        "main", title=f"user {u.name}", content=render("linklist", links=u.links),
+    )
 
 
 @app.route("/u/<string:user>/l", methods=["POST"])

@@ -43,7 +43,10 @@ class Link(Model):
     # is the field entirely private?
     private = peewee.BooleanField()
     # owned by
-    user = peewee.ForeignKeyField(User, backref="all_links")
+    user = peewee.ForeignKeyField(User, backref="links")
+
+    def link_url(self) -> str:
+        return f"/u/{self.user.name}/l/{self.id}"
 
     @staticmethod
     def from_request(user: User, link: r.Link) -> "Link":
@@ -56,7 +59,7 @@ class Link(Model):
             user=user,
         )
         for tag_name in link.tags:
-            t = Tag.find_tag(tag_name)
+            t = Tag.find_tag(user, tag_name)
             HasTag.create(
                 link=l, tag=t,
             )
@@ -71,6 +74,9 @@ class Tag(Model):
     name = peewee.TextField()
     parent = peewee.ForeignKeyField("self", null=True, backref="children")
     user = peewee.ForeignKeyField(User, backref="tags")
+
+    def url(self) -> str:
+        return f"/u/{self.user.name}/t/{self.name}"
 
     @staticmethod
     def find_tag(user: User, tag_name: str):
