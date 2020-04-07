@@ -1,7 +1,31 @@
 body {
-    font-face: "Arial", "Helvetica", sans-serif;
+    font-family: "Arial", "Helvetica", sans-serif;
 }
 
 .link {
-    border: solid black;
+    padding: 2em;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.link .text {
+    padding-right: 1em;
+}
+
+.link .url {
+    flex: 1;
+}
+
+.link .url a {
+    color: #999;
+    font-size: small;
+}
+
+.link taglist {
+    color: #900;
+}
+
+.link .datetime {
+    color: #999;
+    font-size: small;
 }
