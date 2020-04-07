@@ -1,9 +1,12 @@
 from typing import Any, Optional, TypeVar, Type, List
 
+
 class Expression:
     pass
 
-T = TypeVar('T', bound='Model')
+
+T = TypeVar("T", bound="Model")
+
 
 class Model:
     id: int
@@ -24,15 +27,19 @@ class Model:
     def select(self, expr: Optional[Expression] = None):
         pass
 
+
 # These all do things that MyPy chokes on
 def TextField() -> Any:
     pass
 
+
 def DateTimeField() -> Any:
     pass
 
+
 def BooleanField() -> Any:
     pass
+
 
 def ForeignKeyField(key: object, null: bool = None, backref: str = "") -> Any:
     pass

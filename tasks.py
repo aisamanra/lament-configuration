@@ -42,6 +42,7 @@ def populate(c):
     """Populate the test database with fake-ish data"""
     c.run("PYTHONPATH=$(pwd) poetry run python3 ./scripts/populate.py")
 
+
 @task
 def tc(c):
     """Populate the test database with fake-ish data"""
