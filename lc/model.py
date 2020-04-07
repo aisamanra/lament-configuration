@@ -1,13 +1,14 @@
 import datetime
 import peewee
+import typing
 
-import lc.config
+import lc.config as c
 import lc.request as r
 
 
 class Model(peewee.Model):
     class Meta:
-        database = lc.config.DB
+        database = c.DB
 
 
 # TODO: figure out authorization for users (oauth? passwd?)
@@ -28,6 +29,12 @@ class User(Model):
 
     def base_url(self) -> str:
         return f"/u/{self.name}"
+
+    def get_links(self, page: int) -> typing.List["Link"]:
+        return Link.select().where(Link.user == self).paginate(page, c.PER_PAGE)
+
+    def get_tag(self, tag_name: str) -> "Tag":
+        return Tag.get((Tag.user==self) & (Tag.name==tag_name))
 
 
 class Link(Model):
@@ -59,7 +66,7 @@ class Link(Model):
             user=user,
         )
         for tag_name in link.tags:
-            t = Tag.find_tag(user, tag_name)
+            t = Tag.get_or_create_tag(user, tag_name)
             HasTag.create(
                 link=l, tag=t,
             )
@@ -78,15 +85,18 @@ class Tag(Model):
     def url(self) -> str:
         return f"/u/{self.user.name}/t/{self.name}"
 
+    def get_links(self, page: int) -> typing.List[Link]:
+        return [ ht.link for ht in HasTag.select().where((HasTag.tag == self)).paginate(page, c.PER_PAGE) ]
+
     @staticmethod
-    def find_tag(user: User, tag_name: str):
+    def get_or_create_tag(user: User, tag_name: str):
         if (t := Tag.get_or_none(name=tag_name, user=user)) :
             return t
 
         parent = None
         if "/" in tag_name:
             parent_name = tag_name[: tag_name.rindex("/")]
-            parent = Tag.find_tag(user, parent_name)
+            parent = Tag.get_or_create_tag(user, parent_name)
 
         return Tag.create(name=tag_name, parent=parent, user=user,)
 
@@ -109,4 +119,4 @@ MODELS = [
 
 
 def create_tables():
-    lc.config.DB.create_tables(MODELS, safe=True)
+    c.DB.create_tables(MODELS, safe=True)

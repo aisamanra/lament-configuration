@@ -1,7 +1,9 @@
 import os
 import flask
 import pystache
+import sys
 
+import lc.config
 import lc.model as m
 import lc.request as r
 
@@ -31,8 +33,10 @@ def create_user():
 @app.route("/u/<string:user>", methods=["GET", "POST"])
 def get_user(user):
     u = m.User.by_slug(user)
+    pg = int(flask.request.args.get('page', 0))
+    links = u.get_links(page=pg)
     return render(
-        "main", title=f"user {u.name}", content=render("linklist", links=u.links),
+        "main", title=f"user {u.name}", content=render("linklist", links=links),
     )
 
 
@@ -48,4 +52,10 @@ def link(user):
 
 @app.route("/u/<string:user>/t/<path:tag>")
 def get_tagged_links(user, tag):
-    pass
+    u = m.User.by_slug(user)
+    pg = int(flask.request.args.get('page', 0))
+    t = u.get_tag(tag)
+    links = t.get_links(page=pg)
+    return render(
+        "main", title=f"tag {tag}", content=render("linklist", links=links),
+    )
