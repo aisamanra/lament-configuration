@@ -18,7 +18,7 @@ class User(Model):
     A user! you know tf this is about
     """
 
-    name = peewee.TextField()
+    name = peewee.TextField(unique=True)
     passhash = peewee.TextField()
 
     @staticmethod

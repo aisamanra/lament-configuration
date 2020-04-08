@@ -1,3 +1,6 @@
+import peewee
+import pytest
+
 import lc.config as c
 import lc.request as r
 import lc.model as m
@@ -41,6 +44,12 @@ class TestDB:
 
         assert u.authenticate(password)
         assert u.authenticate("wrong password") is False
+
+    def test_no_duplicate_users(self):
+        name = "gdritter"
+        u1 = self.mk_user(name=name)
+        with pytest.raises(peewee.IntegrityError):
+            u2 = self.mk_user(name=name)
 
     def test_get_or_create_tag(self):
         u = self.mk_user()
