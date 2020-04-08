@@ -25,14 +25,20 @@ def handle_errors(func):
         try:
             return func(*args, **kwargs)
         except e.LCException as exn:
-            return render("main", title="error", content=f"shit's fucked yo: {exn}"), 500
+            return (
+                render("main", title="error", content=f"shit's fucked yo: {exn}"),
+                500,
+            )
+
     __wrapped__.__name__ = func.__name__
     return __wrapped__
+
 
 @app.route("/")
 @handle_errors
 def index():
     return render("main", title="main", content="whoo")
+
 
 @app.route("/auth", methods=["POST"])
 @handle_errors
