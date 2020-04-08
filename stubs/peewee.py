@@ -28,16 +28,17 @@ class Model:
         pass
 
 
-# These all do things that MyPy chokes on
-def TextField() -> Any:
+# These all do things that MyPy chokes on, so we're going to treat
+# them like methods instead of naming classes
+def TextField(unique: bool = False) -> Any:
     pass
 
 
-def DateTimeField() -> Any:
+def DateTimeField(unique: bool = False) -> Any:
     pass
 
 
-def BooleanField() -> Any:
+def BooleanField(unique: bool = False) -> Any:
     pass
 
 
