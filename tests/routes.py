@@ -1,13 +1,13 @@
 import lc.config as c
 import lc.model as m
-import lc.routes as r
+import lc.app as a
 
 
 class TestRoutes:
     def setup_method(self, _):
         c.DB.init(":memory:")
         c.DB.create_tables(m.MODELS)
-        self.app = r.app.test_client()
+        self.app = a.app.test_client()
 
     def teardown_method(self, _):
         c.DB.close()
