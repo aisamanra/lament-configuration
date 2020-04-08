@@ -26,7 +26,11 @@ def handle_errors(func):
             return func(*args, **kwargs)
         except e.LCException as exn:
             return (
-                render("main", title="error", content=f"shit's fucked yo: {exn}"),
+                render("main",
+                       title="error",
+                       content=f"shit's fucked yo: {exn}",
+                       user=None
+                ),
                 500,
             )
 
@@ -37,7 +41,7 @@ def handle_errors(func):
 @app.route("/")
 @handle_errors
 def index():
-    return render("main", title="main", content="whoo")
+    return render("main", title="main", content="whoo", u=None)
 
 
 @app.route("/auth", methods=["POST"])
@@ -62,7 +66,10 @@ def get_user(user: str):
     pg = int(flask.request.args.get("page", 0))
     links = u.get_links(page=pg)
     return render(
-        "main", title=f"user {u.name}", content=render("linklist", links=links),
+        "main",
+        title=f"user {u.name}",
+        content=render("linklist", links=links),
+        user=u,
     )
 
 
@@ -85,4 +92,9 @@ def get_tagged_links(user: str, tag: str):
     pg = int(flask.request.args.get("page", 0))
     t = u.get_tag(tag)
     links = t.get_links(page=pg)
-    return render("main", title=f"tag {tag}", content=render("linklist", links=links),)
+    return render(
+        "main",
+        title=f"tag {tag}",
+        content=render("linklist", links=links),
+        user=u,
+    )
