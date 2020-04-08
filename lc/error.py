@@ -5,6 +5,9 @@ class LCException(Exception):
     def to_json(self) -> dict:
         return {"error": str(self)}
 
+    def http_code(self) -> int:
+        return 500
+
 
 @dataclass
 class UserExists(LCException):
@@ -20,6 +23,9 @@ class NoSuchUser(LCException):
 
     def __str__(self):
         return f"No user named {self.name} exists."
+
+    def http_code(self) -> int:
+        return 404
 
 
 @dataclass

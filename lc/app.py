@@ -31,7 +31,7 @@ def handle_errors(func):
                        content=f"shit's fucked yo: {exn}",
                        user=None
                 ),
-                500,
+                e.http_code(),
             )
 
     __wrapped__.__name__ = func.__name__
