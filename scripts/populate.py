@@ -9,8 +9,15 @@ import lc.request as r
 
 def main():
     lc.config.DB.init("test.db")
-    u, _ = m.User.get_or_create(name="gdritter",)
-    print(u)
+    m.create_tables()
+
+    u = m.User.get_or_none(name="gdritter")
+    if not u:
+        u = m.User.from_request(r.User(
+            name="gdritter",
+            password="behest",
+        ))
+
     with open("scripts/aisamanra.json") as f:
         links = json.load(f)
     for l in links:
