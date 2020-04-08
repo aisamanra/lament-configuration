@@ -1,9 +1,11 @@
+import contextlib
 import os
 import flask
 import pystache
 import sys
 
-import lc.config
+import lc.config as c
+import lc.error as e
 import lc.model as m
 import lc.request as r
 
@@ -18,12 +20,29 @@ def render(name, **kwargs):
     return renderer.render(template, kwargs)
 
 
+def handle_errors(func):
+    def __wrapped__(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except e.LCException as exn:
+            return render("main", title="error", content=f"shit's fucked yo: {exn}"), 500
+    __wrapped__.__name__ = func.__name__
+    return __wrapped__
+
 @app.route("/")
+@handle_errors
 def index():
     return render("main", title="main", content="whoo")
 
+@app.route("/auth", methods=["POST"])
+@handle_errors
+def auth():
+    u = m.User.login(r.User.from_json(flask.request.data))
+    return flask.redirect(u.base_url())
+
 
 @app.route("/u", methods=["POST"])
+@handle_errors
 def create_user():
     print(flask.request.data)
     u = m.User.from_request(r.User.from_json(flask.request.data))
@@ -31,6 +50,7 @@ def create_user():
 
 
 @app.route("/u/<string:user>", methods=["GET", "POST"])
+@handle_errors
 def get_user(user: str):
     u = m.User.by_slug(user)
     pg = int(flask.request.args.get("page", 0))
@@ -41,16 +61,19 @@ def get_user(user: str):
 
 
 @app.route("/u/<string:user>/l", methods=["POST"])
+@handle_errors
 def create_link(user: str):
     pass
 
 
 @app.route("/u/<string:user>/l/<string:link>", methods=["GET", "POST"])
+@handle_errors
 def link(user: str, link: str):
     pass
 
 
 @app.route("/u/<string:user>/t/<path:tag>")
+@handle_errors
 def get_tagged_links(user: str, tag: str):
     u = m.User.by_slug(user)
     pg = int(flask.request.args.get("page", 0))

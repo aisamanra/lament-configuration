@@ -42,7 +42,10 @@ class User(Model):
 
     @staticmethod
     def by_slug(slug: str) -> "User":
-        return User.get(name=slug)
+        u = User.get_or_none(name=slug)
+        if u is None:
+            raise e.NoSuchUser(name=slug)
+        return u
 
     def base_url(self) -> str:
         return f"/u/{self.name}"
