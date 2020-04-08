@@ -16,10 +16,7 @@ class TestDB:
         c.DB.close()
 
     def mk_user(self, name="gdritter", password="foo") -> m.User:
-        return m.User.from_request(r.User(
-            name=name,
-            password=password,
-        ))
+        return m.User.from_request(r.User(name=name, password=password,))
 
     def test_create_user(self):
         name = "gdritter"

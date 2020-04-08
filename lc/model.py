@@ -26,10 +26,7 @@ class User(Model):
     def from_request(user: r.User) -> "User":
         passhash = pwd.hash(user.password)
         try:
-            return User.create(
-                name=user.name,
-                passhash=passhash,
-            )
+            return User.create(name=user.name, passhash=passhash,)
         except peewee.IntegrityError:
             raise e.UserExists(name=user.name)
 
