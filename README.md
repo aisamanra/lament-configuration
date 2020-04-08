@@ -1,6 +1,12 @@
 # Lament Configuration
 
+![lament configuration logo](/lc/static/lc_64.png)
+
 Bookmark organizing for pinheads.
+
+## In-Progress Screenshots
+
+![screenshot 01](/screenshots/lament-configuration-inprogress-01.png)
 
 ## Planned Features
 
