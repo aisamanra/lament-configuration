@@ -1,4 +1,5 @@
 import datetime
+from passlib.apps import custom_app_context as pwd
 import peewee
 import typing
 
@@ -18,10 +19,18 @@ class User(Model):
     """
 
     name = peewee.TextField()
+    passhash = peewee.TextField()
 
     @staticmethod
     def from_request(user: r.User) -> "User":
-        return User.create(name=user.name)
+        passhash = pwd.hash(user.password)
+        return User.create(
+            name=user.name,
+            passhash=passhash,
+        )
+
+    def authenticate(self, password: str) -> bool:
+        return pwd.verify(password, self.passhash)
 
     @staticmethod
     def by_slug(slug: str) -> "User":

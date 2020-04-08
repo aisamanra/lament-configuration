@@ -1,4 +1,5 @@
 import lc.config as c
+import lc.request as r
 import lc.model as m
 
 
@@ -10,9 +11,15 @@ class TestDB:
     def teardown_method(self, _):
         c.DB.close()
 
+    def mk_user(self, name="gdritter", password="foo") -> m.User:
+        return m.User.from_request(r.User(
+            name=name,
+            password=password,
+        ))
+
     def test_create_user(self):
         name = "gdritter"
-        u = m.User.create(name=name)
+        u = self.mk_user(name=name)
 
         # it should be the only thing in the db
         all_users = m.User.select()
@@ -25,9 +32,20 @@ class TestDB:
         assert named_user.id == u.id
         assert named_user.name == name
 
+    def test_user_passwords(self):
+        name = "gdritter"
+        password = "foo"
+
+        u = self.mk_user(name=name, password=password)
+        print(u.name, u.passhash)
+
+        assert u.authenticate(password)
+        assert u.authenticate("wrong password") is False
+
     def test_get_or_create_tag(self):
+        u = self.mk_user()
+
         tag_name = "food"
-        u = m.User.create(name="gdritter")
         t = m.Tag.get_or_create_tag(u, tag_name)
 
         # we should be able to find the tag with the given name
@@ -39,7 +57,7 @@ class TestDB:
         assert t.id == t2.id
 
     def test_find_hierarchy(self):
-        u = m.User.create(name="gdritter")
+        u = self.mk_user()
         t = m.Tag.get_or_create_tag(u, "food/bread/rye")
 
         # this should have created three DB rows: for 'food', for

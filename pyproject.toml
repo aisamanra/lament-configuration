@@ -10,6 +10,8 @@ flask = "^1.1.2"
 peewee = "^3.13.2"
 pystache = "^0.5.4"
 dataclasses-json = "^0.4.2"
+passlib = "^1.7.2"
+itsdangerous = "^1.1.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.4.1"

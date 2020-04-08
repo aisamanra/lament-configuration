@@ -7,6 +7,7 @@ from typing import List
 @dataclass
 class User:
     name: str
+    password: str
 
 
 @dataclass_json
