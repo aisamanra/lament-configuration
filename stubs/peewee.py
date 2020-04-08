@@ -44,3 +44,5 @@ def BooleanField(unique: bool = False) -> Any:
 
 def ForeignKeyField(key: object, null: bool = None, backref: str = "") -> Any:
     pass
+
+class IntegrityError(Exception): pass

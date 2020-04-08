@@ -2,6 +2,7 @@ import peewee
 import pytest
 
 import lc.config as c
+import lc.error as e
 import lc.request as r
 import lc.model as m
 
@@ -48,7 +49,7 @@ class TestDB:
     def test_no_duplicate_users(self):
         name = "gdritter"
         u1 = self.mk_user(name=name)
-        with pytest.raises(peewee.IntegrityError):
+        with pytest.raises(e.UserExists):
             u2 = self.mk_user(name=name)
 
     def test_get_or_create_tag(self):

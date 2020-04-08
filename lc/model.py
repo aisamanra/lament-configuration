@@ -4,6 +4,7 @@ import peewee
 import typing
 
 import lc.config as c
+import lc.error as e
 import lc.request as r
 
 
@@ -24,10 +25,13 @@ class User(Model):
     @staticmethod
     def from_request(user: r.User) -> "User":
         passhash = pwd.hash(user.password)
-        return User.create(
-            name=user.name,
-            passhash=passhash,
-        )
+        try:
+            return User.create(
+                name=user.name,
+                passhash=passhash,
+            )
+        except peewee.IntegrityError:
+            raise e.UserExists(name=user.name)
 
     def authenticate(self, password: str) -> bool:
         return pwd.verify(password, self.passhash)
