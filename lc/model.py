@@ -34,6 +34,13 @@ class User(Model):
         return pwd.verify(password, self.passhash)
 
     @staticmethod
+    def login(user: r.User) -> "User":
+        u = User.by_slug(user.name)
+        if not u.authenticate(user.password):
+            raise e.BadPassword(name=user.name)
+        return u
+
+    @staticmethod
     def by_slug(slug: str) -> "User":
         return User.get(name=slug)
 
