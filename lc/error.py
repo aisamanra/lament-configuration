@@ -34,3 +34,20 @@ class BadPassword(LCException):
 
     def __str__(self):
         return f"Wrong password for user {self.name}."
+
+@dataclass
+class NotImplemented(LCException):
+    def __str__(self):
+        return f"Bad request: no handler for route."
+
+    def http_code(self) -> int:
+        return 404
+
+
+@dataclass
+class BadPermissions(LCException):
+    def __str__(self):
+        return f"Insufficient permissions."
+
+    def http_code(self) -> int:
+        return 400

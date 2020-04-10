@@ -1,6 +1,7 @@
 import datetime
 from passlib.apps import custom_app_context as pwd
 import peewee
+import playhouse.shortcuts
 import typing
 
 import lc.config as c
@@ -11,6 +12,9 @@ import lc.request as r
 class Model(peewee.Model):
     class Meta:
         database = c.DB
+
+    def to_dict(self):
+        return playhouse.shortcuts.model_to_dict(self)
 
 
 # TODO: figure out authorization for users (oauth? passwd?)
@@ -38,7 +42,7 @@ class User(Model):
         u = User.by_slug(user.name)
         if not u.authenticate(user.password):
             raise e.BadPassword(name=user.name)
-        return u
+        return c.SERIALIZER.dumps(user.to_dict())
 
     @staticmethod
     def by_slug(slug: str) -> "User":
@@ -55,6 +59,9 @@ class User(Model):
 
     def get_tag(self, tag_name: str) -> "Tag":
         return Tag.get((Tag.user == self) & (Tag.name == tag_name))
+
+    def to_dict(self):
+        return {"id": self.id, "name": self.name}
 
 
 class Link(Model):
