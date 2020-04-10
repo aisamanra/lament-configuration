@@ -2,6 +2,7 @@ import flask
 import pystache
 
 import lc.config as c
+import lc.error as e
 import lc.model as m
 
 
@@ -40,15 +41,6 @@ class Endpoint:
         '''
         if not self.user or name != self.user.name:
             raise e.BadPermissions()
-
-    def api_post(self, *args, **kwargs) -> dict:
-        raise e.NotImplemented()
-
-    def api_get(self, *args, **kwargs) -> dict:
-        raise e.NotImplemented()
-
-    def html(self, *args, **kwargs):
-        raise e.NotImplemented()
 
     def route(self, *args, **kwargs):
         try:

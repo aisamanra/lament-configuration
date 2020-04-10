@@ -13,7 +13,7 @@ class Model(peewee.Model):
     class Meta:
         database = c.DB
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         return playhouse.shortcuts.model_to_dict(self)
 
 
@@ -60,7 +60,7 @@ class User(Model):
     def get_tag(self, tag_name: str) -> "Tag":
         return Tag.get((Tag.user == self) & (Tag.name == tag_name))
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         return {"id": self.id, "name": self.name}
 
 
