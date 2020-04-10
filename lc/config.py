@@ -6,7 +6,7 @@ import playhouse.sqlite_ext
 
 DB = playhouse.sqlite_ext.SqliteExtDatabase(None)
 PER_PAGE = 50
-SERIALIZER = itsdangerous.URLSafeSerializer('TEMP KEY')
+SERIALIZER = itsdangerous.URLSafeSerializer("TEMP KEY")
 
 if sys.stderr.isatty():
 

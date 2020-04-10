@@ -26,21 +26,21 @@ class Endpoint:
 
         # try finding the token
         token = None
-        if (auth := flask.request.headers['Authorization']):
+        if (auth := flask.request.headers["Authorization"]) :
             token = auth.split()[1]
-        elif flask.session['auth']:
-            token = flask.session['auth']
+        elif flask.session["auth"]:
+            token = flask.session["auth"]
 
         if token and (payload := c.SERIALIZER.loads(token)):
-            if 'name' not in payload or 'password' not in payload:
+            if "name" not in payload or "password" not in payload:
                 return
 
             try:
-                u = m.User.by_slug(payload['name'])
+                u = m.User.by_slug(payload["name"])
             except e.LCException:
                 return
 
-            if u.authenticate(payload['password']):
+            if u.authenticate(payload["password"]):
                 self.user = u
 
     def require_authentication(self, name: user):
@@ -61,8 +61,10 @@ class Endpoint:
             if flask.request.method == "POST":
                 require_authentication()
                 return flask.jsonify(self.api_post(*args, **kwargs))
-            elif (flask.request.method in ["GET", "HEAD"] and
-                  flask.request.content_type == "application/json"):
+            elif (
+                flask.request.method in ["GET", "HEAD"]
+                and flask.request.content_type == "application/json"
+            ):
                 return flask.jsonify(self.api_get(*args, **kwargs))
         except e.LCException as exn:
             return ({"status": exn.http_code(), "error": str(exn)}, exn.http_code())
@@ -114,7 +116,10 @@ class GetUser(Endpoint):
         pg = int(flask.request.args.get("page", 0))
         links = u.get_links(page=pg)
         return render(
-            "main", title=f"user {u.name}", content=render("linklist", links=links), user=self.user,
+            "main",
+            title=f"user {u.name}",
+            content=render("linklist", links=links),
+            user=self.user,
         )
 
     def api_get(self, current_user, slug: str):

@@ -35,6 +35,7 @@ class BadPassword(LCException):
     def __str__(self):
         return f"Wrong password for user {self.name}."
 
+
 @dataclass
 class NotImplemented(LCException):
     def __str__(self):
