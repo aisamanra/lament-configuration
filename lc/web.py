@@ -45,7 +45,6 @@ class Endpoint:
     def route(self, *args, **kwargs):
         try:
             if flask.request.method == "POST":
-                require_authentication()
                 return flask.jsonify(self.api_post(*args, **kwargs))
             elif (
                 flask.request.method in ["GET", "HEAD"]
@@ -54,6 +53,8 @@ class Endpoint:
                 return flask.jsonify(self.api_get(*args, **kwargs))
         except e.LCException as exn:
             return ({"status": exn.http_code(), "error": str(exn)}, exn.http_code())
+        except e.LCRedirect as exn:
+            return flask.redirect(exn.to_path())
 
         try:
             return self.html(*args, **kwargs)
@@ -62,14 +63,22 @@ class Endpoint:
                 "main", title="error", content=f"shit's fucked yo: {exn}", user=None,
             )
             return (page, exn.http_code())
+        except e.LCRedirect as exn:
+            return flask.redirect(exn.to_path())
 
 
-def endpoint(cls):
-    def func(*args, **kwargs):
-        return cls().route(*args, **kwargs)
+def endpoint(route):
+    def do_endpoint(cls):
+        def func(*args, **kwargs):
+            return cls().route(*args, **kwargs)
 
-    func.__name__ = cls.__name__
-    return func
+        methods = ["GET"]
+        if 'api_post' in dir(cls):
+            methods.append("POST")
+
+        func.__name__ = cls.__name__
+        return c.app.route(route, methods=methods)(func)
+    return do_endpoint
 
 
 LOADER = pystache.loader.Loader(extension="mustache", search_dirs=["templates"])

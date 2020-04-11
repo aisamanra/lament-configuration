@@ -42,7 +42,7 @@ class User(Model):
         u = User.by_slug(user.name)
         if not u.authenticate(user.password):
             raise e.BadPassword(name=user.name)
-        return c.SERIALIZER.dumps(user.to_dict())
+        return u, c.SERIALIZER.dumps(user.to_dict())
 
     @staticmethod
     def by_slug(slug: str) -> "User":
@@ -141,6 +141,9 @@ class HasTag(Model):
     link = peewee.ForeignKeyField(Link, backref="tags")
     tag = peewee.ForeignKeyField(Tag, backref="models")
 
+
+class UserInvite(Model):
+    token: str
 
 MODELS = [
     User,

@@ -1,6 +1,14 @@
 from dataclasses import dataclass
 
 
+@dataclass
+class LCRedirect(Exception):
+    path: str
+
+    def to_path(self) -> str:
+        return self.path
+
+
 class LCException(Exception):
     def to_json(self) -> dict:
         return {"error": str(self)}

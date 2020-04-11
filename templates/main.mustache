@@ -17,6 +17,14 @@
       {{^user}}
         <span class="user">not logged in</span>
       {{/user}}
+      <div class="login">
+        {{#user}}
+          <a href="/logout">log out</a>
+        {{/user}}
+        {{^user}}
+          <a href="/login">log in</a>
+      {{/user}}
+      </div>
     </div>
     <div class="content">
       {{{ content }}}

@@ -9,32 +9,56 @@ import lc.model as m
 import lc.request as r
 from lc.web import Endpoint, endpoint, render
 
-app = flask.Flask(__name__)
+app = c.app
 
-@app.route("/")
-@endpoint
+@endpoint("/")
 class Index(Endpoint):
     def html(self):
         return render("main", title="main", content="whoo", user=self.user)
 
 
-@app.route("/auth", methods=["GET", "POST"])
-@endpoint
+@endpoint("/auth")
 class Auth(Endpoint):
     def api_post(self):
-        return m.User.login(r.User.from_json(flask.request.data))
+        _, token = m.User.login(r.User.from_json(flask.request.data))
+        return token
 
 
-@app.route("/u", methods=["GET", "POST"])
-@endpoint
+@endpoint("/login")
+class Login(Endpoint):
+    def html(self):
+        return render("main", title="login", content=render("login"), user=self.user)
+
+    def api_post(self):
+        print(flask.request.form)
+        u, token = m.User.login(r.User(
+            name=flask.request.form["username"],
+            password=flask.request.form["password"],
+        ))
+        flask.session["auth"] = token
+        raise e.LCRedirect(u.base_url())
+
+@endpoint("/logout")
+class Logout(Endpoint):
+    def html(self):
+        if "auth" in flask.session:
+            del flask.session["auth"]
+        raise e.LCRedirect("/")
+
+    def api_post(self):
+        if "auth" in flask.session:
+            del flask.session["auth"]
+        raise e.LCRedirect("/")
+
+
+@endpoint("/u")
 class CreateUser(Endpoint):
     def api_post(self):
         u = m.User.from_request(r.User.from_json(flask.request.data))
         return flask.redirect(u.base_url())
 
 
-@app.route("/u/<string:slug>")
-@endpoint
+@endpoint("/u/<string:slug>")
 class GetUser(Endpoint):
     def html(self, slug: str):
         u = m.User.by_slug(slug)
@@ -51,22 +75,28 @@ class GetUser(Endpoint):
         return m.User.by_slug(slug).to_dict()
 
 
-@app.route("/u/<string:user>/l")
-def create_link(user: str):
-    pass
+@endpoint("/u/<string:user>/l")
+class CreateLink:
+    def api_post(self, user: str):
+        pass
 
 
-@app.route("/u/<string:user>/l/<string:link>")
-def link(user: str, link: str):
-    pass
+@endpoint("/u/<string:user>/l/<string:link>")
+class GetLink:
+    def api_get(self, user: str, link: str):
+        pass
+
+    def html(self, user: str, link: str):
+        pass
 
 
-@app.route("/u/<string:user>/t/<path:tag>")
-def get_tagged_links(user: str, tag: str):
-    u = m.User.by_slug(user)
-    pg = int(flask.request.args.get("page", 0))
-    t = u.get_tag(tag)
-    links = t.get_links(page=pg)
-    return render(
-        "main", title=f"tag {tag}", content=render("linklist", links=links), user=u,
-    )
+@endpoint("/u/<string:user>/t/<path:tag>")
+class GetTaggedLinks:
+    def html(self, user: str, tag: str):
+        u = m.User.by_slug(user)
+        pg = int(flask.request.args.get("page", 0))
+        t = u.get_tag(tag)
+        links = t.get_links(page=pg)
+        return render(
+            "main", title=f"tag {tag}", content=render("linklist", links=links), user=u,
+        )
