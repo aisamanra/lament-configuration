@@ -13,7 +13,7 @@ class Endpoint:
         # try finding the token
         token = None
         # first check the HTTP headers
-        if (auth := flask.request.headers.get("Authorization", None)):
+        if (auth := flask.request.headers.get("Authorization", None)) :
             token = auth.split()[1]
         # if that fails, check the session
         elif flask.session.get("auth", None):
@@ -34,11 +34,11 @@ class Endpoint:
                 self.user = u
 
     def require_authentication(self, name: str):
-        '''
+        """
         Check that the currently logged-in user exists and is the
         same as the user whose username is given. Raises an exception
         otherwise.
-        '''
+        """
         if not self.user or name != self.user.name:
             raise e.BadPermissions()
 
@@ -73,11 +73,12 @@ def endpoint(route):
             return cls().route(*args, **kwargs)
 
         methods = ["GET"]
-        if 'api_post' in dir(cls):
+        if "api_post" in dir(cls):
             methods.append("POST")
 
         func.__name__ = cls.__name__
         return c.app.route(route, methods=methods)(func)
+
     return do_endpoint
 
 

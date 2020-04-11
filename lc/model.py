@@ -145,6 +145,7 @@ class HasTag(Model):
 class UserInvite(Model):
     token: str
 
+
 MODELS = [
     User,
     Link,

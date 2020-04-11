@@ -11,6 +11,7 @@ from lc.web import Endpoint, endpoint, render
 
 app = c.app
 
+
 @endpoint("/")
 class Index(Endpoint):
     def html(self):
@@ -31,12 +32,15 @@ class Login(Endpoint):
 
     def api_post(self):
         print(flask.request.form)
-        u, token = m.User.login(r.User(
-            name=flask.request.form["username"],
-            password=flask.request.form["password"],
-        ))
+        u, token = m.User.login(
+            r.User(
+                name=flask.request.form["username"],
+                password=flask.request.form["password"],
+            )
+        )
         flask.session["auth"] = token
         raise e.LCRedirect(u.base_url())
+
 
 @endpoint("/logout")
 class Logout(Endpoint):
