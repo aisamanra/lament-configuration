@@ -55,7 +55,7 @@ class User(Model):
         return f"/u/{self.name}"
 
     def get_links(self, page: int) -> typing.List["Link"]:
-        return Link.select().where(Link.user == self).paginate(page, c.PER_PAGE)
+        return Link.select().where(Link.user == self).order_by(-Link.created).paginate(page, c.PER_PAGE)
 
     def get_link(self, link_id: int) -> "Link":
         return Link.get((Link.user == self) & (Link.id == link_id))
@@ -119,7 +119,9 @@ class Tag(Model):
         return [
             ht.link
             for ht in HasTag.select()
+            .join(Link)
             .where((HasTag.tag == self))
+            .order_by(-Link.created)
             .paginate(page, c.PER_PAGE)
         ]
 
