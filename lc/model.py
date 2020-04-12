@@ -23,12 +23,12 @@ class Pagination:
     current: int
     last: int
 
-    def previous(self) -> dict:
+    def previous(self) -> typing.Optional[dict]:
         if self.current > 1:
             return {"page": self.current - 1}
         return None
 
-    def next(self) -> dict:
+    def next(self) -> typing.Optional[dict]:
         if self.current < self.last:
             return {"page": self.current + 1}
         return None
@@ -71,7 +71,10 @@ class User(Model):
         u = User.by_slug(user.name)
         if not u.authenticate(user.password):
             raise e.BadPassword(name=user.name)
-        return u, c.SERIALIZER.dumps(user.to_dict())
+        return u, c.SERIALIZER.dumps({
+            "name": user.name,
+            "password": user.password,
+        })
 
     @staticmethod
     def by_slug(slug: str) -> "User":
