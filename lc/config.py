@@ -7,9 +7,9 @@ import playhouse.sqlite_ext
 
 db = playhouse.sqlite_ext.SqliteExtDatabase(None)
 per_page = 50
-serializer = itsdangerous.URLSafeSerializer("TEMP KEY")
+serializer = itsdangerous.URLSafeSerializer(os.getenv("SECRET_KEY", "TEMP KEY"))
 app = flask.Flask(__name__)
-app.secret_key = "ARGLBARGL"
+app.secret_key = os.getenv("SECRET_KEY", "ARGLBARGL")
 
 if sys.stderr.isatty():
 
