@@ -50,7 +50,7 @@ class Endpoint:
         if not self.user or name != self.user.name:
             raise e.BadPermissions()
 
-        return m.User.by_slug(name)
+        return self.user
 
     def route(self, *args, **kwargs):
         try:
