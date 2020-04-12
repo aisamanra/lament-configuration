@@ -15,6 +15,13 @@ body {
     padding: 0em 1em;
 }
 
+.addlink {
+    padding: 0em 1em;
+}
+.login {
+    padding: 0em 1em;
+}
+
 .user a {
     text-decoration: none;
 }
@@ -63,6 +70,18 @@ a {
     border-bottom: solid black;
     padding: 0.2em 2em;
     margin: 0em 1em;
+    justify-content: space-between;
+}
+
+.header .left {
+    align-items: center;
+    display: flex;
+}
+
+.header .right {
+    align-items: center;
+    display: flex;
+    justify-content: flex-end;
 }
 
 .logo {
@@ -80,4 +99,50 @@ a {
 .sitename a {
     color: #000;
     text-decoration: none;
+}
+
+.loginform {
+    padding: 2em;
+    display: flex;
+    justify-content: center;
+}
+
+label {
+    display: inline-block;
+    width: 6em;
+    text-align: right;
+    padding-right: 0.6em;
+}
+
+input[type="text"] {
+    width: 40em;
+}
+
+input[type="password"] {
+    width: 40em;
+}
+
+input[type="submit"] {
+    width: 10em;
+}
+
+form > div {
+    padding: 0.2em;
+}
+
+.submit {
+    text-align: center;
+}
+
+.msgpage {
+    padding: 4em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.msgpage h1 {
+    font-family: league-spartan;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
 }

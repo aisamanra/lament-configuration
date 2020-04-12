@@ -15,7 +15,16 @@ app = c.app
 @endpoint("/")
 class Index(Endpoint):
     def html(self):
-        return render("main", title="main", content="whoo", user=self.user)
+        return render(
+            "main",
+            title="main",
+            content=render(
+                "message",
+                title="Lament Configuration",
+                message="Bookmark organizing for real pinheads.",
+            ),
+            user=self.user,
+        )
 
 
 @endpoint("/auth")

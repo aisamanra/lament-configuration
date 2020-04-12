@@ -25,6 +25,7 @@ class User(Model):
 
     name = peewee.TextField(unique=True)
     passhash = peewee.TextField()
+    is_admin = peewee.BooleanField(default=False)
 
     @staticmethod
     def from_request(user: r.User) -> "User":
@@ -36,6 +37,10 @@ class User(Model):
 
     def authenticate(self, password: str) -> bool:
         return pwd.verify(password, self.passhash)
+
+    def set_as_admin(self):
+        self.is_admin = True
+        self.save()
 
     @staticmethod
     def login(user: r.User) -> "User":
@@ -92,7 +97,7 @@ class Link(Model):
             name=link.name,
             description=link.description,
             private=link.private,
-            created=datetime.datetime.now(),
+            created=link.created or datetime.datetime.now(),
             user=user,
         )
         for tag_name in link.tags:

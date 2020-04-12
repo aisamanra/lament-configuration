@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from dataclasses_json import dataclass_json
-from typing import List
+from datetime import datetime
+from typing import List, Optional
 
 
 @dataclass_json
@@ -22,6 +23,7 @@ class Link:
     description: str
     private: bool
     tags: List[str]
+    created: Optional[datetime] = None
 
     @classmethod
     def from_form(cls, form):
