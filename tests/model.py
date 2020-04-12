@@ -95,8 +95,41 @@ class Testdb:
         u = self.mk_user()
         invite = m.UserInvite.manufacture(u)
 
+        # the invite should reference the user and be unclaimed
         assert invite.created_by.id == u.id
+        assert invite.created_at is not None
+        assert invite.claimed_by is None
+        assert invite.claimed_at is None
 
+        # deserializing the unique token should reveal the encrypted data
         raw_data = c.serializer.loads(invite.token)
-
         assert(raw_data["created_by"] == u.name)
+
+    def test_use_invite(self):
+        u = self.mk_user()
+        initial_invite = m.UserInvite.manufacture(u)
+
+        assert initial_invite.claimed_by is None
+        assert initial_invite.claimed_at is None
+
+        u2 = m.User.from_invite(r.User(name="u2", password="u2"), initial_invite.token)
+
+        invite = m.UserInvite.by_code(initial_invite.token)
+        assert invite.token == initial_invite.token
+        assert invite.created_by.id == u.id
+        assert invite.claimed_by.id == u2.id
+        assert invite.created_at is not None
+        assert invite.claimed_at is not None
+
+    def bad_use_invite(self):
+        initial_invite = m.UserInvite.manufacture(self.mk_user())
+
+        # creating this user claims the invite
+        m.User.from_invite(r.User(name="u2", password="u2"), initial_invite.token)
+
+        # using the invite again raise an error
+        with pytest.raises(e.AlreadyUsedInvite):
+            m.User.from_invite(r.User(name="u3", password="u3"), initial_invite.token)
+
+        with pytest.raises(e.NoSuchInvite):
+            m.User.from_invite(r.User(name="u4", password="u4"), "a-non-existent-token")

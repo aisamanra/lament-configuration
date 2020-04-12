@@ -56,6 +56,17 @@ class User(Model):
         except peewee.IntegrityError:
             raise e.UserExists(name=user.name)
 
+    @staticmethod
+    def from_invite(user: r.User, token: str) -> "User":
+        invite = UserInvite.by_code(token)
+        if invite.claimed_by is not None or invite.claimed_at is not None:
+            raise e.AlreadyUsedInvite(invite=token)
+        u = User.from_request(user)
+        invite.claimed_at = datetime.datetime.now()
+        invite.claimed_by = u
+        invite.save()
+        return u
+
     def authenticate(self, password: str) -> bool:
         return pwd.verify(password, self.passhash)
 
@@ -185,13 +196,19 @@ class HasTag(Model):
 
 
 class UserInvite(Model):
-    token = peewee.TextField()
+    token = peewee.TextField(unique=True)
 
     created_by = peewee.ForeignKeyField(User, backref="invites")
     created_at = peewee.DateTimeField()
 
     claimed_by = peewee.ForeignKeyField(User, null=True)
     claimed_at = peewee.DateTimeField(null=True)
+
+    @staticmethod
+    def by_code(token: str) -> "UserInvite":
+        if (u := UserInvite.get_or_none(token=token)):
+            return u
+        raise e.NoSuchInvite(invite=token)
 
     @staticmethod
     def manufacture(creator: User) -> "UserInvite":
