@@ -103,7 +103,7 @@ class Testdb:
 
         # deserializing the unique token should reveal the encrypted data
         raw_data = c.serializer.loads(invite.token)
-        assert(raw_data["created_by"] == u.name)
+        assert raw_data["created_by"] == u.name
 
     def test_use_invite(self):
         u = self.mk_user()

@@ -206,17 +206,16 @@ class UserInvite(Model):
 
     @staticmethod
     def by_code(token: str) -> "UserInvite":
-        if (u := UserInvite.get_or_none(token=token)):
+        if (u := UserInvite.get_or_none(token=token)) :
             return u
         raise e.NoSuchInvite(invite=token)
 
     @staticmethod
     def manufacture(creator: User) -> "UserInvite":
         now = datetime.datetime.now()
-        token = c.serializer.dumps({
-            "created_at": now.timestamp(),
-            "created_by": creator.name,
-        })
+        token = c.serializer.dumps(
+            {"created_at": now.timestamp(), "created_by": creator.name,}
+        )
         return UserInvite.create(
             token=token,
             created_by=creator,
