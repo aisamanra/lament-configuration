@@ -78,7 +78,9 @@ class CreateUser(Endpoint):
 
     def api_post(self):
         token = flask.request.args["token"]
-        u = m.User.from_invite(self.request_data(r.NewUser).to_user_request(), token)
+        req = self.request_data(r.NewUser).to_user_request()
+        u = m.User.from_invite(req, token)
+        flask.session["auth"] = req.to_token()
         raise e.LCRedirect(u.base_url())
 
 

@@ -107,6 +107,22 @@ a {
     justify-content: center;
 }
 
+.config-pane {
+    display: flex;
+    justify-content: center;
+}
+
+.config {
+    margin: 2em;
+    padding: 2em;
+    border: solid black 1px;
+}
+
+.invite {
+    font-size: small;
+    color: #444;
+}
+
 label {
     display: inline-block;
     width: 6em;
