@@ -68,7 +68,7 @@ class User(Model):
         u = User.by_slug(user.name)
         if not u.authenticate(user.password):
             raise e.BadPassword(name=user.name)
-        return u, c.SERIALIZER.dumps({"name": user.name, "password": user.password,})
+        return u, user.to_token()
 
     @staticmethod
     def by_slug(slug: str) -> "User":

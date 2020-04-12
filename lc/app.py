@@ -62,7 +62,7 @@ class Logout(Endpoint):
 @endpoint("/u")
 class CreateUser(Endpoint):
     def api_post(self):
-        u = m.User.from_request(r.User.from_json(flask.request.data))
+        u = m.User.from_request(self.request_data(r.User))
         return flask.redirect(u.base_url())
 
 
