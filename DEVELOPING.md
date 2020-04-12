@@ -1,12 +1,22 @@
 # Utilities
 
-The easiest way to develop and test is to have `poetry` and `invoke` installed. Run
+The easiest way to develop and test is to have `poetry` and `invoke` installed. If you don't mind installing them globally, you can run
 
 ```bash
 # make sure ~/.local/bin is on your path
 $ export PATH=$HOME/.local/bin
 $ python3 -m pip install --user invoke
 $ python3 -m pip install --user poetry
+```
+
+If you'd prefer sandboxed installations of tools like `invoke` and `poetry`, the easiest way is to use `pipx`, which automatically installs tools in virtualenvs. You still need to install `pipx` somehow, but it's probably better for the others:
+
+```bash
+# make sure ~/.local/bin is on your path
+$ export PATH=$HOME/.local/bin
+$ python3 -m pip install --user pipx
+$ pipx install invoke
+$ pipx install poetry
 ```
 
 Once those are installed, you can run, test, and typecheck the program using the following:
