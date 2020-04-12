@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 import datetime
 from passlib.apps import custom_app_context as pwd
 import peewee
@@ -15,6 +16,29 @@ class Model(peewee.Model):
 
     def to_dict(self) -> dict:
         return playhouse.shortcuts.model_to_dict(self)
+
+
+@dataclass
+class Pagination:
+    current: int
+    last: int
+
+    def previous(self) -> dict:
+        if self.current > 1:
+            return {"page": self.current - 1}
+        return None
+
+    def next(self) -> dict:
+        if self.current < self.last:
+            return {"page": self.current + 1}
+        return None
+
+    @classmethod
+    def from_total(cls, current, total) -> "Pagination":
+        return cls(
+            current=current,
+            last=((total-1)//c.PER_PAGE)+1,
+        )
 
 
 # TODO: figure out authorization for users (oauth? passwd?)
@@ -43,7 +67,7 @@ class User(Model):
         self.save()
 
     @staticmethod
-    def login(user: r.User) -> "User":
+    def login(user: r.User) -> typing.Tuple["User", str]:
         u = User.by_slug(user.name)
         if not u.authenticate(user.password):
             raise e.BadPassword(name=user.name)
@@ -59,8 +83,10 @@ class User(Model):
     def base_url(self) -> str:
         return f"/u/{self.name}"
 
-    def get_links(self, page: int) -> typing.List["Link"]:
-        return Link.select().where(Link.user == self).order_by(-Link.created).paginate(page, c.PER_PAGE)
+    def get_links(self, page: int) -> typing.Tuple[typing.List["Link"], Pagination]:
+        links = Link.select().where(Link.user == self).order_by(-Link.created).paginate(page, c.PER_PAGE)
+        pagination = Pagination.from_total(page, Link.select().count())
+        return links, pagination
 
     def get_link(self, link_id: int) -> "Link":
         return Link.get((Link.user == self) & (Link.id == link_id))
@@ -120,8 +146,8 @@ class Tag(Model):
     def url(self) -> str:
         return f"/u/{self.user.name}/t/{self.name}"
 
-    def get_links(self, page: int) -> typing.List[Link]:
-        return [
+    def get_links(self, page: int) -> typing.Tuple[typing.List[Link], Pagination]:
+        links = [
             ht.link
             for ht in HasTag.select()
             .join(Link)
@@ -129,6 +155,11 @@ class Tag(Model):
             .order_by(-Link.created)
             .paginate(page, c.PER_PAGE)
         ]
+        pagination = Pagination.from_total(
+            page,
+            HasTag.select().where((HasTag.tag == self)).count(),
+        )
+        return links, pagination
 
     @staticmethod
     def get_or_create_tag(user: User, tag_name: str):

@@ -146,3 +146,12 @@ form > div {
     text-transform: uppercase;
     letter-spacing: 0.2em;
 }
+
+.pagination {
+    border-top: solid black;
+    display: flex;
+    justify-content: space-around;
+    font-size: large;
+    padding: 0.2em 2em;
+    margin: 0em 1em;
+}

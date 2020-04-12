@@ -3,3 +3,29 @@
     {{>link}}
   {{/links}}
 </div>
+{{#pages}}
+  <div class="pagination">
+    <div class="navbutton">
+      <a href="?page=0">first</a>
+    </div>
+    <div class="navbutton">
+      {{#previous}}
+        <a href="?page={{page}}">prev</a>
+      {{/previous}}
+      {{^previous}}
+        prev
+      {{/previous}}
+    </div>
+    <div class="navbutton">
+      {{#next}}
+        <a href="?page={{page}}">next</a>
+      {{/next}}
+      {{^next}}
+        next
+      {{/next}}
+    </div>
+    <div class="navbutton">
+      <a href="?page={{last}}">last</a>
+    </div>
+  </div>
+{{/pages}}

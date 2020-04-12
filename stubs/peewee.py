@@ -30,7 +30,7 @@ class Model:
 
 # These all do things that MyPy chokes on, so we're going to treat
 # them like methods instead of naming classes
-def TextField(unique: bool = False) -> Any:
+def TextField(default: str = '', unique: bool = False) -> Any:
     pass
 
 
@@ -38,7 +38,7 @@ def DateTimeField(unique: bool = False) -> Any:
     pass
 
 
-def BooleanField(unique: bool = False) -> Any:
+def BooleanField(default: bool = False, unique: bool = False) -> Any:
     pass
 
 
