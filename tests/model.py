@@ -90,3 +90,13 @@ class Testdb:
         # one already entered
         assert t.id == m.Tag.get(name="food/bread/rye").id
         assert t2.id == m.Tag.get(name="food/bread/baguette").id
+
+    def test_create_invite(self):
+        u = self.mk_user()
+        invite = m.UserInvite.manufacture(u)
+
+        assert invite.created_by.id == u.id
+
+        raw_data = c.serializer.loads(invite.token)
+
+        assert(raw_data["created_by"] == u.name)

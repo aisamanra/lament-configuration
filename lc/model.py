@@ -185,7 +185,28 @@ class HasTag(Model):
 
 
 class UserInvite(Model):
-    token: str
+    token = peewee.TextField()
+
+    created_by = peewee.ForeignKeyField(User, backref="invites")
+    created_at = peewee.DateTimeField()
+
+    claimed_by = peewee.ForeignKeyField(User, null=True)
+    claimed_at = peewee.DateTimeField(null=True)
+
+    @staticmethod
+    def manufacture(creator: User) -> "UserInvite":
+        now = datetime.datetime.now()
+        token = c.serializer.dumps({
+            "created_at": now.timestamp(),
+            "created_by": creator.name,
+        })
+        return UserInvite.create(
+            token=token,
+            created_by=creator,
+            created_at=now,
+            claimed_by=None,
+            claimed_at=None,
+        )
 
 
 MODELS = [
@@ -193,6 +214,7 @@ MODELS = [
     Link,
     Tag,
     HasTag,
+    UserInvite,
 ]
 
 
