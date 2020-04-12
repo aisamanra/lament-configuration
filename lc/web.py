@@ -109,7 +109,7 @@ def endpoint(route: str):
     # called with the result of the definition after it. The argument
     # to what we're calling `do_endpoint` here is going to be the
     # class object defined afterwards.
-    def do_endpoint(endpoint_class):
+    def do_endpoint(endpoint_class: Type[Endpoint]):
         # we'll just make that explicit here
         assert Endpoint in endpoint_class.__bases__
         # finally, we need a function that we'll give to Flask in
@@ -137,7 +137,7 @@ def endpoint(route: str):
 LOADER = pystache.loader.Loader(extension="mustache", search_dirs=["templates"])
 
 
-def render(name, **kwargs):
+def render(name: str, **kwargs) -> str:
     """Load and use a Mustache template from the project root"""
     template = LOADER.load_name(name)
     renderer = pystache.Renderer(missing_tags="strict", search_dirs=["templates"])
