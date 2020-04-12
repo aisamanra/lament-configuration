@@ -28,7 +28,7 @@ def main():
             url=l["href"],
             name=l["description"],
             description=l["extended"],
-            private=l["shared"] == "yes",
+            private=l["shared"] == "no",
             tags=l["tags"].split(),
             created=time,
         )
