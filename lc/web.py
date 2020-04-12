@@ -1,9 +1,14 @@
 import flask
 import pystache
+from typing import TypeVar, Type
 
 import lc.config as c
 import lc.error as e
 import lc.model as m
+import lc.request as r
+
+
+T = TypeVar("T", bound=r.Request)
 
 
 class Endpoint:
@@ -33,13 +38,14 @@ class Endpoint:
             if u.authenticate(payload["password"]):
                 self.user = u
 
-    def request_data(self, cls):
+    def request_data(self, cls: Type[T]) -> T:
+        """Construct a Request model from either a JSON payload or a urlencoded payload"""
         if flask.request.content_type == "application/json":
             return cls.from_json(flask.request.data)
         elif flask.request.content_type == "application/x-www-form-urlencoded":
             return cls.from_form(flask.request.form)
         else:
-            raise e.BadContentType(flask.request.content_type)
+            raise e.BadContentType(flask.request.content_type or "unknown")
 
     def require_authentication(self, name: str) -> m.User:
         """
