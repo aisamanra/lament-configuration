@@ -27,18 +27,21 @@ class Model:
     def select(self, expr: Optional[Expression] = None):
         pass
 
+    def save(self):
+        pass
+
 
 # These all do things that MyPy chokes on, so we're going to treat
 # them like methods instead of naming classes
-def TextField(default: str = "", unique: bool = False) -> Any:
+def TextField(default: str = "", unique: bool = False, null: bool = None) -> Any:
     pass
 
 
-def DateTimeField(unique: bool = False) -> Any:
+def DateTimeField(unique: bool = False, null: bool = None) -> Any:
     pass
 
 
-def BooleanField(default: bool = False, unique: bool = False) -> Any:
+def BooleanField(default: bool = False, unique: bool = False, null: bool = None) -> Any:
     pass
 
 

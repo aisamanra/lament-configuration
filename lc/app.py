@@ -61,9 +61,27 @@ class Logout(Endpoint):
 
 @endpoint("/u")
 class CreateUser(Endpoint):
+    def html(self):
+        if self.user:
+            raise e.LCRedirect(f"/u/{self.user.name}")
+
+        token = flask.request.args.get("token")
+        if not token:
+            raise e.LCRedirect("/")
+
+        return render(
+            "main",
+            title="add user",
+            user=self.user,
+            content=render("add_user", token=token),
+        )
+
     def api_post(self):
-        u = m.User.from_request(self.request_data(r.User))
-        return flask.redirect(u.base_url())
+        token = flask.request.args["token"]
+        req = self.request_data(r.NewUser).to_user_request()
+        u = m.User.from_invite(req, token)
+        flask.session["auth"] = req.to_token()
+        raise e.LCRedirect(u.base_url())
 
 
 @endpoint("/u/<string:slug>")
@@ -81,6 +99,26 @@ class GetUser(Endpoint):
 
     def api_get(self, slug: str):
         return m.User.by_slug(slug).to_dict()
+
+
+@endpoint("/u/<string:user>/config")
+class UserConfig(Endpoint):
+    def html(self, user: str):
+        u = self.require_authentication(user)
+        return render(
+            "main",
+            title="configuration",
+            content=render("config", **u.get_config()),
+            user=self.user,
+        )
+
+
+@endpoint("/u/<string:user>/invite")
+class CreateInvite(Endpoint):
+    def api_post(self, user: str):
+        u = self.require_authentication(user)
+        m.UserInvite.manufacture(u)
+        raise e.LCRedirect(f"/u/{user}/config")
 
 
 @endpoint("/u/<string:user>/l")

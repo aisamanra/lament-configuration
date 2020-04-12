@@ -56,6 +56,17 @@ class User(Model):
         except peewee.IntegrityError:
             raise e.UserExists(name=user.name)
 
+    @staticmethod
+    def from_invite(user: r.User, token: str) -> "User":
+        invite = UserInvite.by_code(token)
+        if invite.claimed_by is not None or invite.claimed_at is not None:
+            raise e.AlreadyUsedInvite(invite=token)
+        u = User.from_request(user)
+        invite.claimed_at = datetime.datetime.now()
+        invite.claimed_by = u
+        invite.save()
+        return u
+
     def authenticate(self, password: str) -> bool:
         return pwd.verify(password, self.passhash)
 
@@ -98,6 +109,23 @@ class User(Model):
 
     def to_dict(self) -> dict:
         return {"id": self.id, "name": self.name}
+
+    def get_config(self) -> dict:
+        admin_pane = None
+        if self.is_admin:
+            user_invites = [
+                {
+                    "claimed": ui.claimed_by is not None,
+                    "claimant": ui.claimed_by and ui.claimed_by.name,
+                    "token": ui.token,
+                }
+                for ui in UserInvite.select().where(UserInvite.created_by == self)
+            ]
+            admin_pane = {"invites": user_invites}
+        return {
+            "username": self.name,
+            "admin_pane": admin_pane,
+        }
 
 
 class Link(Model):
@@ -185,7 +213,33 @@ class HasTag(Model):
 
 
 class UserInvite(Model):
-    token: str
+    token = peewee.TextField(unique=True)
+
+    created_by = peewee.ForeignKeyField(User, backref="invites")
+    created_at = peewee.DateTimeField()
+
+    claimed_by = peewee.ForeignKeyField(User, null=True)
+    claimed_at = peewee.DateTimeField(null=True)
+
+    @staticmethod
+    def by_code(token: str) -> "UserInvite":
+        if (u := UserInvite.get_or_none(token=token)) :
+            return u
+        raise e.NoSuchInvite(invite=token)
+
+    @staticmethod
+    def manufacture(creator: User) -> "UserInvite":
+        now = datetime.datetime.now()
+        token = c.serializer.dumps(
+            {"created_at": now.timestamp(), "created_by": creator.name,}
+        )
+        return UserInvite.create(
+            token=token,
+            created_by=creator,
+            created_at=now,
+            claimed_by=None,
+            claimed_at=None,
+        )
 
 
 MODELS = [
@@ -193,6 +247,7 @@ MODELS = [
     Link,
     Tag,
     HasTag,
+    UserInvite,
 ]
 
 

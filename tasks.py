@@ -5,7 +5,7 @@ from invoke import task
 @task
 def test(c):
     """Run all the provided tests"""
-    c.run("poetry run python -m pytest tests/*.py")
+    c.run("poetry run python -m pytest tests/*.py -W ignore::DeprecationWarning")
 
 
 @task

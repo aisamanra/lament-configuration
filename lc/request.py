@@ -5,6 +5,7 @@ from datetime import datetime
 from typing import List, Mapping, Optional, TypeVar, Type
 
 import lc.config as c
+import lc.error as e
 
 T = TypeVar("T")
 
@@ -35,6 +36,24 @@ class User(Request):
 
     def to_token(self) -> str:
         return c.serializer.dumps({"name": self.name, "password": self.password,})
+
+
+@dataclass_json
+@dataclass
+class NewUser(Request):
+    name: str
+    n1: str
+    n2: str
+
+    @classmethod
+    def from_form(cls, form: Mapping[str, str]):
+        return cls(name=form["username"], n1=form["n1"], n2=form["n2"],)
+
+    def to_user_request(self) -> User:
+        if self.n1 != self.n2:
+            raise e.MismatchedPassword()
+
+        return User(name=self.name, password=self.n1)
 
 
 @dataclass_json

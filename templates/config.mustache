@@ -1,0 +1,46 @@
+<div class="config-pane">
+  <div class="config">
+    Change password:
+    <form name="password-change" action="/u/{{username}}/password" method="POST">
+      <div>
+        <label for="old">Old:</label>
+        <input name="old" type="password" />
+      </div>
+      <div>
+        <label for="n1">New:</label>
+        <input name="n1" type="password" />
+      </div>
+      <div>
+        <label for="n2">New:</label>
+        <input name="n2" type="password" />
+      </div>
+      <div>
+        <input type="submit" value="Change Password" />
+      </div>
+    </form>
+  </div>
+</div>
+{{#admin_pane}}
+  <div class="config-pane">
+    <div class="config">
+      User Invites:
+      <ul>
+        {{#invites}}
+          {{#claimed}}
+            <li><span class="invite">{{token}}</span> claimed: <span class="user"><a href="/u/{{claimant}}">@{{claimant}}</a></span></li>
+          {{/claimed}}
+          {{^claimed}}
+            <li>Token <span class="invite"><a href="/u?token={{token}}">{{token}}</a></invite></li>
+          {{/claimed}}
+        {{/invites}}
+      </ul>
+      <div class="add-new">
+        <form name="new-invite" action="/u/{{username}}/invite" method="POST">
+          <div>
+            <input type="submit" value="Create invite link" />
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{{/admin_pane}}

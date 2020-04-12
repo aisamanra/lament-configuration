@@ -62,7 +62,7 @@ class BadPermissions(LCException):
         return f"Insufficient permissions."
 
     def http_code(self) -> int:
-        return 400
+        return 403
 
 
 @dataclass
@@ -73,4 +73,35 @@ class BadContentType(LCException):
         return f"Bad content type for request: {self.content_type}"
 
     def http_code(self) -> int:
-        return 500
+        return 403
+
+
+@dataclass
+class NoSuchInvite(LCException):
+    invite: str
+
+    def __str__(self):
+        return f"No such invite code: {self.invite}."
+
+    def http_code(self) -> int:
+        return 404
+
+
+@dataclass
+class AlreadyUsedInvite(LCException):
+    invite: str
+
+    def __str__(self):
+        return f"Invite code {self.invite} already taken."
+
+    def http_code(self) -> int:
+        return 403
+
+
+@dataclass
+class MismatchedPassword(LCException):
+    def __str__(self):
+        return f"Provided passwords do not match. Please check your passwords."
+
+    def http_code(self) -> int:
+        return 400
