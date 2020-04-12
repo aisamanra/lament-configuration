@@ -52,4 +52,6 @@ def tc(c):
 @task
 def uwsgi(c, sock="lc.sock"):
     """Run a uwsgi server"""
-    c.run(f"poetry run uwsgi --socket {sock} --module lament-configuration:app --processes 4 --threads 2")
+    c.run(
+        f"poetry run uwsgi --socket {sock} --module lament-configuration:app --processes 4 --threads 2"
+    )

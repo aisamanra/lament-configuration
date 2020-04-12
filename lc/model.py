@@ -35,10 +35,7 @@ class Pagination:
 
     @classmethod
     def from_total(cls, current, total) -> "Pagination":
-        return cls(
-            current=current,
-            last=((total-1)//c.PER_PAGE)+1,
-        )
+        return cls(current=current, last=((total - 1) // c.PER_PAGE) + 1,)
 
 
 # TODO: figure out authorization for users (oauth? passwd?)
@@ -71,10 +68,7 @@ class User(Model):
         u = User.by_slug(user.name)
         if not u.authenticate(user.password):
             raise e.BadPassword(name=user.name)
-        return u, c.SERIALIZER.dumps({
-            "name": user.name,
-            "password": user.password,
-        })
+        return u, c.SERIALIZER.dumps({"name": user.name, "password": user.password,})
 
     @staticmethod
     def by_slug(slug: str) -> "User":
@@ -87,7 +81,12 @@ class User(Model):
         return f"/u/{self.name}"
 
     def get_links(self, page: int) -> typing.Tuple[typing.List["Link"], Pagination]:
-        links = Link.select().where(Link.user == self).order_by(-Link.created).paginate(page, c.PER_PAGE)
+        links = (
+            Link.select()
+            .where(Link.user == self)
+            .order_by(-Link.created)
+            .paginate(page, c.PER_PAGE)
+        )
         pagination = Pagination.from_total(page, Link.select().count())
         return links, pagination
 
@@ -159,8 +158,7 @@ class Tag(Model):
             .paginate(page, c.PER_PAGE)
         ]
         pagination = Pagination.from_total(
-            page,
-            HasTag.select().where((HasTag.tag == self)).count(),
+            page, HasTag.select().where((HasTag.tag == self)).count(),
         )
         return links, pagination
 

@@ -14,10 +14,7 @@ def main():
 
     u = m.User.get_or_none(name="gdritter")
     if not u:
-        u = m.User.from_request(r.User(
-            name="gdritter",
-            password="behest",
-        ))
+        u = m.User.from_request(r.User(name="gdritter", password="behest",))
         u.set_as_admin()
 
     with open("scripts/aisamanra.json") as f:
