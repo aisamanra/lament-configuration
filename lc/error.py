@@ -43,6 +43,9 @@ class BadPassword(LCException):
     def __str__(self):
         return f"Wrong password for user {self.name}."
 
+    def http_code(self) -> int:
+        return 403
+
 
 @dataclass
 class NotImplemented(LCException):

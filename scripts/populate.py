@@ -3,19 +3,21 @@
 import datetime
 import json
 
-import lc.config
+import lc.config as c
 import lc.model as m
 import lc.request as r
 
 
 def main():
-    lc.config.db.init("test.db")
+    c.db.init("test.db")
     m.create_tables()
 
     u = m.User.get_or_none(name="gdritter")
     if not u:
         u = m.User.from_request(r.User(name="gdritter", password="behest",))
         u.set_as_admin()
+
+    c.log(f"created user {u.name}")
 
     with open("scripts/aisamanra.json") as f:
         links = json.load(f)
@@ -29,7 +31,8 @@ def main():
             tags=l["tags"].split(),
             created=time,
         )
-        print(m.Link.from_request(u, req))
+        l = m.Link.from_request(u, req)
+        c.log(f"created link {l.url}")
 
 
 if __name__ == "__main__":

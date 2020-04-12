@@ -30,8 +30,8 @@ class Index(Endpoint):
 @endpoint("/auth")
 class Auth(Endpoint):
     def api_post(self):
-        _, token = m.User.login(r.User.from_json(flask.request.data))
-        return token
+        _, token = m.User.login(self.request_data(r.User))
+        return {"token": token}
 
 
 @endpoint("/login")

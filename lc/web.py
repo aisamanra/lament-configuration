@@ -26,7 +26,7 @@ class Endpoint:
 
         # if that exists and we can deserialize it, then make sure
         # it contains a valid user password, too
-        if token and (payload := c.SERIALIZER.loads(token)):
+        if token and (payload := c.serializer.loads(token)):
             if "name" not in payload or "password" not in payload:
                 return
 

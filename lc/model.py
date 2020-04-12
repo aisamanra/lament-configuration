@@ -197,4 +197,4 @@ MODELS = [
 
 
 def create_tables():
-    c.DB.create_tables(MODELS, safe=True)
+    c.db.create_tables(MODELS, safe=True)
