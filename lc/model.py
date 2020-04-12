@@ -3,7 +3,7 @@ import datetime
 from passlib.apps import custom_app_context as pwd
 import peewee
 import playhouse.shortcuts
-import typing
+from typing import List, Optional, Tuple
 
 import lc.config as c
 import lc.error as e
@@ -23,12 +23,12 @@ class Pagination:
     current: int
     last: int
 
-    def previous(self) -> typing.Optional[dict]:
+    def previous(self) -> Optional[dict]:
         if self.current > 1:
             return {"page": self.current - 1}
         return None
 
-    def next(self) -> typing.Optional[dict]:
+    def next(self) -> Optional[dict]:
         if self.current < self.last:
             return {"page": self.current + 1}
         return None
@@ -64,7 +64,7 @@ class User(Model):
         self.save()
 
     @staticmethod
-    def login(user: r.User) -> typing.Tuple["User", str]:
+    def login(user: r.User) -> Tuple["User", str]:
         u = User.by_slug(user.name)
         if not u.authenticate(user.password):
             raise e.BadPassword(name=user.name)
@@ -80,7 +80,7 @@ class User(Model):
     def base_url(self) -> str:
         return f"/u/{self.name}"
 
-    def get_links(self, page: int) -> typing.Tuple[typing.List["Link"], Pagination]:
+    def get_links(self, page: int) -> Tuple[List["Link"], Pagination]:
         links = (
             Link.select()
             .where(Link.user == self)
@@ -148,7 +148,7 @@ class Tag(Model):
     def url(self) -> str:
         return f"/u/{self.user.name}/t/{self.name}"
 
-    def get_links(self, page: int) -> typing.Tuple[typing.List[Link], Pagination]:
+    def get_links(self, page: int) -> Tuple[List[Link], Pagination]:
         links = [
             ht.link
             for ht in HasTag.select()
