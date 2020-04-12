@@ -122,11 +122,11 @@ def endpoint(route: str):
         # use reflection over the methods defined by the endpoint
         # class to decide if it needs to accept POST requests or not.
         methods = ["GET"]
-        if "api_post" in dir(cls):
+        if "api_post" in dir(endpoint_class):
             methods.append("POST")
 
         # this is just for making error messages nicer
-        func.__name__ = cls.__name__
+        func.__name__ = endpoint_class.__name__
 
         # finally, use the Flask routing machinery to register our callback
         return c.app.route(route, methods=methods)(func)

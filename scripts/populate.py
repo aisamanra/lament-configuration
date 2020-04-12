@@ -9,7 +9,7 @@ import lc.request as r
 
 
 def main():
-    lc.config.DB.init("test.db")
+    lc.config.db.init("test.db")
     m.create_tables()
 
     u = m.User.get_or_none(name="gdritter")

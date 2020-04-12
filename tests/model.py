@@ -7,13 +7,13 @@ import lc.request as r
 import lc.model as m
 
 
-class TestDB:
+class Testdb:
     def setup_method(self, _):
-        c.DB.init(":memory:")
-        c.DB.create_tables(m.MODELS)
+        c.db.init(":memory:")
+        c.db.create_tables(m.MODELS)
 
     def teardown_method(self, _):
-        c.DB.close()
+        c.db.close()
 
     def mk_user(self, name="gdritter", password="foo") -> m.User:
         return m.User.from_request(r.User(name=name, password=password,))
@@ -67,7 +67,7 @@ class TestDB:
         u = self.mk_user()
         t = m.Tag.get_or_create_tag(u, "food/bread/rye")
 
-        # this should have created three DB rows: for 'food', for
+        # this should have created three db rows: for 'food', for
         # 'food/bread', and for 'food/bread/rye':
         assert len(m.Tag.select()) == 3
 

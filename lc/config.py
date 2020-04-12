@@ -5,9 +5,9 @@ import flask
 import itsdangerous
 import playhouse.sqlite_ext
 
-DB = playhouse.sqlite_ext.SqliteExtDatabase(None)
-PER_PAGE = 50
-SERIALIZER = itsdangerous.URLSafeSerializer("TEMP KEY")
+db = playhouse.sqlite_ext.SqliteExtDatabase(None)
+per_page = 50
+serializer = itsdangerous.URLSafeSerializer("TEMP KEY")
 app = flask.Flask(__name__)
 app.secret_key = "ARGLBARGL"
 

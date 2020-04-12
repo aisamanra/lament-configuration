@@ -5,12 +5,12 @@ import lc.app as a
 
 class TestRoutes:
     def setup_method(self, _):
-        c.DB.init(":memory:")
-        c.DB.create_tables(m.MODELS)
+        c.db.init(":memory:")
+        c.db.create_tables(m.MODELS)
         self.app = a.app.test_client()
 
     def teardown_method(self, _):
-        c.DB.close()
+        c.db.close()
 
     def get(self, path):
         return self.app.get(path)

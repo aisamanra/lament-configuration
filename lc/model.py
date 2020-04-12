@@ -12,7 +12,7 @@ import lc.request as r
 
 class Model(peewee.Model):
     class Meta:
-        database = c.DB
+        database = c.db
 
     def to_dict(self) -> dict:
         return playhouse.shortcuts.model_to_dict(self)
@@ -35,7 +35,7 @@ class Pagination:
 
     @classmethod
     def from_total(cls, current, total) -> "Pagination":
-        return cls(current=current, last=((total - 1) // c.PER_PAGE) + 1,)
+        return cls(current=current, last=((total - 1) // c.per_page) + 1,)
 
 
 # TODO: figure out authorization for users (oauth? passwd?)
@@ -85,7 +85,7 @@ class User(Model):
             Link.select()
             .where(Link.user == self)
             .order_by(-Link.created)
-            .paginate(page, c.PER_PAGE)
+            .paginate(page, c.per_page)
         )
         pagination = Pagination.from_total(page, Link.select().count())
         return links, pagination
@@ -155,7 +155,7 @@ class Tag(Model):
             .join(Link)
             .where((HasTag.tag == self))
             .order_by(-Link.created)
-            .paginate(page, c.PER_PAGE)
+            .paginate(page, c.per_page)
         ]
         pagination = Pagination.from_total(
             page, HasTag.select().where((HasTag.tag == self)).count(),
