@@ -96,3 +96,12 @@ class AlreadyUsedInvite(LCException):
 
     def http_code(self) -> int:
         return 403
+
+
+@dataclass
+class MismatchedPassword(LCException):
+    def __str__(self):
+        return f"Provided passwords do not match. Please check your passwords."
+
+    def http_code(self) -> int:
+        return 400

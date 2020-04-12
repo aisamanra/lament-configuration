@@ -110,6 +110,23 @@ class User(Model):
     def to_dict(self) -> dict:
         return {"id": self.id, "name": self.name}
 
+    def get_config(self) -> dict:
+        admin_pane = None
+        if self.is_admin:
+            user_invites = [
+                {"claimed": ui.claimed_by is not None,
+                 "claimant": ui.claimed_by and ui.claimed_by.name,
+                 "token": ui.token}
+                for ui in UserInvite.select().where(UserInvite.created_by == self)
+            ]
+            admin_pane = {
+                "invites": user_invites
+            }
+        return {
+            "username": self.name,
+            "admin_pane": admin_pane,
+        }
+
 
 class Link(Model):
     """
