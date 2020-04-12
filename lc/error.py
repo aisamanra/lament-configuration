@@ -60,3 +60,14 @@ class BadPermissions(LCException):
 
     def http_code(self) -> int:
         return 400
+
+
+@dataclass
+class BadContentType(LCException):
+    content_type: str
+
+    def __str__(self):
+        return f"Bad content type for request: {self.content_type}"
+
+    def http_code(self) -> int:
+        return 500

@@ -31,13 +31,8 @@ class Login(Endpoint):
         return render("main", title="login", content=render("login"), user=self.user)
 
     def api_post(self):
-        print(flask.request.form)
-        u, token = m.User.login(
-            r.User(
-                name=flask.request.form["username"],
-                password=flask.request.form["password"],
-            )
-        )
+        req = self.request_data(r.User)
+        u, token = m.User.login(req)
         flask.session["auth"] = token
         raise e.LCRedirect(u.base_url())
 
@@ -80,27 +75,43 @@ class GetUser(Endpoint):
 
 
 @endpoint("/u/<string:user>/l")
-class CreateLink:
+class CreateLink(Endpoint):
+    def html(self, user: str):
+        return render("main", title="login", content=render("add_link"), user=self.user)
+
     def api_post(self, user: str):
-        pass
+        u = self.require_authentication(user)
+        req = self.request_data(r.Link)
+        l = m.Link.from_request(u, req)
+        raise e.LCRedirect(l.link_url())
 
 
 @endpoint("/u/<string:user>/l/<string:link>")
-class GetLink:
+class GetLink(Endpoint):
     def api_get(self, user: str, link: str):
         pass
 
     def html(self, user: str, link: str):
+        l = m.User.by_slug(user).get_link(int(link))
+        return render(
+            "main",
+            title=f"link {l.name}",
+            content=render("linklist", links=[l]),
+            user=self.user,
+        )
         pass
 
 
 @endpoint("/u/<string:user>/t/<path:tag>")
-class GetTaggedLinks:
+class GetTaggedLinks(Endpoint):
     def html(self, user: str, tag: str):
         u = m.User.by_slug(user)
         pg = int(flask.request.args.get("page", 0))
         t = u.get_tag(tag)
         links = t.get_links(page=pg)
         return render(
-            "main", title=f"tag {tag}", content=render("linklist", links=links), user=u,
+            "main",
+            title=f"tag {tag}",
+            content=render("linklist", links=links),
+            user=self.user,
         )

@@ -17,14 +17,19 @@
       {{^user}}
         <span class="user">not logged in</span>
       {{/user}}
-      <div class="login">
-        {{#user}}
+      {{#user}}
+        <div class="addlink">
+          <a href="/u/{{name}}/l">add link</a>
+        </div>
+        <div class="login">
           <a href="/logout">log out</a>
-        {{/user}}
-        {{^user}}
-          <a href="/login">log in</a>
+        </div>
       {{/user}}
-      </div>
+      {{^user}}
+        <div class="login">
+          <a href="/login">log in</a>
+        </div>
+      {{/user}}
     </div>
     <div class="content">
       {{{ content }}}

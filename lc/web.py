@@ -33,7 +33,15 @@ class Endpoint:
             if u.authenticate(payload["password"]):
                 self.user = u
 
-    def require_authentication(self, name: str):
+    def request_data(self, cls):
+        if flask.request.content_type == "application/json":
+            return cls.from_json(flask.request.data)
+        elif flask.request.content_type == "application/x-www-form-urlencoded":
+            return cls.from_form(flask.request.form)
+        else:
+            raise e.BadContentType(flask.request.content_type)
+
+    def require_authentication(self, name: str) -> m.User:
         """
         Check that the currently logged-in user exists and is the
         same as the user whose username is given. Raises an exception
@@ -41,6 +49,8 @@ class Endpoint:
         """
         if not self.user or name != self.user.name:
             raise e.BadPermissions()
+
+        return m.User.by_slug(name)
 
     def route(self, *args, **kwargs):
         try:
