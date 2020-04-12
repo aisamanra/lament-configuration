@@ -19,6 +19,7 @@ invoke = "^1.4.1"
 black = "^19.10b0"
 requests = "^2.23.0"
 mypy = "^0.770"
+uwsgi = "^2.0.18"
 
 [build-system]
 requires = ["poetry>=0.12"]
