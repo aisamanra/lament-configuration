@@ -18,6 +18,16 @@ class LCException(Exception):
 
 
 @dataclass
+class BadPayload(LCException):
+    key: str
+
+    def __str__(self):
+        return f"Missing value for '{self.key}' in request"
+
+    def http_code(self) -> int:
+        return 400
+
+@dataclass
 class UserExists(LCException):
     name: str
 

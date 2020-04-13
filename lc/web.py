@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 import flask
 import pystache
 from typing import TypeVar, Type
@@ -9,6 +10,10 @@ import lc.request as r
 
 
 T = TypeVar("T", bound=r.Request)
+
+@dataclass
+class ApiOK:
+    response: dict
 
 
 class Endpoint:
@@ -38,9 +43,9 @@ class Endpoint:
             if u.authenticate(payload["password"]):
                 self.user = u
 
-    def api_ok(self, redirect: str, data: dict = {"status": "ok"}):
+    def api_ok(self, redirect: str, data: dict = {"status": "ok"}) -> ApiOK:
         if flask.request.content_type == "application/json":
-            return flask.jsonify(data)
+            return ApiOK(response=data)
         elif flask.request.content_type == "application/x-www-form-urlencoded":
             raise e.LCRedirect(redirect)
         else:
@@ -49,7 +54,11 @@ class Endpoint:
     def request_data(self, cls: Type[T]) -> T:
         """Construct a Request model from either a JSON payload or a urlencoded payload"""
         if flask.request.content_type == "application/json":
-            return cls.from_json(flask.request.data)
+            try:
+                return cls.from_json(flask.request.data)
+            except KeyError as exn:
+                raise e.BadPayload(key=exn.args[0])
+
         elif flask.request.content_type == "application/x-www-form-urlencoded":
             return cls.from_form(flask.request.form)
         else:
@@ -75,7 +84,9 @@ class Endpoint:
                 # should redirect to the page where that information
                 # can be viewed instead of returning that
                 # information. (I think.)
-                return self.api_post(*args, **kwargs)
+                api_ok = self.api_post(*args, **kwargs)
+                assert isinstance(api_ok, ApiOK)
+                return flask.jsonify(api_ok.response)
             elif (
                 flask.request.method in ["GET", "HEAD"]
                 and flask.request.content_type == "application/json"
@@ -90,7 +101,13 @@ class Endpoint:
         # if an exception arose from an "API method", then we should
         # report it as JSON
         except e.LCException as exn:
-            return ({"status": exn.http_code(), "error": str(exn)}, exn.http_code())
+            if flask.request.content_type == "application/json":
+                return ({"status": exn.http_code(), "error": str(exn)}, exn.http_code())
+            else:
+                page = render(
+                    "main", title="error", content=f"shit's fucked yo: {exn}", user=None,
+                )
+                return (page, exn.http_code())
         # also maybe we tried to redirect, so just do that
         except e.LCRedirect as exn:
             return flask.redirect(exn.to_path())
