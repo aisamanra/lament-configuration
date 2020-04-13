@@ -15,7 +15,9 @@ def main():
 
     u = m.User.get_or_none(name="gdritter")
     if not u:
-        u = m.User.from_request(r.User(name="gdritter", password=os.getenv("PASSWORD", "behest").strip(),))
+        u = m.User.from_request(
+            r.User(name="gdritter", password=os.getenv("PASSWORD", "behest").strip(),)
+        )
         u.set_as_admin()
 
     c.log(f"created user {u.name}")

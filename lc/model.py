@@ -38,7 +38,6 @@ class Pagination:
         return cls(current=current, last=((total - 1) // c.per_page) + 1,)
 
 
-# TODO: figure out authorization for users (oauth? passwd?)
 class User(Model):
     """
     A user! you know tf this is about
@@ -181,7 +180,10 @@ class Tag(Model):
             ht.link
             for ht in HasTag.select()
             .join(Link)
-            .where((HasTag.tag == self) & ((HasTag.link.user == as_user) | (HasTag.link.private == False)))
+            .where(
+                (HasTag.tag == self)
+                & ((HasTag.link.user == as_user) | (HasTag.link.private == False))
+            )
             .order_by(-Link.created)
             .paginate(page, c.per_page)
         ]
