@@ -125,7 +125,7 @@ class CreateLink(Endpoint):
         u = self.require_authentication(user)
         req = self.request_data(r.Link)
         l = m.Link.from_request(u, req)
-        return self.api_ok(l.link_url(), l)
+        return self.api_ok(l.link_url(), l.to_dict())
 
 
 @endpoint("/u/<string:user>/l/<string:link>")
