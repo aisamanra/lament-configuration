@@ -91,10 +91,10 @@ class User(Model):
     def base_url(self) -> str:
         return f"/u/{self.name}"
 
-    def get_links(self, page: int) -> Tuple[List["Link"], Pagination]:
+    def get_links(self, as_user: r.User, page: int) -> Tuple[List["Link"], Pagination]:
         links = (
             Link.select()
-            .where(Link.user == self)
+            .where((Link.user == self) & ((self == as_user) | (Link.private == False)))
             .order_by(-Link.created)
             .paginate(page, c.per_page)
         )
@@ -176,12 +176,12 @@ class Tag(Model):
     def url(self) -> str:
         return f"/u/{self.user.name}/t/{self.name}"
 
-    def get_links(self, page: int) -> Tuple[List[Link], Pagination]:
+    def get_links(self, as_user: r.User, page: int) -> Tuple[List[Link], Pagination]:
         links = [
             ht.link
             for ht in HasTag.select()
             .join(Link)
-            .where((HasTag.tag == self))
+            .where((HasTag.tag == self) & ((HasTag.link.user == as_user) | (HasTag.link.private == False)))
             .order_by(-Link.created)
             .paginate(page, c.per_page)
         ]

@@ -89,7 +89,7 @@ class GetUser(Endpoint):
     def html(self, slug: str):
         u = m.User.by_slug(slug)
         pg = int(flask.request.args.get("page", 1))
-        links, pages = u.get_links(page=pg)
+        links, pages = u.get_links(as_user=self.user, page=pg)
         return render(
             "main",
             title=f"user {u.name}",
@@ -155,7 +155,7 @@ class GetTaggedLinks(Endpoint):
         u = m.User.by_slug(user)
         pg = int(flask.request.args.get("page", 0))
         t = u.get_tag(tag)
-        links, pages = t.get_links(page=pg)
+        links, pages = t.get_links(as_user=self.user, page=pg)
         return render(
             "main",
             title=f"tag {tag}",

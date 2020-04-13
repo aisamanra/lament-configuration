@@ -26,6 +26,10 @@ body {
     text-decoration: none;
 }
 
+.private {
+    background-color: #ddd;
+}
+
 .link {
     padding: 0.4em 1em;
 }
