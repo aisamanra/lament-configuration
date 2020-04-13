@@ -134,6 +134,10 @@ class Testdb:
         with pytest.raises(e.NoSuchInvite):
             m.User.from_invite(r.User(name="u4", password="u4"), "a-non-existent-token")
 
+    def check_tags(self, l, tags):
+        present = set(map(lambda hastag: hastag.tag.name, l.tags))
+        assert present == set(tags)
+
     def test_edit_link(self):
         u = self.mk_user()
 
@@ -148,13 +152,13 @@ class Testdb:
         req.private = True
         l.update_from_request(u, req)
         assert l.name == req.name
-        assert l.tags == req.tags
         assert l.private
         assert l.created != req.created
+        self.check_tags(l, req.tags)
 
         # check that the link was persisted
         l = m.Link.by_id(l.id)
         assert l.name == req.name
-        assert l.tags == req.tags
         assert l.private
         assert l.created != req.created
+        self.check_tags(l, req.tags)

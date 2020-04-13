@@ -168,15 +168,19 @@ class Link(Model):
         return l
 
     def update_from_request(self, user: User, link: r.Link):
-        new_tags = set()
-        for tag_name in link.tags:
-            t = Tag.get_or_create_tag(user, tag_name)
-            new_tags.add(t)
-            HasTag.get_or_create(self, t)
 
-        for tag in self.tags:
-            if tag not in new_tags:
-                HasTag.delete().where((HasTag.link == self.id) & (HasTag.tag == tag))
+        req_tags = set(link.tags)
+
+        for hastag in self.tags:
+            name = hastag.tag.name
+            if name not in req_tags:
+                hastag.delete_instance()
+            else:
+                req_tags.remove(name)
+
+        for tag_name in req_tags:
+            t = Tag.get_or_create_tag(user, tag_name)
+            HasTag.get_or_create(link=self, tag=t)
 
         self.url = link.url
         self.name = link.name
