@@ -27,6 +27,7 @@ class BadPayload(LCException):
     def http_code(self) -> int:
         return 400
 
+
 @dataclass
 class UserExists(LCException):
     name: str

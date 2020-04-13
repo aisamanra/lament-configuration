@@ -11,6 +11,7 @@ import lc.request as r
 
 T = TypeVar("T", bound=r.Request)
 
+
 @dataclass
 class ApiOK:
     response: dict
@@ -105,7 +106,10 @@ class Endpoint:
                 return ({"status": exn.http_code(), "error": str(exn)}, exn.http_code())
             else:
                 page = render(
-                    "main", title="error", content=f"shit's fucked yo: {exn}", user=None,
+                    "main",
+                    title="error",
+                    content=f"shit's fucked yo: {exn}",
+                    user=None,
                 )
                 return (page, exn.http_code())
         # also maybe we tried to redirect, so just do that
