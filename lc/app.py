@@ -134,12 +134,10 @@ class GetLink(Endpoint):
         pass
 
     def api_post(self, user: str, link: str):
-        u = m.User.by_slug(user)
+        u = self.require_authentication(user)
         l = u.get_link(int(link))
-        if u == self.user:
-            req = self.request_data(r.Link)
-            l.update_from_request(req)
-
+        req = self.request_data(r.Link)
+        l.update_from_request(req)
         raise e.LCRedirect(l.link_url())
 
     def html(self, user: str, link: str):
@@ -155,11 +153,8 @@ class GetLink(Endpoint):
 @endpoint("/u/<string:slug>/l/<string:link>/edit")
 class EditLink(Endpoint):
     def html(self, slug: str, link: str):
-        u = m.User.by_slug(slug)
+        u = self.require_authentication(slug)
         l = u.get_link(int(link))
-        if u != self.user:
-            raise e.LCRedirect(l.link_url())
-
         return render(
             "main", title="login", content=render("edit_link", link=l), user=self.user
         )
