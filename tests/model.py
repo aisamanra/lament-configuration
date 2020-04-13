@@ -140,7 +140,6 @@ class Testdb:
         req = r.Link("http://foo.com", "foo", "", False, ["foo", "bar"])
         l = m.Link.from_request(u, req)
         assert l.name == req.name
-
         assert l.tags == ["foo", "bar"]
 
         # check the in-place update

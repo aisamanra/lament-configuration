@@ -137,7 +137,7 @@ class GetLink(Endpoint):
         u = self.require_authentication(user)
         l = u.get_link(int(link))
         req = self.request_data(r.Link)
-        l.update_from_request(req)
+        l.update_from_request(u, req)
         raise e.LCRedirect(l.link_url())
 
     def html(self, user: str, link: str):

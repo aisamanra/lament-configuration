@@ -167,12 +167,21 @@ class Link(Model):
             )
         return l
 
-    def update_from_request(self, link: r.Link):
+    def update_from_request(self, user: User, link: r.Link):
+        new_tags = set()
+        for tag_name in link.tags:
+            t = Tag.get_or_create_tag(user, tag_name)
+            new_tags.add(t)
+            HasTag.get_or_create(self, t)
+
+        for tag in self.tags:
+            if tag not in new_tags:
+                HasTag.delete().where((HasTag.link == self.id) & (HasTag.tag == tag))
+
         self.url = link.url
         self.name = link.name
         self.description = link.description
         self.private = link.private
-        self.tags = link.tags
         self.save()
 
 
@@ -225,6 +234,14 @@ class HasTag(Model):
 
     link = peewee.ForeignKeyField(Link, backref="tags")
     tag = peewee.ForeignKeyField(Tag, backref="models")
+
+    @staticmethod
+    def get_or_create(link: Link, tag: Tag):
+        res = HasTag.get_or_none(link=link, tag=tag)
+        if res is None:
+            res = HasTag.create(link=link, tag=tag)
+
+        return res
 
 
 class UserInvite(Model):
