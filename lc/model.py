@@ -8,6 +8,7 @@ from typing import List, Optional, Tuple
 import lc.config as c
 import lc.error as e
 import lc.request as r
+import lc.view as v
 
 
 class Model(peewee.Model):
@@ -109,22 +110,22 @@ class User(Model):
     def to_dict(self) -> dict:
         return {"id": self.id, "name": self.name}
 
-    def get_config(self) -> dict:
+    def get_config(self) -> v.Config:
         admin_pane = None
         if self.is_admin:
             user_invites = [
-                {
-                    "claimed": ui.claimed_by is not None,
-                    "claimant": ui.claimed_by and ui.claimed_by.name,
-                    "token": ui.token,
-                }
+                v.UserInvite(
+                    claimed=ui.claimed_by is not None,
+                    claimant=ui.claimed_by and ui.claimed_by.name,
+                    token=ui.token,
+                )
                 for ui in UserInvite.select().where(UserInvite.created_by == self)
             ]
-            admin_pane = {"invites": user_invites}
-        return {
-            "username": self.name,
-            "admin_pane": admin_pane,
-        }
+            admin_pane = v.AdminPane(invites=user_invites)
+        return v.Config(
+            username=self.name,
+            admin_pane=admin_pane,
+        )
 
 
 class Link(Model):

@@ -7,6 +7,7 @@ import lc.config as c
 import lc.error as e
 import lc.model as m
 import lc.request as r
+import lc.view as v
 from lc.web import Endpoint, endpoint, render
 
 app = c.app
@@ -15,16 +16,14 @@ app = c.app
 @endpoint("/")
 class Index(Endpoint):
     def html(self):
-        return render(
-            "main",
+        return render("main", v.Page(
             title="main",
-            content=render(
-                "message",
+            content=render("message", v.Message(
                 title="Lament Configuration",
                 message="Bookmark organizing for real pinheads.",
-            ),
+            )),
             user=self.user,
-        )
+        ))
 
 
 @endpoint("/auth")
@@ -38,7 +37,11 @@ class Auth(Endpoint):
 @endpoint("/login")
 class Login(Endpoint):
     def html(self):
-        return render("main", title="login", content=render("login"), user=self.user)
+        return render("main", v.Page(
+            title="login",
+            content=render("login"),
+            user=self.user,
+        ))
 
 
 @endpoint("/logout")
@@ -64,12 +67,11 @@ class CreateUser(Endpoint):
         if not token:
             raise e.LCRedirect("/")
 
-        return render(
-            "main",
+        return render("main", v.Page(
             title="add user",
             user=self.user,
-            content=render("add_user", token=token),
-        )
+            content=render("add_user"),
+        ))
 
     def api_post(self):
         token = flask.request.args["token"]
@@ -85,12 +87,11 @@ class GetUser(Endpoint):
         u = m.User.by_slug(slug)
         pg = int(flask.request.args.get("page", 1))
         links, pages = u.get_links(as_user=self.user, page=pg)
-        return render(
-            "main",
+        return render("main", v.Page(
             title=f"user {u.name}",
-            content=render("linklist", links=links, pages=pages),
+            content=render("linklist", v.LinkList(links=links, pages=pages)),
             user=self.user,
-        )
+        ))
 
     def api_get(self, slug: str):
         return m.User.by_slug(slug).to_dict()
@@ -100,12 +101,11 @@ class GetUser(Endpoint):
 class UserConfig(Endpoint):
     def html(self, user: str):
         u = self.require_authentication(user)
-        return render(
-            "main",
+        return render("main", v.Page(
             title="configuration",
-            content=render("config", **u.get_config()),
+            content=render("config", u.get_config()),
             user=self.user,
-        )
+        ))
 
 
 @endpoint("/u/<string:user>/invite")
@@ -119,7 +119,11 @@ class CreateInvite(Endpoint):
 @endpoint("/u/<string:user>/l")
 class CreateLink(Endpoint):
     def html(self, user: str):
-        return render("main", title="login", content=render("add_link"), user=self.user)
+        return render("main", v.Page(
+            title="login",
+            content=render("add_link"),
+            user=self.user,
+        ))
 
     def api_post(self, user: str):
         u = self.require_authentication(user)
@@ -142,12 +146,11 @@ class GetLink(Endpoint):
 
     def html(self, user: str, link: str):
         l = m.User.by_slug(user).get_link(int(link))
-        return render(
-            "main",
+        return render("main", v.Page(
             title=f"link {l.name}",
-            content=render("linklist", links=[l]),
+            content=render("linklist", v.LinkList([l])),
             user=self.user,
-        )
+        ))
 
 
 @endpoint("/u/<string:slug>/l/<string:link>/edit")
@@ -167,9 +170,11 @@ class GetTaggedLinks(Endpoint):
         pg = int(flask.request.args.get("page", 0))
         t = u.get_tag(tag)
         links, pages = t.get_links(as_user=self.user, page=pg)
-        return render(
-            "main",
+        return render("main", v.Page(
             title=f"tag {tag}",
-            content=render("linklist", links=links, pages=pages),
+            content=render("linklist", v.LinkList(
+                links=links,
+                pages=pages,
+            )),
             user=self.user,
-        )
+        ))
