@@ -19,25 +19,6 @@ class Model(peewee.Model):
         return playhouse.shortcuts.model_to_dict(self)
 
 
-@dataclass
-class Pagination:
-    current: int
-    last: int
-
-    def previous(self) -> Optional[dict]:
-        if self.current > 1:
-            return {"page": self.current - 1}
-        return None
-
-    def next(self) -> Optional[dict]:
-        if self.current < self.last:
-            return {"page": self.current + 1}
-        return None
-
-    @classmethod
-    def from_total(cls, current, total) -> "Pagination":
-        return cls(current=current, last=((total - 1) // c.per_page) + 1,)
-
 
 class User(Model):
     """
@@ -91,15 +72,16 @@ class User(Model):
     def base_url(self) -> str:
         return f"/u/{self.name}"
 
-    def get_links(self, as_user: r.User, page: int) -> Tuple[List["Link"], Pagination]:
+    def get_links(self, as_user: r.User, page: int) -> Tuple[v.Link, v.Pagination]:
         links = (
             Link.select()
             .where((Link.user == self) & ((self == as_user) | (Link.private == False)))
             .order_by(-Link.created)
             .paginate(page, c.per_page)
         )
-        pagination = Pagination.from_total(page, Link.select().count())
-        return links, pagination
+        link_views = [l.to_view(as_user) for l in links]
+        pagination = v.Pagination.from_total(page, Link.select().count())
+        return link_views, pagination
 
     def get_link(self, link_id: int) -> "Link":
         return Link.get((Link.user == self) & (Link.id == link_id))
@@ -168,6 +150,7 @@ class Link(Model):
             )
         return l
 
+
     def update_from_request(self, user: User, link: r.Link):
 
         req_tags = set(link.tags)
@@ -190,6 +173,20 @@ class Link(Model):
         self.save()
 
 
+    def to_view(self, as_user: User) -> v.Link:
+        return v.Link(
+            id=self.id,
+            url=self.url,
+            name=self.name,
+            description=self.description,
+            private=self.private,
+            tags=[t.tag.to_view() for t in self.tags],
+            created=self.created,
+            is_mine=self.user.id == as_user.id,
+            link_url=self.link_url(),
+        )
+
+
 class Tag(Model):
     """
     A tag. This just indicates that a user has used this tag at some point.
@@ -202,9 +199,9 @@ class Tag(Model):
     def url(self) -> str:
         return f"/u/{self.user.name}/t/{self.name}"
 
-    def get_links(self, as_user: r.User, page: int) -> Tuple[List[Link], Pagination]:
+    def get_links(self, as_user: r.User, page: int) -> Tuple[List[Link], v.Pagination]:
         links = [
-            ht.link
+            ht.link.to_view(as_user)
             for ht in HasTag.select()
             .join(Link)
             .where(
@@ -214,7 +211,7 @@ class Tag(Model):
             .order_by(-Link.created)
             .paginate(page, c.per_page)
         ]
-        pagination = Pagination.from_total(
+        pagination = v.Pagination.from_total(
             page, HasTag.select().where((HasTag.tag == self)).count(),
         )
         return links, pagination
@@ -230,6 +227,9 @@ class Tag(Model):
             parent = Tag.get_or_create_tag(user, parent_name)
 
         return Tag.create(name=tag_name, parent=parent, user=user)
+
+    def to_view(self) -> v.Tag:
+        return v.Tag(url=self.url(), name=self.name)
 
 
 class HasTag(Model):

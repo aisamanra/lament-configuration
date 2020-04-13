@@ -1,5 +1,8 @@
 from dataclasses import dataclass
+from datetime import datetime
 from typing import Any, Optional, List
+
+import lc.config as c
 
 class View: pass
 
@@ -36,6 +39,23 @@ class AdminPane(View):
 class Config(View):
     username: str
     admin_pane: Optional[AdminPane]
+
+@dataclass
+class Tag(View):
+    url: str
+    name: str
+
+@dataclass
+class Link(View):
+    id: int
+    url: str
+    name: str
+    description: str
+    private: bool
+    tags: List[Tag]
+    created: datetime
+    is_mine: bool
+    link_url: str
 
 @dataclass
 class LinkList(View):

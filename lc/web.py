@@ -166,7 +166,6 @@ def endpoint(route: str):
 
 LOADER = pystache.loader.Loader(extension="mustache", search_dirs=["templates"])
 
-
 def render(name: str, data: Optional[v.View] = None) -> str:
     """Load and use a Mustache template from the project root"""
     template = LOADER.load_name(name)
