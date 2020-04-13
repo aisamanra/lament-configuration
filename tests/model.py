@@ -133,3 +133,29 @@ class Testdb:
 
         with pytest.raises(e.NoSuchInvite):
             m.User.from_invite(r.User(name="u4", password="u4"), "a-non-existent-token")
+
+    def test_edit_link(self):
+        u = self.mk_user()
+
+        req = r.Link("http://foo.com", "foo", "", False, ["foo", "bar"])
+        l = m.Link.from_request(u, req)
+        assert l.name == req.name
+
+        assert l.tags == ["foo", "bar"]
+
+        # check the in-place update
+        req.name = "bar"
+        req.tags = ["bar", "baz"]
+        req.private = True
+        l.update_from_request(u, req)
+        assert l.name == req.name
+        assert l.tags == req.tags
+        assert l.private
+        assert l.created != req.created
+
+        # check that the link was persisted
+        l = m.Link.by_id(l.id)
+        assert l.name == req.name
+        assert l.tags == req.tags
+        assert l.private
+        assert l.created != req.created
