@@ -19,7 +19,6 @@ class Model(peewee.Model):
         return playhouse.shortcuts.model_to_dict(self)
 
 
-
 class User(Model):
     """
     A user! you know tf this is about
@@ -104,10 +103,7 @@ class User(Model):
                 for ui in UserInvite.select().where(UserInvite.created_by == self)
             ]
             admin_pane = v.AdminPane(invites=user_invites)
-        return v.Config(
-            username=self.name,
-            admin_pane=admin_pane,
-        )
+        return v.Config(username=self.name, admin_pane=admin_pane,)
 
 
 class Link(Model):
