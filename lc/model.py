@@ -71,7 +71,7 @@ class User(Model):
     def base_url(self) -> str:
         return f"/u/{self.name}"
 
-    def get_links(self, as_user: r.User, page: int) -> Tuple[v.Link, v.Pagination]:
+    def get_links(self, as_user: r.User, page: int) -> Tuple[List[v.Link], v.Pagination]:
         links = (
             Link.select()
             .where((Link.user == self) & ((self == as_user) | (Link.private == False)))
@@ -176,7 +176,7 @@ class Link(Model):
             name=self.name,
             description=self.description,
             private=self.private,
-            tags=[t.tag.to_view() for t in self.tags],
+            tags=[t.tag.to_view() for t in self.tags], # type: ignore
             created=self.created,
             is_mine=self.user.id == as_user.id,
             link_url=self.link_url(),
