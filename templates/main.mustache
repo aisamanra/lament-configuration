@@ -9,34 +9,37 @@
   <body>
     <div class="header">
       <div class="left">
-      <span class="logo">
-        <a href="/"><img src="/static/lc_32.png" alt="Lament Configuration" /></a></span>
-      <span class="sitename"><a href="/">Lament Configuration</a></span>
-      {{#user}}
-        <span class="user">(<a href="/u/{{name}}">@{{name}}</a>)</span>
-      {{/user}}
+        <span class="logo">
+          <a href="/"><img src="/static/lc_32.png" alt="Lament Configuration" /></a></span>
+        <span class="sitename"><a href="/">Lament Configuration</a></span>
+        {{#user}}
+          <span class="user">(<a href="/u/{{name}}">@{{name}}</a>)</span>
+        {{/user}}
       </div>
       <div class="right">
         <div class="srclink">
           <a href="https://git.infinitenegativeutility.com/getty/lament-configuration">source</a>
         </div>
-      {{#user}}
-        <div class="addlink">
-          <a href="/u/{{name}}/l">add link</a>
-        </div>
-        <div class="login">
-          <a href="/logout">log out</a>
-        </div>
-      {{/user}}
-      {{^user}}
-        <div class="login">
-          <a href="/login">log in</a>
-        </div>
-      {{/user}}
+        {{#user}}
+          <div class="addlink">
+            <a href="/u/{{name}}/l">add link</a>
+          </div>
+          <div>
+            <a href="/u/{{name}}/config">settings</a>
+          </div>
+          <div class="login">
+            <a href="/logout">log out</a>
+          </div>
+        {{/user}}
+        {{^user}}
+          <div class="login">
+            <a href="/login">log in</a>
+          </div>
+        {{/user}}
       </div>
     </div>
     <div class="content">
       {{{ content }}}
     </div>
- </body>
+  </body>
 </html>
