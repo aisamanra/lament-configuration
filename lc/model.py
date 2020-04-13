@@ -146,6 +146,11 @@ class Link(Model):
         return f"/u/{self.user.name}/l/{self.id}"
 
     @staticmethod
+    def by_id(id: int) -> Optional["Link"]:
+        return Link.get_or_none(id=id)
+
+
+    @staticmethod
     def from_request(user: User, link: r.Link) -> "Link":
         l = Link.create(
             url=link.url,
@@ -163,12 +168,12 @@ class Link(Model):
         return l
 
     def update_from_request(self, link: r.Link):
-        Link.update(
-            url=link.url,
-            name=link.name,
-            description=link.description,
-            private=link.private,
-        ).where(Link.id == self.id).execute()
+        self.url = link.url
+        self.name = link.name
+        self.description = link.description
+        self.private = link.private
+        self.tags = link.tags
+        self.save()
 
 
 class Tag(Model):
