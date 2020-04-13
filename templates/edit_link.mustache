@@ -1,0 +1,30 @@
+{{#link}}
+<div class="loginform">
+  <form name="edit_link" method="POST" action="{{link_url}}">
+    <div class="url">
+      <label for="url">URL</label>
+      <input name="url" type="text" value="{{url}}" />
+    </div>
+    <div class="name">
+      <label for="name">Link Name</label>
+      <input name="name" type="text" value="{{name}}" />
+    </div>
+    <div class="description">
+      <label for="description">Description</label>
+      <input name="description" type="text" value="{{description}}" />
+    </div>
+    <div class="private">
+      <label for="private">Private?</label>
+      <input name="private" type="checkbox" {{#private}}checked {{/private}}/>
+    </div>
+    <div class="tags">
+      <label for="tags">Tags</label>
+      <input name="tags" type="text" value="" />
+    </div>
+
+    <div class="submit">
+      <input type="submit" value="Save" />
+    </div>
+  </form>
+</div>
+{{/link}}

@@ -162,6 +162,14 @@ class Link(Model):
             )
         return l
 
+    def update_from_request(self, link: r.Link):
+        Link.update(
+            url=link.url,
+            name=link.name,
+            description=link.description,
+            private=link.private,
+        ).where(Link.id == self.id).execute()
+
 
 class Tag(Model):
     """
