@@ -38,6 +38,14 @@ class Endpoint:
             if u.authenticate(payload["password"]):
                 self.user = u
 
+    def api_ok(self, redirect: str, data: dict = {"status": "ok"}):
+        if flask.request.content_type == "application/json":
+            return flask.jsonify(data)
+        elif flask.request.content_type == "application/x-www-form-urlencoded":
+            raise e.LCRedirect(redirect)
+        else:
+            raise e.BadContentType(flask.request.content_type or "unknown")
+
     def request_data(self, cls: Type[T]) -> T:
         """Construct a Request model from either a JSON payload or a urlencoded payload"""
         if flask.request.content_type == "application/json":
@@ -67,7 +75,7 @@ class Endpoint:
                 # should redirect to the page where that information
                 # can be viewed instead of returning that
                 # information. (I think.)
-                return flask.jsonify(self.api_post(*args, **kwargs))
+                return self.api_post(*args, **kwargs)
             elif (
                 flask.request.method in ["GET", "HEAD"]
                 and flask.request.content_type == "application/json"

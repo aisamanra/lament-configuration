@@ -30,20 +30,15 @@ class Index(Endpoint):
 @endpoint("/auth")
 class Auth(Endpoint):
     def api_post(self):
-        _, token = m.User.login(self.request_data(r.User))
-        return {"token": token}
+        u, token = m.User.login(self.request_data(r.User))
+        flask.session["auth"] = token
+        return self.api_ok(u.base_url(), {"token": token})
 
 
 @endpoint("/login")
 class Login(Endpoint):
     def html(self):
         return render("main", title="login", content=render("login"), user=self.user)
-
-    def api_post(self):
-        req = self.request_data(r.User)
-        u, token = m.User.login(req)
-        flask.session["auth"] = token
-        raise e.LCRedirect(u.base_url())
 
 
 @endpoint("/logout")
@@ -56,7 +51,7 @@ class Logout(Endpoint):
     def api_post(self):
         if "auth" in flask.session:
             del flask.session["auth"]
-        raise e.LCRedirect("/")
+        return self.api_ok("/")
 
 
 @endpoint("/u")
@@ -81,7 +76,7 @@ class CreateUser(Endpoint):
         req = self.request_data(r.NewUser).to_user_request()
         u = m.User.from_invite(req, token)
         flask.session["auth"] = req.to_token()
-        raise e.LCRedirect(u.base_url())
+        return self.api_ok(u.base_url(), u)
 
 
 @endpoint("/u/<string:slug>")
@@ -117,8 +112,8 @@ class UserConfig(Endpoint):
 class CreateInvite(Endpoint):
     def api_post(self, user: str):
         u = self.require_authentication(user)
-        m.UserInvite.manufacture(u)
-        raise e.LCRedirect(f"/u/{user}/config")
+        invite = m.UserInvite.manufacture(u)
+        return self.api_ok(f"/u/{user}/config", {"invite": invite.token})
 
 
 @endpoint("/u/<string:user>/l")
@@ -130,7 +125,7 @@ class CreateLink(Endpoint):
         u = self.require_authentication(user)
         req = self.request_data(r.Link)
         l = m.Link.from_request(u, req)
-        raise e.LCRedirect(l.link_url())
+        return self.api_ok(l.link_url(), l)
 
 
 @endpoint("/u/<string:user>/l/<string:link>")
@@ -146,7 +141,6 @@ class GetLink(Endpoint):
             content=render("linklist", links=[l]),
             user=self.user,
         )
-        pass
 
 
 @endpoint("/u/<string:user>/t/<path:tag>")
