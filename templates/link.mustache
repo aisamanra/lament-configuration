@@ -6,6 +6,8 @@
   {{/tags}}</div>
   <div class="datetime">
     <a href="{{link_url}}">{{created}}</a>
-    <a href="{{link_url}}/edit">edit</a>
+    {{#is_mine}}
+      <a href="{{link_url}}/edit">edit</a>
+    {{/is_mine}}
   </div>
 </div>
