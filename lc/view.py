@@ -73,6 +73,11 @@ class LinkList(View):
 
 
 @dataclass
+class SingleLink(View):
+    link: Any
+
+
+@dataclass
 class Message(View):
     title: str
     message: str

@@ -151,7 +151,7 @@ class Link(Model):
 
         req_tags = set(link.tags)
 
-        for hastag in self.tags:
+        for hastag in self.tags:  # type: ignore
             name = hastag.tag.name
             if name not in req_tags:
                 hastag.delete_instance()

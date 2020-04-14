@@ -169,7 +169,12 @@ class EditLink(Endpoint):
         u = self.require_authentication(slug)
         l = u.get_link(int(link))
         return render(
-            "main", title="login", content=render("edit_link", link=l), user=self.user
+            "main",
+            v.Page(
+                title="login",
+                content=render("edit_link", v.SingleLink(l)),
+                user=self.user,
+            ),
         )
 
 
