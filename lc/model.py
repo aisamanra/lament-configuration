@@ -177,7 +177,7 @@ class Link(Model):
             private=self.private,
             tags=[t.tag.to_view() for t in self.tags],  # type: ignore
             created=self.created,
-            is_mine=self.user.id == as_user.id,
+            is_mine=self.user.id == as_user.id if as_user else False,
             link_url=self.link_url(),
         )
 
