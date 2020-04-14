@@ -146,6 +146,11 @@ class Link(Model):
         return f"/u/{self.user.name}/l/{self.id}"
 
     @staticmethod
+    def by_id(id: int) -> Optional["Link"]:
+        return Link.get_or_none(id=id)
+
+
+    @staticmethod
     def from_request(user: User, link: r.Link) -> "Link":
         l = Link.create(
             url=link.url,
@@ -161,6 +166,27 @@ class Link(Model):
                 link=l, tag=t,
             )
         return l
+
+    def update_from_request(self, user: User, link: r.Link):
+
+        req_tags = set(link.tags)
+
+        for hastag in self.tags:
+            name = hastag.tag.name
+            if name not in req_tags:
+                hastag.delete_instance()
+            else:
+                req_tags.remove(name)
+
+        for tag_name in req_tags:
+            t = Tag.get_or_create_tag(user, tag_name)
+            HasTag.get_or_create(link=self, tag=t)
+
+        self.url = link.url
+        self.name = link.name
+        self.description = link.description
+        self.private = link.private
+        self.save()
 
 
 class Tag(Model):
@@ -212,6 +238,14 @@ class HasTag(Model):
 
     link = peewee.ForeignKeyField(Link, backref="tags")
     tag = peewee.ForeignKeyField(Tag, backref="models")
+
+    @staticmethod
+    def get_or_create(link: Link, tag: Tag):
+        res = HasTag.get_or_none(link=link, tag=tag)
+        if res is None:
+            res = HasTag.create(link=link, tag=tag)
+
+        return res
 
 
 class UserInvite(Model):
