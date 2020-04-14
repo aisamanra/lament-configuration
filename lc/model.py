@@ -71,7 +71,9 @@ class User(Model):
     def base_url(self) -> str:
         return f"/u/{self.name}"
 
-    def get_links(self, as_user: r.User, page: int) -> Tuple[List[v.Link], v.Pagination]:
+    def get_links(
+        self, as_user: r.User, page: int
+    ) -> Tuple[List[v.Link], v.Pagination]:
         links = (
             Link.select()
             .where((Link.user == self) & ((self == as_user) | (Link.private == False)))
@@ -128,7 +130,6 @@ class Link(Model):
     def by_id(id: int) -> Optional["Link"]:
         return Link.get_or_none(id=id)
 
-
     @staticmethod
     def from_request(user: User, link: r.Link) -> "Link":
         l = Link.create(
@@ -145,7 +146,6 @@ class Link(Model):
                 link=l, tag=t,
             )
         return l
-
 
     def update_from_request(self, user: User, link: r.Link):
 
@@ -168,7 +168,6 @@ class Link(Model):
         self.private = link.private
         self.save()
 
-
     def to_view(self, as_user: User) -> v.Link:
         return v.Link(
             id=self.id,
@@ -176,7 +175,7 @@ class Link(Model):
             name=self.name,
             description=self.description,
             private=self.private,
-            tags=[t.tag.to_view() for t in self.tags], # type: ignore
+            tags=[t.tag.to_view() for t in self.tags],  # type: ignore
             created=self.created,
             is_mine=self.user.id == as_user.id,
             link_url=self.link_url(),
