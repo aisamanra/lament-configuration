@@ -157,7 +157,7 @@ class GetLink(Endpoint):
             "main",
             v.Page(
                 title=f"link {l.name}",
-                content=render("linklist", v.LinkList([l])),
+                content=render("linklist", v.LinkList([l.to_view(self.user)])),
                 user=self.user,
             ),
         )
