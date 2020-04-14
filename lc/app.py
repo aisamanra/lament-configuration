@@ -7,6 +7,7 @@ import lc.config as c
 import lc.error as e
 import lc.model as m
 import lc.request as r
+import lc.view as v
 from lc.web import Endpoint, endpoint, render
 
 app = c.app
@@ -17,13 +18,17 @@ class Index(Endpoint):
     def html(self):
         return render(
             "main",
-            title="main",
-            content=render(
-                "message",
-                title="Lament Configuration",
-                message="Bookmark organizing for real pinheads.",
+            v.Page(
+                title="main",
+                content=render(
+                    "message",
+                    v.Message(
+                        title="Lament Configuration",
+                        message="Bookmark organizing for real pinheads.",
+                    ),
+                ),
+                user=self.user,
             ),
-            user=self.user,
         )
 
 
@@ -38,7 +43,9 @@ class Auth(Endpoint):
 @endpoint("/login")
 class Login(Endpoint):
     def html(self):
-        return render("main", title="login", content=render("login"), user=self.user)
+        return render(
+            "main", v.Page(title="login", content=render("login"), user=self.user,)
+        )
 
 
 @endpoint("/logout")
@@ -66,9 +73,7 @@ class CreateUser(Endpoint):
 
         return render(
             "main",
-            title="add user",
-            user=self.user,
-            content=render("add_user", token=token),
+            v.Page(title="add user", user=self.user, content=render("add_user"),),
         )
 
     def api_post(self):
@@ -87,9 +92,11 @@ class GetUser(Endpoint):
         links, pages = u.get_links(as_user=self.user, page=pg)
         return render(
             "main",
-            title=f"user {u.name}",
-            content=render("linklist", links=links, pages=pages),
-            user=self.user,
+            v.Page(
+                title=f"user {u.name}",
+                content=render("linklist", v.LinkList(links=links, pages=pages)),
+                user=self.user,
+            ),
         )
 
     def api_get(self, slug: str):
@@ -102,9 +109,11 @@ class UserConfig(Endpoint):
         u = self.require_authentication(user)
         return render(
             "main",
-            title="configuration",
-            content=render("config", **u.get_config()),
-            user=self.user,
+            v.Page(
+                title="configuration",
+                content=render("config", u.get_config()),
+                user=self.user,
+            ),
         )
 
 
@@ -119,7 +128,9 @@ class CreateInvite(Endpoint):
 @endpoint("/u/<string:user>/l")
 class CreateLink(Endpoint):
     def html(self, user: str):
-        return render("main", title="login", content=render("add_link"), user=self.user)
+        return render(
+            "main", v.Page(title="login", content=render("add_link"), user=self.user,)
+        )
 
     def api_post(self, user: str):
         u = self.require_authentication(user)
@@ -144,9 +155,11 @@ class GetLink(Endpoint):
         l = m.User.by_slug(user).get_link(int(link))
         return render(
             "main",
-            title=f"link {l.name}",
-            content=render("linklist", links=[l]),
-            user=self.user,
+            v.Page(
+                title=f"link {l.name}",
+                content=render("linklist", v.LinkList([l])),
+                user=self.user,
+            ),
         )
 
 
@@ -156,7 +169,12 @@ class EditLink(Endpoint):
         u = self.require_authentication(slug)
         l = u.get_link(int(link))
         return render(
-            "main", title="login", content=render("edit_link", link=l), user=self.user
+            "main",
+            v.Page(
+                title="login",
+                content=render("edit_link", v.SingleLink(l)),
+                user=self.user,
+            ),
         )
 
 
@@ -169,7 +187,9 @@ class GetTaggedLinks(Endpoint):
         links, pages = t.get_links(as_user=self.user, page=pg)
         return render(
             "main",
-            title=f"tag {tag}",
-            content=render("linklist", links=links, pages=pages),
-            user=self.user,
+            v.Page(
+                title=f"tag {tag}",
+                content=render("linklist", v.LinkList(links=links, pages=pages,)),
+                user=self.user,
+            ),
         )

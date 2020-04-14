@@ -1,12 +1,13 @@
 from dataclasses import dataclass
 import flask
 import pystache
-from typing import TypeVar, Type
+from typing import Optional, TypeVar, Type
 
 import lc.config as c
 import lc.error as e
 import lc.model as m
 import lc.request as r
+import lc.view as v
 
 
 T = TypeVar("T", bound=r.Request)
@@ -166,8 +167,8 @@ def endpoint(route: str):
 LOADER = pystache.loader.Loader(extension="mustache", search_dirs=["templates"])
 
 
-def render(name: str, **kwargs) -> str:
+def render(name: str, data: Optional[v.View] = None) -> str:
     """Load and use a Mustache template from the project root"""
     template = LOADER.load_name(name)
     renderer = pystache.Renderer(missing_tags="strict", search_dirs=["templates"])
-    return renderer.render(template, kwargs)
+    return renderer.render(template, data or {})

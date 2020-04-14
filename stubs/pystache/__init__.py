@@ -7,5 +7,5 @@ class Renderer:
     def __init__(self, missing_tags: str, search_dirs: List[str]):
         pass
 
-    def render(self, template: Any, kwargs: dict):
+    def render(self, template: Any, kwargs: Any):
         pass
