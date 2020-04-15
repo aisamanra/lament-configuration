@@ -38,6 +38,12 @@ def fmt(c):
 
 
 @task
+def checkfmt(c):
+    """Automatically format the source code, committing it if it is safe to do so."""
+    return c.run("poetry run black --check $(find . -name '*.py')")
+
+
+@task
 def populate(c):
     """Populate the test database with fake-ish data"""
     c.run("PYTHONPATH=$(pwd) poetry run python3 ./scripts/populate.py")
