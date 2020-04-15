@@ -5,6 +5,7 @@ steps:
 - name: setup
   image: gdritter/lament-configuration-env:latest
   commands:
+  - poetry config virtualenvs.in-project true
   - poetry install
 
 - name: format
