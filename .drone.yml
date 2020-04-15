@@ -1,15 +1,24 @@
 kind: pipeline
 name: default
 
-workspace:
-  path: /root
-
 steps:
-- name: test_all
-  image: python
+- name: setup
+  image: gdritter/lament-configuration-env:latest
   commands:
-  - pip install poetry
+  - poetry config virtualenvs.in-project true
   - poetry install
-  - poetry run inv test
-  - poetry run inv tc
-  - poetry run inv checkfmt
+
+- name: format
+  image: gdritter/lament-configuration-env:latest
+  commands:
+  - inv checkfmt
+
+- name: typecheck
+  image: gdritter/lament-configuration-env:latest
+  commands:
+  - inv tc
+
+- name: test
+  image: gdritter/lament-configuration-env:latest
+  commands:
+  - inv test
