@@ -175,11 +175,17 @@ class Link(Model):
             name=self.name,
             description=self.description,
             private=self.private,
-            tags=[t.tag.to_view() for t in self.tags],  # type: ignore
+            tags=self.get_tags_view(),
             created=self.created,
             is_mine=self.user.id == as_user.id if as_user else False,
             link_url=self.link_url(),
         )
+
+    def get_tags_view(self) -> List[v.Tag]:
+        return [
+            v.Tag(url=f"/u/{self.user.name}/t/{ht.tag.name}", name=ht.tag.name)
+            for ht in HasTag().select(Tag.name).join(Tag).where(HasTag.link == self)
+        ]
 
 
 class Tag(Model):
