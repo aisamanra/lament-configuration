@@ -8,25 +8,7 @@ steps:
 - name: setup
   image: python
   commands:
-  - pip install poetry --user
-  - pip install invoke --user
-  - /root/.local/bin/poetry config virtualenvs.in-project true --local
-  - /root/.local/bin/poetry install
-
-- name: test
-  image: python
-  commands:
-  - export PATH=/root/.pip:$PATH
-  - /root/.local/bin/poetry run inv test
-
-- name: typecheck
-  image: python
-  commands:
-  - export PATH=/root/.pip:$PATH
-  - /root/.local/bin/poetry run inv tc
-
-- name: format
-  image: python
-  commands:
-  - export PATH=/root/.pip:$PATH
-  - /root/.local/bin/poetry run inv checkfmt
+  - pip install poetry
+  - poetry run inv test
+  - poetry run inv tc
+  - poetry run inv checkfmt
