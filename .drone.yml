@@ -1,0 +1,12 @@
+kind: pipeline
+name: default
+
+steps:
+- name: test
+  image: python
+  commands:
+  - pip install poetry
+  - pip install invoke
+  - inv install
+  - inv test
+  - inv tc
