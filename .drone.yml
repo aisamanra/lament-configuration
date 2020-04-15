@@ -5,7 +5,7 @@ workspace:
   path: /root
 
 steps:
-- name: setup
+- name: test_all
   image: python
   commands:
   - pip install poetry
