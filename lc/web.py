@@ -106,12 +106,11 @@ class Endpoint:
             if flask.request.content_type == "application/json":
                 return ({"status": exn.http_code(), "error": str(exn)}, exn.http_code())
             else:
-                page = render(
-                    "main",
+                page = render("main", v.Page(
                     title="error",
                     content=f"shit's fucked yo: {exn}",
                     user=None,
-                )
+                ))
                 return (page, exn.http_code())
         # also maybe we tried to redirect, so just do that
         except e.LCRedirect as exn:
