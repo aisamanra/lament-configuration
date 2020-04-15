@@ -13,14 +13,14 @@ steps:
 - name: test
   image: python
   commands:
-  - inv test
+  - poetry run inv test
 
 - name: typecheck
   image: python
   commands:
-  - inv tc
+  - poetry run inv tc
 
 - name: format
   image: python
   commands:
-  - inv checkfmt
+  - poetry run inv checkfmt
