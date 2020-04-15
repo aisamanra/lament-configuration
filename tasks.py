@@ -28,7 +28,7 @@ def fmt(c):
     """Automatically format the source code, committing it if it is safe to do so."""
     status = c.run("git status --porcelain", hide="stdout")
     is_clean = status.stdout.strip() == ""
-    c.run("poetry run black $(find . -name '*.py')")
+    c.run("poetry run black $(find lc scripts stubs tests *.py -name '*.py')")
 
     if is_clean:
         date = datetime.now().isoformat()
@@ -40,7 +40,9 @@ def fmt(c):
 @task
 def checkfmt(c):
     """Automatically format the source code, committing it if it is safe to do so."""
-    return c.run("poetry run black --check $(find . -name '*.py')")
+    return c.run(
+        "poetry run black --check $(find lc scripts stubs tests *.py -name '*.py')"
+    )
 
 
 @task
