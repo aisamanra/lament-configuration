@@ -10,20 +10,24 @@ steps:
   commands:
   - pip install poetry --user
   - pip install invoke --user
+  - export PATH=/root/.local/bin:PATH
   - poetry config virtualenvs.in-project true --local
   - poetry install
 
 - name: test
   image: python
   commands:
+  - export PATH=/root/.local/bin:PATH
   - inv test
 
 - name: typecheck
   image: python
   commands:
+  - export PATH=/root/.local/bin:PATH
   - poetry run inv tc
 
 - name: format
   image: python
   commands:
+  - export PATH=/root/.local/bin:PATH
   - poetry run inv checkfmt
