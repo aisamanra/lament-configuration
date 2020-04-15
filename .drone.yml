@@ -7,27 +7,31 @@ workspace:
 steps:
 - name: setup
   image: python
+  environment:
+    PIP_TARGET: '/root/.pip'
   commands:
-  - pip install poetry --user
-  - pip install invoke --user
-  - export PATH=/root/.local/bin:PATH
+  - pip install poetry
+  - pip install invoke
   - poetry config virtualenvs.in-project true --local
   - poetry install
 
 - name: test
   image: python
+  environment:
+    PIP_TARGET: '/root/.pip'
   commands:
-  - export PATH=/root/.local/bin:PATH
   - inv test
 
 - name: typecheck
   image: python
+  environment:
+    PIP_TARGET: '/root/.pip'
   commands:
-  - export PATH=/root/.local/bin:PATH
   - poetry run inv tc
 
 - name: format
   image: python
+  environment:
+    PIP_TARGET: '/root/.pip'
   commands:
-  - export PATH=/root/.local/bin:PATH
   - poetry run inv checkfmt
