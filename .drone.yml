@@ -5,6 +5,8 @@ steps:
 - name: setup
   image: python
   commands:
+  - python3 -m virtualenv .
+  - source ./bin/activate
   - pip install poetry
   - pip install invoke
   - poetry config virtualenvs.in-project true --local
@@ -13,14 +15,17 @@ steps:
 - name: test
   image: python
   commands:
-  - poetry run inv test
+  - source ./bin/activate
+  - inv test
 
 - name: typecheck
   image: python
   commands:
+  - source ./bin/activate
   - poetry run inv tc
 
 - name: format
   image: python
   commands:
+  - source ./bin/activate
   - poetry run inv checkfmt
