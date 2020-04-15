@@ -2,11 +2,25 @@ kind: pipeline
 name: default
 
 steps:
-- name: test
+- name: setup
   image: python
   commands:
   - pip install poetry
   - pip install invoke
-  - inv install
+  - poetry config virtualenvs.in-project true --local
+  - poetry install
+
+- name: test
+  image: python
+  commands:
   - inv test
+
+- name: typecheck
+  image: python
+  commands:
   - inv tc
+
+- name: format
+  image: python
+  commands:
+  - inv checkfmt
