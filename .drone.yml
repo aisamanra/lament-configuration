@@ -12,6 +12,7 @@ steps:
   commands:
   - pip install poetry
   - pip install invoke
+  - export PATH=/root/.pip:$PATH
   - poetry config virtualenvs.in-project true --local
   - poetry install
 
@@ -20,6 +21,7 @@ steps:
   environment:
     PIP_TARGET: '/root/.pip'
   commands:
+  - export PATH=/root/.pip:$PATH
   - inv test
 
 - name: typecheck
@@ -27,6 +29,7 @@ steps:
   environment:
     PIP_TARGET: '/root/.pip'
   commands:
+  - export PATH=/root/.pip:$PATH
   - poetry run inv tc
 
 - name: format
@@ -34,4 +37,5 @@ steps:
   environment:
     PIP_TARGET: '/root/.pip'
   commands:
+  - export PATH=/root/.pip:$PATH
   - poetry run inv checkfmt
