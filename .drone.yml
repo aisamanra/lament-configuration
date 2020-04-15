@@ -9,7 +9,7 @@ steps:
   image: python
   commands:
   - pip install poetry
-  - poetry run inv install
+  - poetry install
   - poetry run inv test
   - poetry run inv tc
   - poetry run inv checkfmt
