@@ -13,8 +13,8 @@ steps:
   - pip install poetry
   - pip install invoke
   - export PATH=/root/.pip:$PATH
-  - poetry config virtualenvs.in-project true --local
-  - poetry install
+  - /root/.pip/bin/poetry config virtualenvs.in-project true --local
+  - /root/.pip/bin/poetry install
 
 - name: test
   image: python
