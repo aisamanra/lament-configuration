@@ -1,12 +1,15 @@
 kind: pipeline
 name: default
 
+workspace:
+  path: /root
+
 steps:
-- name: test
+- name: test_all
   image: python
   commands:
   - pip install poetry
-  - pip install invoke
-  - inv install
-  - inv test
-  - inv tc
+  - poetry install
+  - poetry run inv test
+  - poetry run inv tc
+  - poetry run inv checkfmt

@@ -1,5 +1,7 @@
 # Lament Configuration
 
+[![Build Status](http://ci.infinitenegativeutility.com/api/badges/getty/lament-configuration/status.svg)](http://ci.infinitenegativeutility.com/getty/lament-configuration)
+
 ![lament configuration logo](/lc/static/lc_64.png)
 
 Bookmark organizing for pinheads.

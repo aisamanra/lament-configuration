@@ -108,9 +108,9 @@ class Endpoint:
             else:
                 page = render(
                     "main",
-                    title="error",
-                    content=f"shit's fucked yo: {exn}",
-                    user=None,
+                    v.Page(
+                        title="error", content=f"shit's fucked yo: {exn}", user=None,
+                    ),
                 )
                 return (page, exn.http_code())
         # also maybe we tried to redirect, so just do that
