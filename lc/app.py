@@ -142,7 +142,9 @@ class CreateLink(Endpoint):
 @endpoint("/u/<string:user>/l/<string:link>")
 class GetLink(Endpoint):
     def api_get(self, user: str, link: str):
-        pass
+        u = self.require_authentication(user)
+        l = u.get_link(int(link))
+        return self.api_ok(l.link_url(), l.to_dict())
 
     def api_post(self, user: str, link: str):
         u = self.require_authentication(user)
