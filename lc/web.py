@@ -34,16 +34,14 @@ class Endpoint:
         # if that exists and we can deserialize it, then make sure
         # it contains a valid user password, too
         if token and (payload := c.serializer.loads(token)):
-            if "name" not in payload or "password" not in payload:
+            if "name" not in payload:
                 return
 
             try:
                 u = m.User.by_slug(payload["name"])
+                self.user = u
             except e.LCException:
                 return
-
-            if u.authenticate(payload["password"]):
-                self.user = u
 
     def api_ok(self, redirect: str, data: dict = {"status": "ok"}) -> ApiOK:
         if flask.request.content_type == "application/x-www-form-urlencoded":
@@ -122,11 +120,12 @@ class Endpoint:
         try:
             return self.html(*args, **kwargs)
         except e.LCException as exn:
-            page = render("main", v.Page(
-                title="error",
-                content=f"shit's fucked yo: {exn}",
-                user=self.user,
-            ))
+            page = render(
+                "main",
+                v.Page(
+                    title="error", content=f"shit's fucked yo: {exn}", user=self.user,
+                ),
+            )
             return (page, exn.http_code())
         except e.LCRedirect as exn:
             return flask.redirect(exn.to_path())

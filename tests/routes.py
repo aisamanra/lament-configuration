@@ -30,7 +30,6 @@ class TestRoutes:
         assert result.status == "200 OK"
         decoded_token = c.serializer.loads(result.json["token"])
         assert decoded_token["name"] == username
-        assert decoded_token["password"] == password
 
     def test_failed_api_login(self):
         username = "gdritter"
