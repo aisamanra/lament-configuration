@@ -105,3 +105,42 @@ class TestRoutes:
             headers={"Authorization": f"Bearer {token}"},
         )
         assert result.status == "403 FORBIDDEN"
+
+    def test_successful_api_delete_link(self):
+        password = "foo"
+        u = self.mk_user(password=password)
+        result = self.app.post("/auth", json={"name": u.name, "password": password})
+        assert result.status == "200 OK"
+        token = result.json["token"]
+
+        sample_url = "http://example.com/"
+        result = self.app.post(
+            f"/u/{u.name}/l",
+            json={
+                "url": sample_url,
+                "name": "Example Dot Com",
+                "description": "Some Description",
+                "private": False,
+                "tags": ["website"],
+            },
+        )
+        link_id = result.json["id"]
+
+        # this should be fine
+        check_link = self.app.get(
+            f"/u/{u.name}/l/{link_id}", headers={"Content-Type": "application/json"},
+        )
+        assert check_link.status == "200 OK"
+        assert check_link.json["url"] == sample_url
+
+        # delete the link
+        delete_link = self.app.delete(
+            f"/u/{u.name}/l/{link_id}", headers={"Authorization": f"Bearer {token}"},
+        )
+        assert delete_link.status == "200 OK"
+
+        # make sure it is gone
+        bad_result = self.app.get(
+            f"/u/{u.name}/l/{link_id}", headers={"Content-Type": "application/json"},
+        )
+        assert bad_result.status == "404 NOT FOUND"

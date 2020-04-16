@@ -175,3 +175,13 @@ form > div {
     padding: 0.2em 2em;
     margin: 0em 1em;
 }
+
+
+.deleteconfirm {
+    padding-left: 1em;
+    font-size: small;
+}
+
+.deleteconfirm a {
+    color: #f00;
+}

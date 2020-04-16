@@ -142,7 +142,9 @@ class CreateLink(Endpoint):
 @endpoint("/u/<string:user>/l/<string:link>")
 class GetLink(Endpoint):
     def api_get(self, user: str, link: str):
-        pass
+        u = self.require_authentication(user)
+        l = u.get_link(int(link))
+        return self.api_ok(l.link_url(), l.to_dict())
 
     def api_post(self, user: str, link: str):
         u = self.require_authentication(user)
@@ -150,6 +152,11 @@ class GetLink(Endpoint):
         req = self.request_data(r.Link)
         l.update_from_request(u, req)
         raise e.LCRedirect(l.link_url())
+
+    def api_delete(self, user: str, link: str):
+        u = self.require_authentication(user)
+        u.get_link(int(link)).delete_instance()
+        return self.api_ok(u.base_url())
 
     def html(self, user: str, link: str):
         l = m.User.by_slug(user).get_link(int(link))

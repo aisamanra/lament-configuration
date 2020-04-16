@@ -11,6 +11,9 @@ T = TypeVar("T", bound="Model")
 class Model:
     id: int
 
+    class DoesNotExist(Exception):
+        pass
+
     @classmethod
     def create(cls: Type[T], **kwargs) -> T:
         pass
@@ -28,6 +31,9 @@ class Model:
         pass
 
     def save(self):
+        pass
+
+    def delete_instance(self) -> Any:
         pass
 
 

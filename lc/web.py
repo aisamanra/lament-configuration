@@ -46,12 +46,10 @@ class Endpoint:
                 self.user = u
 
     def api_ok(self, redirect: str, data: dict = {"status": "ok"}) -> ApiOK:
-        if flask.request.content_type == "application/json":
-            return ApiOK(response=data)
-        elif flask.request.content_type == "application/x-www-form-urlencoded":
+        if flask.request.content_type == "application/x-www-form-urlencoded":
             raise e.LCRedirect(redirect)
         else:
-            raise e.BadContentType(flask.request.content_type or "unknown")
+            return ApiOK(response=data)
 
     def request_data(self, cls: Type[T]) -> T:
         """Construct a Request model from either a JSON payload or a urlencoded payload"""
@@ -89,6 +87,8 @@ class Endpoint:
                 api_ok = self.api_post(*args, **kwargs)
                 assert isinstance(api_ok, ApiOK)
                 return flask.jsonify(api_ok.response)
+            elif flask.request.method == "DELETE":
+                return flask.jsonify(self.api_delete(*args, **kwargs).response)
             elif (
                 flask.request.method in ["GET", "HEAD"]
                 and flask.request.content_type == "application/json"
@@ -99,7 +99,7 @@ class Endpoint:
                 # I like using the HTTP headers to distinguish these
                 # cases, while other APIs tend to have a separate /api
                 # endpoint to do this.
-                return flask.jsonify(self.api_get(*args, **kwargs))
+                return flask.jsonify(self.api_get(*args, **kwargs).response)
         # if an exception arose from an "API method", then we should
         # report it as JSON
         except e.LCException as exn:
@@ -122,9 +122,11 @@ class Endpoint:
         try:
             return self.html(*args, **kwargs)
         except e.LCException as exn:
-            page = render(
-                "main", title="error", content=f"shit's fucked yo: {exn}", user=None,
-            )
+            page = render("main", v.Page(
+                title="error",
+                content=f"shit's fucked yo: {exn}",
+                user=self.user,
+            ))
             return (page, exn.http_code())
         except e.LCRedirect as exn:
             return flask.redirect(exn.to_path())
@@ -154,6 +156,8 @@ def endpoint(route: str):
         methods = ["GET"]
         if "api_post" in dir(endpoint_class):
             methods.append("POST")
+        if "api_delete" in dir(endpoint_class):
+            methods.append("DELETE")
 
         # this is just for making error messages nicer
         func.__name__ = endpoint_class.__name__
