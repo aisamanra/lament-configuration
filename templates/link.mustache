@@ -1,4 +1,4 @@
-<div class="link{{#private}} private{{/private}}">
+<div id="link_{{id}}" class="link{{#private}} private{{/private}}">
   <div class="text"><a href="{{url}}">{{name}}</a></div>
   <div class="url"><a href="{{url}}">{{url}}</a></div>
   <div class="taglist">{{#tags}}
@@ -8,6 +8,9 @@
     <a href="{{link_url}}">{{created}}</a>
     {{#is_mine}}
       <a href="{{link_url}}/edit">edit</a>
+      <span id="delete_{{id}}">
+        <a class="deletelink" onClick="confirmDelete('{{link_url}}', {{id}})" >delete</a>
+      </span>
     {{/is_mine}}
   </div>
 </div>
