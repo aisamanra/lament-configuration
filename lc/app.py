@@ -153,6 +153,11 @@ class GetLink(Endpoint):
         l.update_from_request(u, req)
         raise e.LCRedirect(l.link_url())
 
+    def api_delete(self, user: str, link: str):
+        u = self.require_authentication(user)
+        u.get_link(int(link)).delete().execute()
+        return self.api_ok(u.base_url())
+
     def html(self, user: str, link: str):
         l = m.User.by_slug(user).get_link(int(link))
         return render(
