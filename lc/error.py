@@ -48,6 +48,17 @@ class NoSuchUser(LCException):
 
 
 @dataclass
+class NoSuchLink(LCException):
+    link_id: int
+
+    def __str__(self):
+        return f"No link {self.link_id} exists."
+
+    def http_code(self) -> int:
+        return 404
+
+
+@dataclass
 class BadPassword(LCException):
     name: str
 

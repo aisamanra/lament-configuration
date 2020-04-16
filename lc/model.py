@@ -85,7 +85,10 @@ class User(Model):
         return link_views, pagination
 
     def get_link(self, link_id: int) -> "Link":
-        return Link.get((Link.user == self) & (Link.id == link_id))
+        try:
+            return Link.get((Link.user == self) & (Link.id == link_id))
+        except Link.DoesNotExist:
+            raise e.NoSuchLink(link_id)
 
     def get_tag(self, tag_name: str) -> "Tag":
         return Tag.get((Tag.user == self) & (Tag.name == tag_name))
