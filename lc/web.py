@@ -122,9 +122,11 @@ class Endpoint:
         try:
             return self.html(*args, **kwargs)
         except e.LCException as exn:
-            page = render(
-                "main", title="error", content=f"shit's fucked yo: {exn}", user=None,
-            )
+            page = render("main", v.Page(
+                title="error",
+                content=f"shit's fucked yo: {exn}",
+                user=self.user,
+            ))
             return (page, exn.http_code())
         except e.LCRedirect as exn:
             return flask.redirect(exn.to_path())

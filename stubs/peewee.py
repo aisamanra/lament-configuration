@@ -33,7 +33,7 @@ class Model:
     def save(self):
         pass
 
-    def delete(self) -> Any:
+    def delete_instance(self) -> Any:
         pass
 
 
