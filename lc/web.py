@@ -31,17 +31,26 @@ class Endpoint:
         elif flask.session.get("auth", None):
             token = flask.session["auth"]
 
+        if token is None:
+            return
+
         # if that exists and we can deserialize it, then make sure
         # it contains a valid user password, too
-        if token and (payload := c.serializer.loads(token)):
-            if "name" not in payload:
-                return
+        try:
+            payload = c.serializer.loads(token)
+        except:
+            # TODO: be more specific about what errors we're catching
+            # here!
+            return
 
-            try:
-                u = m.User.by_slug(payload["name"])
-                self.user = u
-            except e.LCException:
-                return
+        if "name" not in payload:
+            return
+
+        try:
+            u = m.User.by_slug(payload["name"])
+            self.user = u
+        except e.LCException:
+            return
 
     def api_ok(self, redirect: str, data: dict = {"status": "ok"}) -> ApiOK:
         if flask.request.content_type == "application/x-www-form-urlencoded":
