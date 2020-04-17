@@ -151,25 +151,25 @@ class Link(Model):
         return l
 
     def update_from_request(self, user: User, link: r.Link):
+        with c.db.atomic():
+            req_tags = set(link.tags)
 
-        req_tags = set(link.tags)
+            for hastag in self.tags:  # type: ignore
+                name = hastag.tag.name
+                if name not in req_tags:
+                    hastag.delete_instance()
+                else:
+                    req_tags.remove(name)
 
-        for hastag in self.tags:  # type: ignore
-            name = hastag.tag.name
-            if name not in req_tags:
-                hastag.delete_instance()
-            else:
-                req_tags.remove(name)
+            for tag_name in req_tags:
+                t = Tag.get_or_create_tag(user, tag_name)
+                HasTag.get_or_create(link=self, tag=t)
 
-        for tag_name in req_tags:
-            t = Tag.get_or_create_tag(user, tag_name)
-            HasTag.get_or_create(link=self, tag=t)
-
-        self.url = link.url
-        self.name = link.name
-        self.description = link.description
-        self.private = link.private
-        self.save()
+            self.url = link.url
+            self.name = link.name
+            self.description = link.description
+            self.private = link.private
+            self.save()
 
     def to_view(self, as_user: User) -> v.Link:
         return v.Link(
