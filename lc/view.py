@@ -35,7 +35,6 @@ class UserInvite(View):
     claimant: str
     token: str
 
-
 @dataclass
 class AdminPane(View):
     invites: List[UserInvite]
@@ -87,4 +86,4 @@ class Message(View):
 class Page(View):
     title: str
     content: str
-    user: Optional[str]
+    user: Optional[Any]

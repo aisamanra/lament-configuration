@@ -54,7 +54,7 @@ def populate(c):
 @task
 def tc(c):
     """Typecheck with mypy"""
-    c.run("MYPYPATH=$(pwd)/stubs poetry run mypy lc/*.py tests/*.py scripts/*.py")
+    c.run("MYPYPATH=$(pwd)/stubs poetry run mypy --check-untyped-defs lc/*.py tests/*.py scripts/*.py")
 
 
 @task

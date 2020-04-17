@@ -72,7 +72,7 @@ class User(Model):
         return f"/u/{self.name}"
 
     def get_links(
-        self, as_user: r.User, page: int
+        self, as_user: Optional['User'], page: int
     ) -> Tuple[List[v.Link], v.Pagination]:
         links = (
             Link.select()
@@ -171,7 +171,7 @@ class Link(Model):
             self.private = link.private
             self.save()
 
-    def to_view(self, as_user: User) -> v.Link:
+    def to_view(self, as_user: Optional[User]) -> v.Link:
         return v.Link(
             id=self.id,
             url=self.url,
@@ -203,7 +203,7 @@ class Tag(Model):
     def url(self) -> str:
         return f"/u/{self.user.name}/t/{self.name}"
 
-    def get_links(self, as_user: r.User, page: int) -> Tuple[List[Link], v.Pagination]:
+    def get_links(self, as_user: Optional[User], page: int) -> Tuple[List[Link], v.Pagination]:
         links = [
             ht.link.to_view(as_user)
             for ht in HasTag.select()

@@ -144,7 +144,7 @@ class Testdb:
         req = r.Link("http://foo.com", "foo", "", False, ["foo", "bar"])
         l = m.Link.from_request(u, req)
         assert l.name == req.name
-        assert l.tags == ["foo", "bar"]
+        assert l.tags == ["foo", "bar"] # type: ignore
 
         # check the in-place update
         req.name = "bar"
@@ -157,8 +157,9 @@ class Testdb:
         self.check_tags(l, req.tags)
 
         # check that the link was persisted
-        l = m.Link.by_id(l.id)
-        assert l.name == req.name
-        assert l.private
-        assert l.created != req.created
-        self.check_tags(l, req.tags)
+        l2 = m.Link.by_id(l.id)
+        assert l2
+        assert l2.name == req.name
+        assert l2.private
+        assert l2.created != req.created
+        self.check_tags(l2, req.tags)

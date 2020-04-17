@@ -81,7 +81,7 @@ class CreateUser(Endpoint):
         req = self.request_data(r.NewUser).to_user_request()
         u = m.User.from_invite(req, token)
         flask.session["auth"] = req.to_token()
-        return self.api_ok(u.base_url(), u)
+        return self.api_ok(u.base_url(), u.to_dict())
 
 
 @endpoint("/u/<string:slug>")

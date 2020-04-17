@@ -7,3 +7,12 @@ class SqliteExtDatabase:
 
     def atomic(self):
         pass
+
+    def init(self, path: str):
+        pass
+
+    def close(self):
+        pass
+
+    def create_tables(self, tables: typing.List[typing.Any], safe: bool = True):
+        pass
