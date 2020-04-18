@@ -46,6 +46,12 @@ class Config(View):
     username: str
     admin_pane: Optional[AdminPane]
 
+    def bookmarklet_link(self):
+        return ('javascript:(function(){window.open(`' +
+                c.app_path + '/u/' + self.username +
+                '/l?name=${document.title}&url=${document.URL}`);})();')
+
+
 
 @dataclass
 class Tag(View):

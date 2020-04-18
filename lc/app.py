@@ -104,7 +104,7 @@ class GetUser(Endpoint):
 
 
 @endpoint("/u/<string:user>/config")
-class UserConfig(Endpoint):
+class GetUserConfig(Endpoint):
     def html(self, user: str):
         u = self.require_authentication(user)
         return render(
