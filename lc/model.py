@@ -3,7 +3,7 @@ import datetime
 from passlib.apps import custom_app_context as pwd
 import peewee
 import playhouse.shortcuts
-from typing import List, Optional, Tuple
+from typing import Iterator, List, Optional, Tuple
 
 import lc.config as c
 import lc.error as e
@@ -144,10 +144,9 @@ class Link(Model):
             user=user,
         )
         for tag_name in link.tags:
-            t = Tag.get_or_create_tag(user, tag_name)
-            HasTag.create(
-                link=l, tag=t,
-            )
+            tag = Tag.get_or_create_tag(user, tag_name)
+            for t in tag.get_family():
+                HasTag.get_or_create(link=l, tag=t)
         return l
 
     def update_from_request(self, user: User, link: r.Link):
@@ -221,6 +220,12 @@ class Tag(Model):
             page, HasTag.select().where((HasTag.tag == self)).count(),
         )
         return links, pagination
+
+    def get_family(self) -> Iterator["Tag"]:
+        yield self
+        p = self
+        while (p := p.parent) :
+            yield p
 
     @staticmethod
     def is_valid_tag_name(tag_name: str) -> bool:
