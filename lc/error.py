@@ -151,7 +151,7 @@ class BadAddLink(LCException):
         return 400
 
 
-@dataclasss
+@dataclass
 class BadFileUpload(LCException):
     message: str
 
