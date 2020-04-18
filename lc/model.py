@@ -224,10 +224,10 @@ class Tag(Model):
 
     @staticmethod
     def is_valid_tag_name(tag_name: str) -> bool:
-        return all((c.isalnum() or c == '/' for c in tag_name))
+        return all((c.isalnum() or c == "/" for c in tag_name))
 
     @staticmethod
-    def get_or_create_tag(user: User, tag_name: str) -> 'Tag':
+    def get_or_create_tag(user: User, tag_name: str) -> "Tag":
         if (t := Tag.get_or_none(name=tag_name, user=user)) :
             return t
 
