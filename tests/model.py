@@ -98,7 +98,7 @@ class Testdb:
         req = r.Link("http://foo.com", "foo", "", False, ["food/bread/rye"])
         l = m.Link.from_request(u, req)
         assert l.name == req.name
-        tag_names = {t.tag.name for t in l.tags} # type: ignore
+        tag_names = {t.tag.name for t in l.tags}  # type: ignore
         assert tag_names == {"food", "food/bread", "food/bread/rye"}
 
     def test_create_invite(self):
