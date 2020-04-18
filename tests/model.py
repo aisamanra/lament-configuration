@@ -101,6 +101,12 @@ class Testdb:
         tag_names = {t.tag.name for t in l.tags}  # type: ignore
         assert tag_names == {"food", "food/bread", "food/bread/rye"}
 
+    def test_bad_tag(self):
+        u = self.mk_user()
+        req = r.Link("http://foo.com", "foo", "", False, ["foo{bar}"])
+        with pytest.raises(e.BadTagName):
+            l = m.Link.from_request(u, req)
+
     def test_create_invite(self):
         u = self.mk_user()
         invite = m.UserInvite.manufacture(u)

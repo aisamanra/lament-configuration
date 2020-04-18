@@ -227,9 +227,11 @@ class Tag(Model):
         while (p := p.parent) :
             yield p
 
+    BAD_TAG_CHARS = set("{}[]\\()#?")
+
     @staticmethod
     def is_valid_tag_name(tag_name: str) -> bool:
-        return all((c.isalnum() or c == "/" for c in tag_name))
+        return all((c not in Tag.BAD_TAG_CHARS for c in tag_name))
 
     @staticmethod
     def get_or_create_tag(user: User, tag_name: str) -> "Tag":
