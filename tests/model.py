@@ -1,6 +1,8 @@
+import os
 import peewee
 import pytest
 
+os.environ["APP_PATH"] = "test"
 import lc.config as c
 import lc.error as e
 import lc.request as r
