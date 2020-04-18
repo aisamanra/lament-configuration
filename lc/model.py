@@ -3,7 +3,7 @@ import datetime
 from passlib.apps import custom_app_context as pwd
 import peewee
 import playhouse.shortcuts
-from typing import List, Optional, Tuple
+from typing import Iterator, List, Optional, Tuple
 
 import lc.config as c
 import lc.error as e
@@ -144,10 +144,9 @@ class Link(Model):
             user=user,
         )
         for tag_name in link.tags:
-            t = Tag.get_or_create_tag(user, tag_name)
-            HasTag.create(
-                link=l, tag=t,
-            )
+            tag = Tag.get_or_create_tag(user, tag_name)
+            for t in tag.get_family():
+                HasTag.get_or_create(link=l, tag=t)
         return l
 
     def update_from_request(self, user: User, link: r.Link):
@@ -222,10 +221,25 @@ class Tag(Model):
         )
         return links, pagination
 
+    def get_family(self) -> Iterator["Tag"]:
+        yield self
+        p = self
+        while (p := p.parent) :
+            yield p
+
+    BAD_TAG_CHARS = set("{}[]\\()#?")
+
     @staticmethod
-    def get_or_create_tag(user: User, tag_name: str):
+    def is_valid_tag_name(tag_name: str) -> bool:
+        return all((c not in Tag.BAD_TAG_CHARS for c in tag_name))
+
+    @staticmethod
+    def get_or_create_tag(user: User, tag_name: str) -> "Tag":
         if (t := Tag.get_or_none(name=tag_name, user=user)) :
             return t
+
+        if not Tag.is_valid_tag_name(tag_name):
+            raise e.BadTagName(tag_name)
 
         parent = None
         if "/" in tag_name:
