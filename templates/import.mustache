@@ -1,0 +1,25 @@
+<div class="config-pane">
+  <div class="config">
+    <p>
+      Here you can import your Pinboard bookmarks. Export your
+      Pinboard data as JSON and then upload it below.
+    </p>
+    <p>
+      Note that tags in Lament Configuration do not work the same way
+      as tags in Pinboard. In particular, Lament Configuration understands
+      the forward slash (<code>/</code>) as a marker of hierarchical
+      tags: tagging a link with <code>#food/bread</code> will automatically tag it with
+      <code>#food</code> as well.
+    </p>
+  </div>
+</div>
+<div class="config-pane">
+  <div class="config">
+    <form name="import" method="POST" enctype="multipart/form-data">
+      <div>
+        <input name="file" type="file" />
+        <input type="submit" value="Import" />
+      </div>
+    </form>
+  </div>
+</div>

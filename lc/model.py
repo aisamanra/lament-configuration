@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 import datetime
+import json
 from passlib.apps import custom_app_context as pwd
 import peewee
 import playhouse.shortcuts
@@ -110,6 +111,43 @@ class User(Model):
             admin_pane = v.AdminPane(invites=user_invites)
         return v.Config(username=self.name, admin_pane=admin_pane,)
 
+    def import_pinboard_data(self, stream):
+        try:
+            links = json.load(stream)
+        except json.decoder.JSONDecodeError as exn:
+            raise e.BadFileUpload("could not parse file as JSON")
+
+        if not isinstance(links, list):
+            raise e.BadFileUpload(f"expected a list")
+
+        # create and (for this session) cache the tags
+        tags = {}
+        for l in links:
+            if "tags" not in l:
+                raise e.BadFileUpload("missing key {exn.args[0]}")
+            for t in l["tags"].split():
+                if t in tags:
+                    continue
+
+                tags[t] = Tag.get_or_create_tag(self, t)
+
+        with c.db.atomic():
+            for l in links:
+                try:
+                    time = datetime.datetime.strptime(l["time"], "%Y-%m-%dT%H:%M:%SZ")
+                    ln = Link.create(
+                        url=l["href"],
+                        name=l["description"],
+                        description=l["extended"],
+                        private=l["shared"] == "no",
+                        created=time,
+                        user=self,
+                    )
+                except KeyError as exn:
+                    raise e.BadFileUpload(f"missing key {exn.args[0]}")
+                for t in l["tags"].split():
+                    HasTag.get_or_create(link=ln, tag=tags[t])
+
 
 class Link(Model):
     """
@@ -145,8 +183,7 @@ class Link(Model):
         )
         for tag_name in link.tags:
             tag = Tag.get_or_create_tag(user, tag_name)
-            for t in tag.get_family():
-                HasTag.get_or_create(link=l, tag=t)
+            HasTag.get_or_create(link=l, tag=tag)
         return l
 
     def update_from_request(self, user: User, link: r.Link):
@@ -265,6 +302,9 @@ class HasTag(Model):
         res = HasTag.get_or_none(link=link, tag=tag)
         if res is None:
             res = HasTag.create(link=link, tag=tag)
+
+        if tag.parent:
+            HasTag.get_or_create(link, tag.parent)
 
         return res
 
