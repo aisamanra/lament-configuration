@@ -185,3 +185,16 @@ form > div {
 .deleteconfirm a {
     color: #f00;
 }
+
+.errorpane {
+    display: flex;
+    justify-content: center;
+}
+
+.error {
+    width: 50%;
+}
+
+.error p {
+    margin-left: 2em;
+}

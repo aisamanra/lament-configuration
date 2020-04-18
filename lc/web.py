@@ -52,6 +52,16 @@ class Endpoint:
         except e.LCException:
             return
 
+    @staticmethod
+    def just_get_user() -> Optional[m.User]:
+        try:
+            return Endpoint().user
+        except:
+            # this is going to catch everything on the off chance that
+            # there's a bug in the user-validation code: this is used
+            # in error handlers, so we should be resilient to that!
+            return None
+
     def api_ok(self, redirect: str, data: dict = {"status": "ok"}) -> ApiOK:
         if flask.request.content_type == "application/x-www-form-urlencoded":
             raise e.LCRedirect(redirect)
@@ -113,13 +123,7 @@ class Endpoint:
             if flask.request.content_type == "application/json":
                 return ({"status": exn.http_code(), "error": str(exn)}, exn.http_code())
             else:
-                page = render(
-                    "main",
-                    v.Page(
-                        title="error", content=f"shit's fucked yo: {exn}", user=None,
-                    ),
-                )
-                return (page, exn.http_code())
+                return (self.render_error(exn), exn.http_code())
         # also maybe we tried to redirect, so just do that
         except e.LCRedirect as exn:
             return flask.redirect(exn.to_path())
@@ -129,15 +133,14 @@ class Endpoint:
         try:
             return self.html(*args, **kwargs)  # type: ignore
         except e.LCException as exn:
-            page = render(
-                "main",
-                v.Page(
-                    title="error", content=f"shit's fucked yo: {exn}", user=self.user,
-                ),
-            )
-            return (page, exn.http_code())
+            return (self.render_error(exn), exn.http_code())
         except e.LCRedirect as exn:
             return flask.redirect(exn.to_path())
+
+    def render_error(self, exn: e.LCException) -> str:
+        error = v.Error(code=exn.http_code(), message=str(exn))
+        page = v.Page(title="error", content=render("error", error), user=self.user)
+        return render("main", page)
 
 
 # Decorators result in some weird code in Python, especially 'cause it
@@ -184,3 +187,21 @@ def render(name: str, data: Optional[v.View] = None) -> str:
     template = LOADER.load_name(name)
     renderer = pystache.Renderer(missing_tags="strict", search_dirs=["templates"])
     return renderer.render(template, data or {})
+
+
+@c.app.errorhandler(404)
+def handle_404(e):
+    user = Endpoint.just_get_user()
+    url = flask.request.path
+    error = v.Error(code=404, message=f"Page {url} not found")
+    page = v.Page(title="not found", content=render("error", error), user=None)
+    return render("main", page)
+
+
+@c.app.errorhandler(500)
+def handle_500(e):
+    user = Endpoint.just_get_user()
+    c.log(f"Internal error: {e}")
+    error = v.Error(code=500, message=f"An unexpected error occurred")
+    page = v.Page(title="500", content=render("error", error), user=None)
+    return render("main", page)

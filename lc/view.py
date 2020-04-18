@@ -103,3 +103,9 @@ class Page(View):
     title: str
     content: str
     user: Optional[Any]
+
+
+@dataclass
+class Error(View):
+    code: int
+    message: str

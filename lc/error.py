@@ -33,7 +33,7 @@ class UserExists(LCException):
     name: str
 
     def __str__(self):
-        return f"A user named {self.name} already exists."
+        return f"A user named '{self.name}' already exists."
 
 
 @dataclass
@@ -41,7 +41,7 @@ class NoSuchUser(LCException):
     name: str
 
     def __str__(self):
-        return f"No user named {self.name} exists."
+        return f"No user named '{self.name}' exists."
 
     def http_code(self) -> int:
         return 404
@@ -52,7 +52,7 @@ class NoSuchLink(LCException):
     link_id: int
 
     def __str__(self):
-        return f"No link {self.link_id} exists."
+        return f"No link '{self.link_id}' exists."
 
     def http_code(self) -> int:
         return 404
@@ -135,6 +135,17 @@ class BadTagName(LCException):
 
     def __str__(self):
         return f"'{self.tag_name}' is not a valid tag name, for Reasons."
+
+    def http_code(self) -> int:
+        return 400
+
+
+@dataclass
+class BadAddLink(LCException):
+    message: str
+
+    def __str__(self):
+        return f"Error adding link: {self.message}"
 
     def http_code(self) -> int:
         return 400
