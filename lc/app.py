@@ -128,8 +128,14 @@ class CreateInvite(Endpoint):
 @endpoint("/u/<string:user>/l")
 class CreateLink(Endpoint):
     def html(self, user: str):
+        url = flask.request.args.get("url", "")
+        name = flask.request.args.get("name", "")
+        defaults = v.AddLinkDefaults(
+            name=name,
+            url=url,
+        )
         return render(
-            "main", v.Page(title="login", content=render("add_link"), user=self.user,)
+            "main", v.Page(title="login", content=render("add_link", defaults), user=self.user,)
         )
 
     def api_post(self, user: str):

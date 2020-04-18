@@ -84,6 +84,11 @@ class Message(View):
 
 
 @dataclass
+class AddLinkDefaults(View):
+    url: Optional[str] = None
+    name: Optional[str] = None
+
+@dataclass
 class Page(View):
     title: str
     content: str
