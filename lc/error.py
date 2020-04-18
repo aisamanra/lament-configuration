@@ -149,3 +149,14 @@ class BadAddLink(LCException):
 
     def http_code(self) -> int:
         return 400
+
+
+@dataclasss
+class BadFileUpload(LCException):
+    message: str
+
+    def __str__(self):
+        return f"Problem with uploaded file: {self.message}"
+
+    def http_code(self) -> int:
+        return 400

@@ -206,3 +206,25 @@ class GetTaggedLinks(Endpoint):
                 user=self.user,
             ),
         )
+
+
+@endpoint("/u/<string:user>/import")
+class PinboardImport(Endpoint):
+    def html(self, user: str):
+        u = self.require_authentication(user)
+        return render(
+            "main",
+            v.Page(
+                title=f"import pinboard data", content=render("import"), user=self.user,
+            ),
+        )
+
+    def api_post(self, user: str):
+        u = self.require_authentication(user)
+        if "file" not in flask.request.files:
+            raise e.BadFileUpload("could not find attached file")
+        file = flask.request.files["file"]
+        if file.filename == "":
+            raise e.BadFileUpload("no file selected")
+        u.import_pinboard_data(file.stream)
+        return self.api_ok(u.base_url())
