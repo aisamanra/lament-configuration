@@ -46,6 +46,15 @@ class Config(View):
     username: str
     admin_pane: Optional[AdminPane]
 
+    def bookmarklet_link(self):
+        return (
+            "javascript:(function(){window.open(`"
+            + c.app_path
+            + "/u/"
+            + self.username
+            + "/l?name=${document.title}&url=${document.URL}`);})();"
+        )
+
 
 @dataclass
 class Tag(View):
@@ -81,6 +90,12 @@ class SingleLink(View):
 class Message(View):
     title: str
     message: str
+
+
+@dataclass
+class AddLinkDefaults(View):
+    url: Optional[str] = None
+    name: Optional[str] = None
 
 
 @dataclass
