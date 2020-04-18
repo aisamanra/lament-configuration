@@ -47,10 +47,13 @@ class Config(View):
     admin_pane: Optional[AdminPane]
 
     def bookmarklet_link(self):
-        return ('javascript:(function(){window.open(`' +
-                c.app_path + '/u/' + self.username +
-                '/l?name=${document.title}&url=${document.URL}`);})();')
-
+        return (
+            "javascript:(function(){window.open(`"
+            + c.app_path
+            + "/u/"
+            + self.username
+            + "/l?name=${document.title}&url=${document.URL}`);})();"
+        )
 
 
 @dataclass
@@ -93,6 +96,7 @@ class Message(View):
 class AddLinkDefaults(View):
     url: Optional[str] = None
     name: Optional[str] = None
+
 
 @dataclass
 class Page(View):
