@@ -35,6 +35,7 @@ class UserInvite(View):
     claimant: str
     token: str
 
+
 @dataclass
 class AdminPane(View):
     invites: List[UserInvite]

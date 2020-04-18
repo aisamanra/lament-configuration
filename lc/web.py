@@ -91,11 +91,11 @@ class Endpoint:
                 # should redirect to the page where that information
                 # can be viewed instead of returning that
                 # information. (I think.)
-                api_ok = self.api_post(*args, **kwargs) # type: ignore
+                api_ok = self.api_post(*args, **kwargs)  # type: ignore
                 assert isinstance(api_ok, ApiOK)
                 return flask.jsonify(api_ok.response)
             elif flask.request.method == "DELETE":
-                return flask.jsonify(self.api_delete(*args, **kwargs).response) # type: ignore
+                return flask.jsonify(self.api_delete(*args, **kwargs).response)  # type: ignore
             elif (
                 flask.request.method in ["GET", "HEAD"]
                 and flask.request.content_type == "application/json"
@@ -106,7 +106,7 @@ class Endpoint:
                 # I like using the HTTP headers to distinguish these
                 # cases, while other APIs tend to have a separate /api
                 # endpoint to do this.
-                return flask.jsonify(self.api_get(*args, **kwargs).response) # type: ignore
+                return flask.jsonify(self.api_get(*args, **kwargs).response)  # type: ignore
         # if an exception arose from an "API method", then we should
         # report it as JSON
         except e.LCException as exn:
