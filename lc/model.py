@@ -223,9 +223,16 @@ class Tag(Model):
         return links, pagination
 
     @staticmethod
-    def get_or_create_tag(user: User, tag_name: str):
+    def is_valid_tag_name(tag_name: str) -> bool:
+        return all((c.isalnum() for c in tag_name))
+
+    @staticmethod
+    def get_or_create_tag(user: User, tag_name: str) -> 'Tag':
         if (t := Tag.get_or_none(name=tag_name, user=user)) :
             return t
+
+        if not Tag.is_valid_tag_name(tag_name):
+            raise e.BadTagName(tag_name)
 
         parent = None
         if "/" in tag_name:

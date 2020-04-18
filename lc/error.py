@@ -127,3 +127,14 @@ class MismatchedPassword(LCException):
 
     def http_code(self) -> int:
         return 400
+
+
+@dataclass
+class BadTagName(LCException):
+    tag_name: str
+
+    def __str__(self):
+        return f"'{self.tag_name}' is not a valid tag name, for Reasons."
+
+    def http_code(self) -> int:
+        return 400
