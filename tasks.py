@@ -13,7 +13,10 @@ def run(c, port=8080, host="127.0.0.1"):
     """Run a debug server locally"""
     c.run(
         f"poetry run python -m flask run -p {port} -h {host}",
-        env={"FLASK_APP": "lament-configuration.py"},
+        env={
+            "FLASK_APP": "lament-configuration.py",
+            "APP_PATH": f"http://{host}:{port}",
+        },
     )
 
 
