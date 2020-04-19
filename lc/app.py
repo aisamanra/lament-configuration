@@ -71,9 +71,12 @@ class CreateUser(Endpoint):
         if not token:
             raise e.LCRedirect("/")
 
+        add_user = v.AddUser(token=token)
         return render(
             "main",
-            v.Page(title="add user", user=self.user, content=render("add_user"),),
+            v.Page(
+                title="add user", user=self.user, content=render("add_user", add_user),
+            ),
         )
 
     def api_post(self):

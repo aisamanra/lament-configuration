@@ -37,6 +37,11 @@ class UserInvite(View):
 
 
 @dataclass
+class AddUser(View):
+    token: str
+
+
+@dataclass
 class AdminPane(View):
     invites: List[UserInvite]
 
