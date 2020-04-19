@@ -45,6 +45,7 @@ class AdminPane(View):
 class Config(View):
     username: str
     admin_pane: Optional[AdminPane]
+    msg: Optional[int] = None
 
     def bookmarklet_link(self):
         return (
@@ -54,6 +55,15 @@ class Config(View):
             + self.username
             + "/l?name=${document.title}&url=${document.URL}`);})();"
         )
+
+    def message(self) -> Optional[str]:
+        if self.msg == 1:
+            return "Password changed."
+        elif self.msg == 2:
+            return "Mismatched new passwords; please try again."
+        elif self.msg == 3:
+            return "Incorrect old password; please try again."
+        return None
 
 
 @dataclass

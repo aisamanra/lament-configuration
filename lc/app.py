@@ -109,11 +109,14 @@ class GetUser(Endpoint):
 class GetUserConfig(Endpoint):
     def html(self, user: str):
         u = self.require_authentication(user)
+        status_msg = flask.request.args.get("m", None)
+        if status_msg is not None:
+            status_msg = int(status_msg)
         return render(
             "main",
             v.Page(
                 title="configuration",
-                content=render("config", u.get_config()),
+                content=render("config", u.get_config(status_msg)),
                 user=self.user,
             ),
         )
@@ -125,6 +128,23 @@ class CreateInvite(Endpoint):
         u = self.require_authentication(user)
         invite = m.UserInvite.manufacture(u)
         return self.api_ok(f"/u/{user}/config", {"invite": invite.token})
+
+
+@endpoint("/u/<string:user>/password")
+class ChangePassword(Endpoint):
+    def api_post(self, user: str):
+        u = self.require_authentication(user)
+        config_url = u.config_url()
+        req = self.request_data(r.PasswordChange)
+        try:
+            req.require_match()
+        except e.MismatchedPassword:
+            raise e.LCRedirect(f"{config_url}?m=2")
+        try:
+            u.change_password(req)
+        except e.BadPassword:
+            raise e.LCRedirect(f"{config_url}?m=3")
+        return self.api_ok(f"{config_url}?m=1")
 
 
 @endpoint("/u/<string:user>/l")

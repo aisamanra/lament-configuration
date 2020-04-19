@@ -58,6 +58,22 @@ class NewUser(Request):
 
 @dataclass_json
 @dataclass
+class PasswordChange(Request):
+    n1: str
+    n2: str
+    old: str
+
+    @classmethod
+    def from_form(cls, form: Mapping[str, str]):
+        return cls(old=form["old"], n1=form["n1"], n2=form["n2"],)
+
+    def require_match(self):
+        if self.n1 != self.n2:
+            raise e.MismatchedPassword()
+
+
+@dataclass_json
+@dataclass
 class Link(Request):
     url: str
     name: str

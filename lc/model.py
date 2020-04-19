@@ -37,6 +37,12 @@ class User(Model):
         except peewee.IntegrityError:
             raise e.UserExists(name=user.name)
 
+    def change_password(self, req: r.PasswordChange):
+        if not pwd.verify(req.old, self.passhash):
+            raise e.BadPassword(name=self.name)
+        self.passhash = pwd.hash(req.n1)
+        self.save()
+
     @staticmethod
     def from_invite(user: r.User, token: str) -> "User":
         invite = UserInvite.by_code(token)
@@ -72,6 +78,9 @@ class User(Model):
     def base_url(self) -> str:
         return f"/u/{self.name}"
 
+    def config_url(self) -> str:
+        return f"/u/{self.name}/config"
+
     def get_links(
         self, as_user: Optional["User"], page: int
     ) -> Tuple[List[v.Link], v.Pagination]:
@@ -97,7 +106,7 @@ class User(Model):
     def to_dict(self) -> dict:
         return {"id": self.id, "name": self.name}
 
-    def get_config(self) -> v.Config:
+    def get_config(self, status_msg: Optional[int]) -> v.Config:
         admin_pane = None
         if self.is_admin:
             user_invites = [
@@ -109,7 +118,7 @@ class User(Model):
                 for ui in UserInvite.select().where(UserInvite.created_by == self)
             ]
             admin_pane = v.AdminPane(invites=user_invites)
-        return v.Config(username=self.name, admin_pane=admin_pane,)
+        return v.Config(username=self.name, admin_pane=admin_pane, msg=status_msg)
 
     def import_pinboard_data(self, stream):
         try:
