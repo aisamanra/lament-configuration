@@ -36,6 +36,10 @@ class Model:
     def delete_instance(self) -> Any:
         pass
 
+    @classmethod
+    def alias(cls: Type[T]) -> Type[T]:
+        pass
+
 
 # These all do things that MyPy chokes on, so we're going to treat
 # them like methods instead of naming classes
