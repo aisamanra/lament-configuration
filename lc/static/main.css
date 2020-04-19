@@ -198,3 +198,13 @@ form > div {
 .error p {
     margin-left: 2em;
 }
+
+.columns {
+    display: grid;
+    grid-template-columns: 60% 40%;
+}
+
+.tags {
+    padding: 2em;
+    word-spacing: 1em;
+}

@@ -78,6 +78,7 @@ class Link(View):
 @dataclass
 class LinkList(View):
     links: List[Any]
+    tags: List[Tag]
     pages: Optional[Pagination] = None
 
 

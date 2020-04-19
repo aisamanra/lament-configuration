@@ -148,6 +148,11 @@ class User(Model):
                 for t in l["tags"].split():
                     HasTag.get_or_create(link=ln, tag=tags[t])
 
+    def get_tags(self) -> List[v.Tag]:
+        return sorted(
+            (t.to_view() for t in self.tags), # type: ignore
+            key=lambda t: t.name,
+        )
 
 class Link(Model):
     """
