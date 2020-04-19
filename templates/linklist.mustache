@@ -1,7 +1,14 @@
-<div class="linklist">
-  {{#links}}
-    {{>link}}
-  {{/links}}
+<div class="columns">
+  <div class="linklist">
+    {{#links}}
+      {{>link}}
+    {{/links}}
+  </div>
+  <div class="tags">
+    {{#tags}}
+      <a href="{{url}}">{{name}}</a>
+    {{/tags}}
+  </div>
 </div>
 {{#pages}}
   <div class="pagination">

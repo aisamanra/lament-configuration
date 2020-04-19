@@ -89,12 +89,14 @@ class GetUser(Endpoint):
     def html(self, slug: str):
         u = m.User.by_slug(slug)
         pg = int(flask.request.args.get("page", 1))
+        tags = u.get_tags()
         links, pages = u.get_links(as_user=self.user, page=pg)
+        linklist = v.LinkList(links=links, pages=pages, tags=tags)
         return render(
             "main",
             v.Page(
                 title=f"user {u.name}",
-                content=render("linklist", v.LinkList(links=links, pages=pages)),
+                content=render("linklist", linklist),
                 user=self.user,
             ),
         )
@@ -170,7 +172,7 @@ class GetLink(Endpoint):
             "main",
             v.Page(
                 title=f"link {l.name}",
-                content=render("linklist", v.LinkList([l.to_view(self.user)])),
+                content=render("linklist", v.LinkList([l.to_view(self.user)], [])),
                 user=self.user,
             ),
         )
@@ -198,11 +200,13 @@ class GetTaggedLinks(Endpoint):
         pg = int(flask.request.args.get("page", 0))
         t = u.get_tag(tag)
         links, pages = t.get_links(as_user=self.user, page=pg)
+        tags = u.get_related_tags(t)
+        linklist = v.LinkList(links=links, pages=pages, tags=tags)
         return render(
             "main",
             v.Page(
                 title=f"tag {tag}",
-                content=render("linklist", v.LinkList(links=links, pages=pages,)),
+                content=render("linklist", linklist),
                 user=self.user,
             ),
         )
