@@ -154,6 +154,19 @@ class User(Model):
             key=lambda t: t.name,
         )
 
+    def get_related_tags(self, tag: 'Tag') -> List[v.Tag]:
+        # SELECT * from has_tag t1, has_tag t2, link l WHERE t1.link_id == l.id AND t2.link_id == l.id AND t1.id != t2.id AND t1 = self
+        SelfTag = HasTag.alias()
+        query = (HasTag.select(HasTag.tag)
+                 .join(Link, on=(HasTag.link == Link.id))
+                 .join(SelfTag, on=(SelfTag.link == Link.id))
+                 .where((SelfTag.tag == tag) & (SelfTag.id != HasTag.id))
+                 .group_by(HasTag.tag))
+        return sorted(
+            (t.tag.to_view() for t in query),
+            key=lambda t: t.name,
+        )
+
 class Link(Model):
     """
     A link as stored in the database
