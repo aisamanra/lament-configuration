@@ -84,14 +84,12 @@ class User(Model):
     def get_links(
         self, as_user: Optional["User"], page: int
     ) -> Tuple[List[v.Link], v.Pagination]:
-        links = (
-            Link.select()
-            .where((Link.user == self) & ((self == as_user) | (Link.private == False)))
-            .order_by(-Link.created)
-            .paginate(page, c.per_page)
+        query = Link.select().where(
+            (Link.user == self) & ((self == as_user) | (Link.private == False))
         )
+        links = query.order_by(-Link.created).paginate(page, c.per_page)
         link_views = [l.to_view(as_user) for l in links]
-        pagination = v.Pagination.from_total(page, Link.select().count())
+        pagination = v.Pagination.from_total(page, query.count())
         return link_views, pagination
 
     def get_link(self, link_id: int) -> "Link":
@@ -269,20 +267,19 @@ class Tag(Model):
     def get_links(
         self, as_user: Optional[User], page: int
     ) -> Tuple[List[Link], v.Pagination]:
-        links = [
-            ht.link.to_view(as_user)
-            for ht in HasTag.select()
+        query = (
+            HasTag.select()
             .join(Link)
             .where(
                 (HasTag.tag == self)
                 & ((HasTag.link.user == as_user) | (HasTag.link.private == False))
             )
-            .order_by(-Link.created)
-            .paginate(page, c.per_page)
-        ]
-        pagination = v.Pagination.from_total(
-            page, HasTag.select().where((HasTag.tag == self)).count(),
         )
+        links = [
+            ht.link.to_view(as_user)
+            for ht in query.order_by(-Link.created).paginate(page, c.per_page)
+        ]
+        pagination = v.Pagination.from_total(page, query.count())
         return links, pagination
 
     def get_family(self) -> Iterator["Tag"]:

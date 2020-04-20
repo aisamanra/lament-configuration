@@ -220,7 +220,7 @@ class EditLink(Endpoint):
 class GetTaggedLinks(Endpoint):
     def html(self, user: str, tag: str):
         u = m.User.by_slug(user)
-        pg = int(flask.request.args.get("page", 0))
+        pg = int(flask.request.args.get("page", 1))
         t = u.get_tag(tag)
         links, pages = t.get_links(as_user=self.user, page=pg)
         tags = u.get_related_tags(t)
