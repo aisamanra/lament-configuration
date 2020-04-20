@@ -16,16 +16,18 @@ app = c.app
 @endpoint("/")
 class Index(Endpoint):
     def html(self):
+
+        pg = int(flask.request.args.get("page", 1))
+        links, pages = m.Link.get_all(as_user=self.user, page=pg)
+        linklist = v.LinkList(links=links, pages=pages, tags=[])
+
         return render(
             "main",
             v.Page(
                 title="main",
                 content=render(
-                    "message",
-                    v.Message(
-                        title="Lament Configuration",
-                        message="Bookmark organizing for real pinheads.",
-                    ),
+                    "linklist",
+                    linklist
                 ),
                 user=self.user,
             ),
