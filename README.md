@@ -34,3 +34,8 @@ Some features are missing on purpose. Lament Configuration is intended to be [an
 ## Developing
 
 See the [notes on developing lament-configuration](DEVELOPING.md).
+
+## Contributors
+
+- [Getty](https://twitter.com/aisamanra)
+- [Trevor](https://twitter.com/moltarx)
