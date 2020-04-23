@@ -19,6 +19,7 @@ class ApiOK:
 
 
 class Endpoint:
+    __slots__ = ('user',)
     def __init__(self):
         self.user = None
 
