@@ -210,7 +210,7 @@ class Link(Model):
             Link.select()
             .where((Link.user == as_user) | (Link.private == False))
             .order_by(-Link.created)
-            .paginate(page, c.per_page)
+            .paginate(page, c.app.per_page)
         )
         link_views = [l.to_view(as_user) for l in links]
         pagination = v.Pagination.from_total(page, Link.select().count())
