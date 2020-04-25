@@ -9,7 +9,7 @@ db = playhouse.sqlite_ext.SqliteExtDatabase(None)
 per_page = 50
 serializer = itsdangerous.URLSafeTimedSerializer(os.getenv("SECRET_KEY", "TEMP KEY"))
 app_path = os.environ["APP_PATH"].strip()
-app = flask.Flask(__name__)
+app = flask.Flask(__name__, static_folder=os.path.join(os.getcwd(), 'static'))
 app.secret_key = os.getenv("SECRET_KEY", "ARGLBARGL")
 
 if sys.stderr.isatty():
