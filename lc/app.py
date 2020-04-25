@@ -10,7 +10,7 @@ import lc.request as r
 import lc.view as v
 from lc.web import Endpoint, endpoint, render
 
-app = c.app
+app = c.app.app
 
 
 @endpoint("/")

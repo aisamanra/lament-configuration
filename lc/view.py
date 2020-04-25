@@ -26,7 +26,7 @@ class Pagination(View):
 
     @classmethod
     def from_total(cls, current, total) -> "Pagination":
-        return cls(current=current, last=((total - 1) // c.per_page) + 1,)
+        return cls(current=current, last=((total - 1) // c.app.per_page) + 1,)
 
 
 @dataclass
@@ -55,7 +55,7 @@ class Config(View):
     def bookmarklet_link(self):
         return (
             "javascript:(function(){window.open(`"
-            + c.app_path
+            + c.app.config.app_path
             + "/u/"
             + self.username
             + "/l?name=${document.title}&url=${document.URL}`);})();"
