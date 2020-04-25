@@ -197,6 +197,20 @@ class Link(Model):
         return Link.get_or_none(id=id)
 
     @staticmethod
+    def get_all(
+        as_user: Optional[User], page: int
+    ) -> Tuple[List["Link"], v.Pagination]:
+        links = (
+            Link.select()
+            .where((Link.user == as_user) | (Link.private == False))
+            .order_by(-Link.created)
+            .paginate(page, c.per_page)
+        )
+        link_views = [l.to_view(as_user) for l in links]
+        pagination = v.Pagination.from_total(page, Link.select().count())
+        return link_views, pagination
+
+    @staticmethod
     def from_request(user: User, link: r.Link) -> "Link":
         l = Link.create(
             url=link.url,
