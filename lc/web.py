@@ -19,7 +19,8 @@ class ApiOK:
 
 
 class Endpoint:
-    __slots__ = ('user',)
+    __slots__ = ("user",)
+
     def __init__(self):
         self.user = None
 
@@ -38,7 +39,7 @@ class Endpoint:
         # if that exists and we can deserialize it, then make sure
         # it contains a valid user password, too
         try:
-            payload = c.serializer.loads(token)
+            payload = c.app.load_token(token)
         except:
             # TODO: be more specific about what errors we're catching
             # here!
@@ -179,7 +180,7 @@ def endpoint(route: str):
         func.__name__ = endpoint_class.__name__
 
         # finally, use the Flask routing machinery to register our callback
-        return c.app.route(route, methods=methods)(func)
+        return c.app.app.route(route, methods=methods)(func)
 
     return do_endpoint
 
@@ -194,7 +195,7 @@ def render(name: str, data: Optional[v.View] = None) -> str:
     return renderer.render(template, data or {})
 
 
-@c.app.errorhandler(404)
+@c.app.app.errorhandler(404)
 def handle_404(e):
     user = Endpoint.just_get_user()
     url = flask.request.path
@@ -203,7 +204,7 @@ def handle_404(e):
     return render("main", page)
 
 
-@c.app.errorhandler(500)
+@c.app.app.errorhandler(500)
 def handle_500(e):
     user = Endpoint.just_get_user()
     c.log(f"Internal error: {e}")

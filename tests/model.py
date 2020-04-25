@@ -2,7 +2,10 @@ import os
 import peewee
 import pytest
 
-os.environ["APP_PATH"] = "test"
+os.environ["LC_DB_PATH"] = ":memory:"
+os.environ["LC_SECRET_KEY"] = "TEST_KEY"
+os.environ["LC_APP_PATH"] = "localhost"
+
 import lc.config as c
 import lc.error as e
 import lc.request as r
@@ -11,11 +14,11 @@ import lc.model as m
 
 class Testdb:
     def setup_method(self, _):
-        c.db.init(":memory:")
-        c.db.create_tables(m.MODELS)
+        c.app.in_memory_db()
+        m.create_tables()
 
     def teardown_method(self, _):
-        c.db.close()
+        c.app.close_db()
 
     def mk_user(self, name="gdritter", password="foo") -> m.User:
         return m.User.from_request(r.User(name=name, password=password,))
@@ -118,7 +121,7 @@ class Testdb:
         assert invite.claimed_at is None
 
         # deserializing the unique token should reveal the encrypted data
-        raw_data = c.serializer.loads(invite.token)
+        raw_data = c.app.load_token(invite.token)
         assert raw_data["created_by"] == u.name
 
     def test_use_invite(self):

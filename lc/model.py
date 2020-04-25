@@ -1,3 +1,4 @@
+from contextlib import contextmanager
 from dataclasses import dataclass
 import datetime
 import json
@@ -14,10 +15,15 @@ import lc.view as v
 
 class Model(peewee.Model):
     class Meta:
-        database = c.db
+        database = c.app.db
 
     def to_dict(self) -> dict:
         return playhouse.shortcuts.model_to_dict(self)
+
+    @contextmanager
+    def atomic(self):
+        with c.app.db.atomic():
+            yield
 
 
 class User(Model):
@@ -87,7 +93,7 @@ class User(Model):
         query = Link.select().where(
             (Link.user == self) & ((self == as_user) | (Link.private == False))
         )
-        links = query.order_by(-Link.created).paginate(page, c.per_page)
+        links = query.order_by(-Link.created).paginate(page, c.app.per_page)
         link_views = [l.to_view(as_user) for l in links]
         pagination = v.Pagination.from_total(page, query.count())
         return link_views, pagination
@@ -138,7 +144,7 @@ class User(Model):
 
                 tags[t] = Tag.get_or_create_tag(self, t)
 
-        with c.db.atomic():
+        with self.atomic():
             for l in links:
                 try:
                     time = datetime.datetime.strptime(l["time"], "%Y-%m-%dT%H:%M:%SZ")
@@ -212,7 +218,7 @@ class Link(Model):
         return l
 
     def update_from_request(self, user: User, link: r.Link):
-        with c.db.atomic():
+        with self.atomic():
             req_tags = set(link.tags)
 
             for hastag in self.tags:  # type: ignore
@@ -277,7 +283,7 @@ class Tag(Model):
         )
         links = [
             ht.link.to_view(as_user)
-            for ht in query.order_by(-Link.created).paginate(page, c.per_page)
+            for ht in query.order_by(-Link.created).paginate(page, c.app.per_page)
         ]
         pagination = v.Pagination.from_total(page, query.count())
         return links, pagination
@@ -351,7 +357,7 @@ class UserInvite(Model):
     @staticmethod
     def manufacture(creator: User) -> "UserInvite":
         now = datetime.datetime.now()
-        token = c.serializer.dumps(
+        token = c.app.serialize_token(
             {"created_at": now.timestamp(), "created_by": creator.name,}
         )
         return UserInvite.create(
@@ -373,4 +379,4 @@ MODELS = [
 
 
 def create_tables():
-    c.db.create_tables(MODELS, safe=True)
+    c.app.db.create_tables(MODELS, safe=True)

@@ -15,7 +15,9 @@ def run(c, port=8080, host="127.0.0.1"):
         f"poetry run python -m flask run -p {port} -h {host}",
         env={
             "FLASK_APP": "lament-configuration.py",
-            "APP_PATH": f"http://{host}:{port}",
+            "LC_APP_PATH": f"http://{host}:{port}",
+            "LC_DB_PATH": f"test.db",
+            "LC_SECRET_KEY": f"TESTING_KEY",
         },
     )
 

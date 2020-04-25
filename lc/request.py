@@ -35,7 +35,7 @@ class User(Request):
         return cls(name=form["username"], password=form["password"],)
 
     def to_token(self) -> str:
-        return c.serializer.dumps({"name": self.name})
+        return c.app.serialize_token({"name": self.name})
 
 
 @dataclass_json

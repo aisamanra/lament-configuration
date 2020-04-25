@@ -1,4 +1,9 @@
+import os
 import json
+
+os.environ["LC_DB_PATH"] = ":memory:"
+os.environ["LC_SECRET_KEY"] = "TEST_KEY"
+os.environ["LC_APP_PATH"] = "localhost"
 
 import lc.config as c
 import lc.model as m
@@ -8,12 +13,12 @@ import lc.app as a
 
 class TestRoutes:
     def setup_method(self, _):
-        c.db.init(":memory:")
-        c.db.create_tables(m.MODELS)
+        c.app.in_memory_db()
+        m.create_tables()
         self.app = a.app.test_client()
 
     def teardown_method(self, _):
-        c.db.close()
+        c.app.close_db()
 
     def mk_user(self, username="gdritter", password="foo") -> m.User:
         return m.User.from_request(r.User(name=username, password=password,))
@@ -28,7 +33,7 @@ class TestRoutes:
         u = self.mk_user(username=username, password=password)
         result = self.app.post("/auth", json={"name": username, "password": password})
         assert result.status == "200 OK"
-        decoded_token = c.serializer.loads(result.json["token"])
+        decoded_token = c.app.load_token(result.json["token"])
         assert decoded_token["name"] == username
 
     def test_failed_api_login(self):
