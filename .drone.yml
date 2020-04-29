@@ -22,3 +22,9 @@ steps:
   image: gdritter/lament-configuration-env:latest
   commands:
   - inv test
+
+- name: slack
+  image: plugins/slack
+  settings:
+    webhook: https://mm.infinitenegativeutility.com/hooks/9kz3ro474bnj7kgqxw7r9qmaxr
+    channel: lament-configuration
