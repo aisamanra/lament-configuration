@@ -23,14 +23,7 @@ class Index(Endpoint):
 
         return render(
             "main",
-            v.Page(
-                title="main",
-                content=render(
-                    "linklist",
-                    linklist
-                ),
-                user=self.user,
-            ),
+            v.Page(title="main", content=render("linklist", linklist), user=self.user,),
         )
 
 
