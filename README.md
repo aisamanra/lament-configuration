@@ -2,7 +2,7 @@
 
 [![Build Status](https://ci.infinitenegativeutility.com/api/badges/getty/lament-configuration/status.svg)](https://ci.infinitenegativeutility.com/getty/lament-configuration)
 
-![lament configuration logo](/lc/static/lc_64.png)
+![lament configuration logo](/static/lc_64.png)
 
 Bookmark organizing for pinheads.
 
