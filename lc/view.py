@@ -132,13 +132,21 @@ class Link(View):
     created: datetime
     is_mine: bool
     link_url: str
+    user: str
+
+    def hier_tags(self) -> str:
+        return HierTagList(user=self.user, tags=self.tags).render()
 
 
 @dataclass
 class LinkList(View):
     links: List[Any]
     tags: List[Tag]
+    user: str
     pages: Optional[Pagination] = None
+
+    def hier_tags(self) -> str:
+        return HierTagList(user=self.user, tags=self.tags).render()
 
 
 @dataclass

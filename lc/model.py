@@ -263,6 +263,7 @@ class Link(Model):
             created=self.created,
             is_mine=self.user.id == as_user.id if as_user else False,
             link_url=self.link_url(),
+            user=self.user.name,
         )
 
     def get_tags_view(self) -> List[v.Tag]:

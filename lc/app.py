@@ -19,7 +19,7 @@ class Index(Endpoint):
 
         pg = int(flask.request.args.get("page", 1))
         links, pages = m.Link.get_all(as_user=self.user, page=pg)
-        linklist = v.LinkList(links=links, pages=pages, tags=[])
+        linklist = v.LinkList(links=links, pages=pages, user="", tags=[])
 
         return render(
             "main",
@@ -89,7 +89,7 @@ class GetUser(Endpoint):
         pg = int(flask.request.args.get("page", 1))
         tags = u.get_tags()
         links, pages = u.get_links(as_user=self.user, page=pg)
-        linklist = v.LinkList(links=links, pages=pages, tags=tags)
+        linklist = v.LinkList(links=links, user=slug, pages=pages, tags=tags)
         return render(
             "main",
             v.Page(
@@ -190,7 +190,9 @@ class GetLink(Endpoint):
             "main",
             v.Page(
                 title=f"link {l.name}",
-                content=render("linklist", v.LinkList([l.to_view(self.user)], [])),
+                content=render(
+                    "linklist", v.LinkList([l.to_view(self.user)], [], user=user)
+                ),
                 user=self.user,
             ),
         )
@@ -219,7 +221,7 @@ class GetTaggedLinks(Endpoint):
         t = u.get_tag(tag)
         links, pages = t.get_links(as_user=self.user, page=pg)
         tags = u.get_related_tags(t)
-        linklist = v.LinkList(links=links, pages=pages, tags=tags)
+        linklist = v.LinkList(links=links, pages=pages, tags=tags, user=user)
         return render(
             "main",
             v.Page(
