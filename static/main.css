@@ -54,6 +54,7 @@ a {
 
 .taglist { display: flex; }
 .tag {
+    color: #555;
     padding-right: 0.4em;
 }
 
@@ -207,4 +208,16 @@ form > div {
 .tags {
     padding: 2em;
     word-spacing: 1em;
+}
+
+.tag_container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.tag_container span {
+    display: block;
+    text-indent: -1em;
+    margin-left: 1em;
+    padding-left: 0.3em;
 }
