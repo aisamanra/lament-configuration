@@ -78,6 +78,50 @@ class Tag(View):
 
 
 @dataclass
+class HierTagList:
+    user: str
+    tags: List[Tag]
+
+    def render(self) -> str:
+        groups: dict = {}
+
+        for tag in (t.name for t in self.tags):
+            if "/" not in tag:
+                groups[tag] = groups.get(tag, {})
+            else:
+                chunks = tag.split("/")
+                focus = groups[chunks[0]] = groups.get(chunks[0], {})
+                for c in chunks[1:]:
+                    focus[c] = focus = focus.get(c, {})
+
+        return "\n".join(self.render_html(k, v) for k, v in groups.items())
+
+    def render_html(self, prefix: str, values: dict) -> str:
+        link = self._render_html(prefix, values, [])
+        return f'<span class="tag">{link}</span>'
+
+    def _href(self, tag: str, init: List[str]) -> str:
+        link = "/".join(init + [tag])
+        return f'<a href="/u/{self.user}/t/{link}">{tag}</a>'
+
+    def _render_html(self, prefix: str, values: dict, init: List[str]) -> str:
+        if not values:
+            return self._href(prefix, init)
+        if len(values) == 1:
+            k, v = values.popitem()
+            rest = self._render_html(k, v, init + [prefix])
+            prefix_href = self._href(prefix, init)
+            return f"{prefix_href}/{rest}"
+        else:
+            fragments = []
+            for k, v in values.items():
+                fragments.append(self._render_html(k, v, init + [prefix]))
+            items = ", ".join(fragments)
+            prefix_href = self._href(prefix, init)
+            return f"{prefix_href}/{{{items}}}"
+
+
+@dataclass
 class Link(View):
     id: int
     url: str
