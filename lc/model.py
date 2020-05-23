@@ -26,6 +26,19 @@ class Model(peewee.Model):
             yield
 
 
+class Meta(Model):
+
+    version = peewee.IntegerField(default=0)
+
+    @staticmethod
+    def fetch():
+        try:
+            return Meta.get(id=0)
+        except:
+            meta = Meta.create(id=0)
+            return meta
+
+
 class User(Model):
     """
     A user! you know tf this is about
@@ -385,6 +398,7 @@ class UserInvite(Model):
 
 
 MODELS = [
+    Meta,
     User,
     Link,
     Tag,
