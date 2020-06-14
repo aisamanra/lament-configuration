@@ -152,6 +152,7 @@ class LinkList(View):
 @dataclass
 class SingleLink(View):
     link: Any
+    all_tags: List[Tag]
 
 
 @dataclass
