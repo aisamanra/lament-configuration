@@ -40,6 +40,10 @@ class Model:
     def alias(cls: Type[T]) -> Type[T]:
         pass
 
+    @classmethod
+    def delete(self) -> Any:
+        pass
+
 
 # These all do things that MyPy chokes on, so we're going to treat
 # them like methods instead of naming classes
@@ -61,3 +65,7 @@ def ForeignKeyField(key: object, null: bool = None, backref: str = "") -> Any:
 
 class IntegrityError(Exception):
     pass
+
+
+JOIN: Any = None
+fn: Any = None
