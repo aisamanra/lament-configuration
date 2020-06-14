@@ -19,7 +19,9 @@
     </div>
     <div class="tags">
       <label for="tags">Tags</label>
-      <input name="tags" type="text" value="{{#tags}}{{#tag}}{{name}} {{/tag}}{{/tags}}" />
+      <input class="tagtest" type="text"
+        value="{{#tags}}{{#tag}}{{name}}{{/tag}},{{/tags}}"
+        data-whitelist="{{#all_tags}}{{name}},{{/all_tags}}" />
     </div>
 
     <div class="submit">
