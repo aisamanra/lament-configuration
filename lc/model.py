@@ -246,6 +246,8 @@ class Link(Model):
                 t = Tag.get_or_create_tag(user, tag_name)
                 HasTag.get_or_create(link=self, tag=t)
 
+            Tag.clean()
+
             self.url = link.url
             self.name = link.name
             self.description = link.description
@@ -332,6 +334,14 @@ class Tag(Model):
 
     def to_view(self) -> v.Tag:
         return v.Tag(url=self.url(), name=self.name)
+
+    @staticmethod
+    def clean():
+        unused = Tag.select(Tag.id) \
+                    .join(HasTag, peewee.JOIN.LEFT_OUTER) \
+                    .group_by(Tag.name) \
+                    .having(peewee.fn.COUNT(HasTag.id) == 0)
+        Tag.delete().where(Tag.id.in_(unused)).execute()
 
 
 class HasTag(Model):
