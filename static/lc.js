@@ -25,3 +25,28 @@ function confirmDelete(url, id) {
 function removeConfirm(id) {
     $(`#confirm_${id}`).remove();
 }
+
+$(document).ready(() => {
+    let input = document.querySelector('.tagtest');
+    if (input) {
+        let tags = new Tagify(input);
+
+        let form = $("form[name=\"edit_link\"]")
+        form.submit(event => {
+            event.preventDefault();
+            let url = form.attr("action");
+            let body = {
+                "url": $('input[name="url"]').val(),
+                "name": $('input[name="name"]').val(),
+                "description": $('input[name="description"]').val(),
+                "private": $('input[name="private"]').is(":checked"),
+                "tags": tags.value.map(o => o.value),
+            };
+            fetch(url, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(body),
+            }).then(_ => window.location.href = url);
+        });
+    }
+});

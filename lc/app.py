@@ -202,12 +202,13 @@ class GetLink(Endpoint):
 class EditLink(Endpoint):
     def html(self, slug: str, link: str):
         u = self.require_authentication(slug)
+        all_tags = u.get_tags()
         l = u.get_link(int(link))
         return render(
             "main",
             v.Page(
                 title="login",
-                content=render("edit_link", v.SingleLink(l)),
+                content=render("edit_link", v.SingleLink(l, all_tags)),
                 user=self.user,
             ),
         )

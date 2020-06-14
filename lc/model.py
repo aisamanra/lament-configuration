@@ -337,10 +337,12 @@ class Tag(Model):
 
     @staticmethod
     def clean():
-        unused = Tag.select(Tag.id) \
-                    .join(HasTag, peewee.JOIN.LEFT_OUTER) \
-                    .group_by(Tag.name) \
-                    .having(peewee.fn.COUNT(HasTag.id) == 0)
+        unused = (
+            Tag.select(Tag.id)
+            .join(HasTag, peewee.JOIN.LEFT_OUTER)
+            .group_by(Tag.name)
+            .having(peewee.fn.COUNT(HasTag.id) == 0)
+        )
         Tag.delete().where(Tag.id.in_(unused)).execute()
 
 
