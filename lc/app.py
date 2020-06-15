@@ -148,9 +148,11 @@ class ChangePassword(Endpoint):
 @endpoint("/u/<string:user>/l")
 class CreateLink(Endpoint):
     def html(self, user: str):
+        u = self.require_authentication(user)
         url = flask.request.args.get("url", "")
         name = flask.request.args.get("name", "")
-        defaults = v.AddLinkDefaults(name=name, url=url,)
+        tags = u.get_tags()
+        defaults = v.AddLinkDefaults(user=user, name=name, url=url, all_tags=tags,)
         return render(
             "main",
             v.Page(

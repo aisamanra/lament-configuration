@@ -163,8 +163,13 @@ class Message(View):
 
 @dataclass
 class AddLinkDefaults(View):
+    user: str
+    all_tags: List[Tag]
     url: Optional[str] = None
     name: Optional[str] = None
+
+    def post_url(self) -> str:
+        return f"/u/{self.user}/l"
 
 
 @dataclass
