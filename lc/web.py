@@ -66,7 +66,10 @@ class Endpoint:
 
     SHOULD_REDIRECT = set(("application/x-www-form-urlencoded", "multipart/form-data",))
 
-    def api_ok(self, redirect: str, data: dict = {"status": "ok"}) -> ApiOK:
+    def api_ok(self, redirect: str, data: Optional[dict] = None) -> ApiOK:
+        if data is None:
+            data = {"status": "ok"}
+        data["redirect"] = redirect
         content_type = flask.request.content_type or ""
         content_type = content_type.split(";")[0]
         if content_type in Endpoint.SHOULD_REDIRECT:

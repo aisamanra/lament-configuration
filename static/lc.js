@@ -46,7 +46,9 @@ $(document).ready(() => {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(body),
-            }).then(_ => window.location.href = url);
+            }).then(response => response.json())
+                .then(body => window.location.href = body['redirect'] || url)
+                .catch(err => window.location.href = url);
         });
     }
 });
