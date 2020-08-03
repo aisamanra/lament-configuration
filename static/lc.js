@@ -51,4 +51,15 @@ $(document).ready(() => {
                 .catch(err => window.location.href = url);
         });
     }
+
+    let searchText = $("#search_text");
+    console.log(`search text: ${searchText}`);
+    searchText.on('keypress', function (e) {
+        if (e.which == 13) {
+            let user = searchText.data('user');
+            let search = searchText.val();
+            window.location.href = `/u/${user}/search/${search}`
+            return false;
+        }
+    });
 });

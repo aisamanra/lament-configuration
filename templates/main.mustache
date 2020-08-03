@@ -21,6 +21,11 @@
         {{/user}}
       </div>
       <div class="right">
+        {{#user}}
+        <div class="search">
+          <input data-user="{{name}}" type="text" id="search_text"/>
+        </div>
+        {{/user}}
         <div class="srclink">
           <a href="https://git.infinitenegativeutility.com/getty/lament-configuration">source</a>
         </div>
