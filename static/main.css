@@ -221,3 +221,11 @@ form > div {
     margin-left: 1em;
     padding-left: 0.3em;
 }
+
+.search {
+    padding: 0em 2em;
+}
+
+#search_text {
+    width: 20em;
+}
