@@ -235,6 +235,24 @@ class GetTaggedLinks(Endpoint):
         )
 
 
+@endpoint("/u/<string:user>/search/<string:needle>")
+class GetStringSearch(Endpoint):
+    def html(self, user: str, needle: str):
+        u = m.User.by_slug(user)
+        pg = int(flask.request.args.get("page", 1))
+        links, pages = u.get_string_search(needle=needle, as_user=self.user, page=pg)
+        tags = u.get_tags()
+        linklist = v.LinkList(links=links, pages=pages, tags=tags, user=user)
+        return render(
+            "main",
+            v.Page(
+                title=f"search for '{needle}'",
+                content=render("linklist", linklist),
+                user=self.user,
+            ),
+        )
+
+
 @endpoint("/u/<string:user>/import")
 class PinboardImport(Endpoint):
     def html(self, user: str):

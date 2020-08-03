@@ -179,6 +179,22 @@ class User(Model):
         )
         return sorted((t.tag.to_view() for t in query), key=lambda t: t.name,)
 
+    def get_string_search(
+        self, needle: str, as_user: Optional["User"], page: int
+    ) -> Tuple[List[v.Link], v.Pagination]:
+        """
+        Find all links that contain the string `needle` somewhere in their URL or title
+        """
+        query = Link.select().where(
+            (Link.user == self)
+            & ((self == as_user) | (Link.private == False))
+            & (Link.name.contains(needle) | Link.description.contains(needle))
+        )
+        links = query.order_by(-Link.created).paginate(page, c.app.per_page)
+        link_views = [l.to_view(as_user) for l in links]
+        pagination = v.Pagination.from_total(page, query.count())
+        return link_views, pagination
+
 
 class Link(Model):
     """
