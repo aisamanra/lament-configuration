@@ -63,6 +63,10 @@ def ForeignKeyField(key: object, null: bool = None, backref: str = "") -> Any:
     pass
 
 
+def IntegerField(default: int = 0, unique: bool = False, null: bool = None) -> Any:
+    pass
+
+
 class IntegrityError(Exception):
     pass
 
