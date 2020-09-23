@@ -77,12 +77,11 @@ def tc(c):
         "MYPYPATH=$(pwd)/stubs poetry run mypy --check-untyped-defs lc/*.py tests/*.py scripts/*.py"
     )
 
+
 @task
 def lint(c):
     """Typecheck with mypy"""
-    c.run(
-        "poetry run flake8"
-    )
+    c.run("poetry run flake8")
 
 
 @task
