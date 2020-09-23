@@ -21,6 +21,7 @@ def run(c, port=8080, host="127.0.0.1"):
         },
     )
 
+
 @task
 def migrate(c, port=8080, host="127.0.0.1"):
     """Run migrations to update the database schema"""
@@ -33,6 +34,7 @@ def migrate(c, port=8080, host="127.0.0.1"):
             "LC_SECRET_KEY": f"TESTING_KEY",
         },
     )
+
 
 @task
 def install(c):
