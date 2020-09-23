@@ -26,7 +26,10 @@ class Pagination(View):
 
     @classmethod
     def from_total(cls, current, total) -> "Pagination":
-        return cls(current=current, last=((total - 1) // c.app.per_page) + 1,)
+        return cls(
+            current=current,
+            last=((total - 1) // c.app.per_page) + 1,
+        )
 
 
 @dataclass
@@ -91,8 +94,8 @@ class HierTagList:
             else:
                 chunks = tag.split("/")
                 focus = groups[chunks[0]] = groups.get(chunks[0], {})
-                for c in chunks[1:]:
-                    focus[c] = focus = focus.get(c, {})
+                for chunk in chunks[1:]:
+                    focus[chunk] = focus = focus.get(chunk, {})
 
         return "\n".join(self.render_html(k, v) for k, v in groups.items())
 

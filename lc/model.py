@@ -52,7 +52,10 @@ class User(Model):
     def from_request(user: r.User) -> "User":
         passhash = pwd.hash(user.password)
         try:
-            return User.create(name=user.name, passhash=passhash,)
+            return User.create(
+                name=user.name,
+                passhash=passhash,
+            )
         except peewee.IntegrityError:
             raise e.UserExists(name=user.name)
 
@@ -190,7 +193,10 @@ class User(Model):
             .where((SelfTag.tag == tag) & (SelfTag.id != HasTag.id))
             .group_by(HasTag.tag)
         )
-        return sorted((t.tag.to_view() for t in query), key=lambda t: t.name,)
+        return sorted(
+            (t.tag.to_view() for t in query),
+            key=lambda t: t.name,
+        )
 
     def get_string_search(
         self, needle: str, as_user: Optional["User"], page: int
@@ -414,7 +420,10 @@ class UserInvite(Model):
     def manufacture(creator: User) -> "UserInvite":
         now = datetime.datetime.now()
         token = c.app.serialize_token(
-            {"created_at": now.timestamp(), "created_by": creator.name,}
+            {
+                "created_at": now.timestamp(),
+                "created_by": creator.name,
+            }
         )
         return UserInvite.create(
             token=token,

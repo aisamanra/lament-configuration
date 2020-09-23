@@ -64,7 +64,12 @@ class Endpoint:
             # in error handlers, so we should be resilient to that!
             return None
 
-    SHOULD_REDIRECT = set(("application/x-www-form-urlencoded", "multipart/form-data",))
+    SHOULD_REDIRECT = set(
+        (
+            "application/x-www-form-urlencoded",
+            "multipart/form-data",
+        )
+    )
 
     def api_ok(self, redirect: str, data: Optional[dict] = None) -> ApiOK:
         if data is None:

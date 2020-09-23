@@ -17,7 +17,7 @@ environ-config = "^20.1.0"
 [tool.poetry.dev-dependencies]
 pytest = "^5.4.1"
 invoke = "^1.4.1"
-black = "^19.10b0"
+black = "^20.8b0"
 requests = "^2.23.0"
 mypy = "^0.770"
 uwsgi = "^2.0.18"

@@ -23,7 +23,11 @@ class Index(Endpoint):
 
         return render(
             "main",
-            v.Page(title="main", content=render("linklist", linklist), user=self.user,),
+            v.Page(
+                title="main",
+                content=render("linklist", linklist),
+                user=self.user,
+            ),
         )
 
 
@@ -39,7 +43,12 @@ class Auth(Endpoint):
 class Login(Endpoint):
     def html(self):
         return render(
-            "main", v.Page(title="login", content=render("login"), user=self.user,)
+            "main",
+            v.Page(
+                title="login",
+                content=render("login"),
+                user=self.user,
+            ),
         )
 
 
@@ -70,7 +79,9 @@ class CreateUser(Endpoint):
         return render(
             "main",
             v.Page(
-                title="add user", user=self.user, content=render("add_user", add_user),
+                title="add user",
+                user=self.user,
+                content=render("add_user", add_user),
             ),
         )
 
@@ -152,11 +163,18 @@ class CreateLink(Endpoint):
         url = flask.request.args.get("url", "")
         name = flask.request.args.get("name", "")
         tags = u.get_tags()
-        defaults = v.AddLinkDefaults(user=user, name=name, url=url, all_tags=tags,)
+        defaults = v.AddLinkDefaults(
+            user=user,
+            name=name,
+            url=url,
+            all_tags=tags,
+        )
         return render(
             "main",
             v.Page(
-                title="login", content=render("add_link", defaults), user=self.user,
+                title="login",
+                content=render("add_link", defaults),
+                user=self.user,
             ),
         )
 
@@ -260,7 +278,9 @@ class PinboardImport(Endpoint):
         return render(
             "main",
             v.Page(
-                title=f"import pinboard data", content=render("import"), user=self.user,
+                title=f"import pinboard data",
+                content=render("import"),
+                user=self.user,
             ),
         )
 

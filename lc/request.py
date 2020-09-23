@@ -32,7 +32,10 @@ class User(Request):
 
     @classmethod
     def from_form(cls, form: Mapping[str, str]):
-        return cls(name=form["username"], password=form["password"],)
+        return cls(
+            name=form["username"],
+            password=form["password"],
+        )
 
     def to_token(self) -> str:
         return c.app.serialize_token({"name": self.name})
@@ -47,7 +50,11 @@ class NewUser(Request):
 
     @classmethod
     def from_form(cls, form: Mapping[str, str]):
-        return cls(name=form["username"], n1=form["n1"], n2=form["n2"],)
+        return cls(
+            name=form["username"],
+            n1=form["n1"],
+            n2=form["n2"],
+        )
 
     def to_user_request(self) -> User:
         if self.n1 != self.n2:
@@ -65,7 +72,11 @@ class PasswordChange(Request):
 
     @classmethod
     def from_form(cls, form: Mapping[str, str]):
-        return cls(old=form["old"], n1=form["n1"], n2=form["n2"],)
+        return cls(
+            old=form["old"],
+            n1=form["n1"],
+            n2=form["n2"],
+        )
 
     def require_match(self):
         if self.n1 != self.n2:

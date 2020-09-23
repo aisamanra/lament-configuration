@@ -21,7 +21,12 @@ class TestRoutes:
         c.app.close_db()
 
     def mk_user(self, username="gdritter", password="foo") -> m.User:
-        return m.User.from_request(r.User(name=username, password=password,))
+        return m.User.from_request(
+            r.User(
+                name=username,
+                password=password,
+            )
+        )
 
     def test_index(self):
         result = self.app.get("/")
@@ -132,19 +137,22 @@ class TestRoutes:
 
         # this should be fine
         check_link = self.app.get(
-            f"/u/{u.name}/l/{link_id}", headers={"Content-Type": "application/json"},
+            f"/u/{u.name}/l/{link_id}",
+            headers={"Content-Type": "application/json"},
         )
         assert check_link.status == "200 OK"
         assert check_link.json["url"] == sample_url
 
         # delete the link
         delete_link = self.app.delete(
-            f"/u/{u.name}/l/{link_id}", headers={"Authorization": f"Bearer {token}"},
+            f"/u/{u.name}/l/{link_id}",
+            headers={"Authorization": f"Bearer {token}"},
         )
         assert delete_link.status == "200 OK"
 
         # make sure it is gone
         bad_result = self.app.get(
-            f"/u/{u.name}/l/{link_id}", headers={"Content-Type": "application/json"},
+            f"/u/{u.name}/l/{link_id}",
+            headers={"Content-Type": "application/json"},
         )
         assert bad_result.status == "404 NOT FOUND"
