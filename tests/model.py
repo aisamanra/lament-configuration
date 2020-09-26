@@ -1,10 +1,5 @@
-import os
-import peewee
 import pytest
-
-os.environ["LC_DB_PATH"] = ":memory:"
-os.environ["LC_SECRET_KEY"] = "TEST_KEY"
-os.environ["LC_APP_PATH"] = "localhost"
+import config  # noqa: F401
 
 import lc.config as c
 import lc.error as e
@@ -55,9 +50,9 @@ class Testdb:
 
     def test_no_duplicate_users(self):
         name = "gdritter"
-        u1 = self.mk_user(name=name)
+        self.mk_user(name=name)
         with pytest.raises(e.UserExists):
-            u2 = self.mk_user(name=name)
+            self.mk_user(name=name)
 
     def test_get_or_create_tag(self):
         u = self.mk_user()
@@ -104,16 +99,16 @@ class Testdb:
     def test_add_hierarchy(self):
         u = self.mk_user()
         req = r.Link("http://foo.com", "foo", "", False, ["food/bread/rye"])
-        l = m.Link.from_request(u, req)
-        assert l.name == req.name
-        tag_names = {t.tag.name for t in l.tags}  # type: ignore
+        link = m.Link.from_request(u, req)
+        assert link.name == req.name
+        tag_names = {t.tag.name for t in link.tags}  # type: ignore
         assert tag_names == {"food", "food/bread", "food/bread/rye"}
 
     def test_bad_tag(self):
         u = self.mk_user()
         req = r.Link("http://foo.com", "foo", "", False, ["foo{bar}"])
         with pytest.raises(e.BadTagName):
-            l = m.Link.from_request(u, req)
+            m.Link.from_request(u, req)
 
     def test_create_invite(self):
         u = self.mk_user()
@@ -158,32 +153,32 @@ class Testdb:
         with pytest.raises(e.NoSuchInvite):
             m.User.from_invite(r.User(name="u4", password="u4"), "a-non-existent-token")
 
-    def check_tags(self, l, tags):
-        present = set(map(lambda hastag: hastag.tag.name, l.tags))
+    def check_tags(self, link, tags):
+        present = set(map(lambda hastag: hastag.tag.name, link.tags))
         assert present == set(tags)
 
     def test_edit_link(self):
         u = self.mk_user()
 
         req = r.Link("http://foo.com", "foo", "", False, ["foo", "bar"])
-        l = m.Link.from_request(u, req)
-        assert l.name == req.name
-        assert l.tags == ["foo", "bar"]  # type: ignore
+        link = m.Link.from_request(u, req)
+        assert link.name == req.name
+        assert link.tags == ["foo", "bar"]  # type: ignore
 
         # check the in-place update
         req.name = "bar"
         req.tags = ["bar", "baz"]
         req.private = True
-        l.update_from_request(u, req)
-        assert l.name == req.name
-        assert l.private
-        assert l.created != req.created
-        self.check_tags(l, req.tags)
+        link.update_from_request(u, req)
+        assert link.name == req.name
+        assert link.private
+        assert link.created != req.created
+        self.check_tags(link, req.tags)
 
         # check that the link was persisted
-        l2 = m.Link.by_id(l.id)
-        assert l2
-        assert l2.name == req.name
-        assert l2.private
-        assert l2.created != req.created
-        self.check_tags(l2, req.tags)
+        link2 = m.Link.by_id(link.id)
+        assert link2
+        assert link2.name == req.name
+        assert link2.private
+        assert link2.created != req.created
+        self.check_tags(link2, req.tags)

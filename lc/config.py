@@ -46,7 +46,7 @@ class App:
     def in_memory_db(self):
         try:
             self.db.close()
-        except:
+        except Exception:
             pass
         self.db.init(":memory:")
 
