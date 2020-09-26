@@ -18,6 +18,11 @@ steps:
   commands:
   - inv tc
 
+- name: lint
+  image: gdritter/lament-configuration-env:latest
+  commands:
+  - inv lint
+
 - name: test
   image: gdritter/lament-configuration-env:latest
   commands:
