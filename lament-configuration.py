@@ -1,6 +1,4 @@
-import os
-
-from lc.app import app
+from lc.app import app  # noqa: F401
 import lc.config
 import lc.model
 

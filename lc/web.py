@@ -27,7 +27,7 @@ class Endpoint:
         # try finding the token
         token = None
         # first check the HTTP headers
-        if (auth := flask.request.headers.get("Authorization", None)) :
+        if auth := flask.request.headers.get("Authorization", None):
             token = auth.split()[1]
         # if that fails, check the session
         elif flask.session.get("auth", None):
@@ -40,7 +40,7 @@ class Endpoint:
         # it contains a valid user password, too
         try:
             payload = c.app.load_token(token)
-        except:
+        except Exception:
             # TODO: be more specific about what errors we're catching
             # here!
             return
@@ -58,13 +58,18 @@ class Endpoint:
     def just_get_user() -> Optional[m.User]:
         try:
             return Endpoint().user
-        except:
+        except Exception:
             # this is going to catch everything on the off chance that
             # there's a bug in the user-validation code: this is used
             # in error handlers, so we should be resilient to that!
             return None
 
-    SHOULD_REDIRECT = set(("application/x-www-form-urlencoded", "multipart/form-data",))
+    SHOULD_REDIRECT = set(
+        (
+            "application/x-www-form-urlencoded",
+            "multipart/form-data",
+        )
+    )
 
     def api_ok(self, redirect: str, data: Optional[dict] = None) -> ApiOK:
         if data is None:
@@ -164,6 +169,7 @@ def endpoint(route: str):
     def do_endpoint(endpoint_class: Type[Endpoint]):
         # we'll just make that explicit here
         assert Endpoint in endpoint_class.__bases__
+
         # finally, we need a function that we'll give to Flask in
         # order to actually dispatch to. This is the actual routing
         # function, which is why it just creates an instance of the
@@ -200,7 +206,6 @@ def render(name: str, data: Optional[v.View] = None) -> str:
 
 @c.app.app.errorhandler(404)
 def handle_404(e):
-    user = Endpoint.just_get_user()
     url = flask.request.path
     error = v.Error(code=404, message=f"Page {url} not found")
     page = v.Page(title="not found", content=render("error", error), user=None)
@@ -209,8 +214,7 @@ def handle_404(e):
 
 @c.app.app.errorhandler(500)
 def handle_500(e):
-    user = Endpoint.just_get_user()
     c.log(f"Internal error: {e}")
-    error = v.Error(code=500, message=f"An unexpected error occurred")
+    error = v.Error(code=500, message="An unexpected error occurred")
     page = v.Page(title="500", content=render("error", error), user=None)
     return render("main", page)

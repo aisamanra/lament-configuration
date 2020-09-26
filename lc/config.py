@@ -29,7 +29,8 @@ class App:
     def from_env() -> "App":
         config = environ.to_config(Config)
         app = flask.Flask(
-            __name__, static_folder=os.path.join(os.getcwd(), config.static_path),
+            __name__,
+            static_folder=os.path.join(os.getcwd(), config.static_path),
         )
         app.secret_key = config.secret_key
         return App(
@@ -45,7 +46,7 @@ class App:
     def in_memory_db(self):
         try:
             self.db.close()
-        except:
+        except Exception:
             pass
         self.db.init(":memory:")
 

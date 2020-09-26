@@ -1,7 +1,4 @@
-import contextlib
-import os
 import flask
-import sys
 
 import lc.config as c
 import lc.error as e
@@ -23,7 +20,11 @@ class Index(Endpoint):
 
         return render(
             "main",
-            v.Page(title="main", content=render("linklist", linklist), user=self.user,),
+            v.Page(
+                title="main",
+                content=render("linklist", linklist),
+                user=self.user,
+            ),
         )
 
 
@@ -39,7 +40,12 @@ class Auth(Endpoint):
 class Login(Endpoint):
     def html(self):
         return render(
-            "main", v.Page(title="login", content=render("login"), user=self.user,)
+            "main",
+            v.Page(
+                title="login",
+                content=render("login"),
+                user=self.user,
+            ),
         )
 
 
@@ -70,7 +76,9 @@ class CreateUser(Endpoint):
         return render(
             "main",
             v.Page(
-                title="add user", user=self.user, content=render("add_user", add_user),
+                title="add user",
+                user=self.user,
+                content=render("add_user", add_user),
             ),
         )
 
@@ -152,65 +160,72 @@ class CreateLink(Endpoint):
         url = flask.request.args.get("url", "")
         name = flask.request.args.get("name", "")
         tags = u.get_tags()
-        defaults = v.AddLinkDefaults(user=user, name=name, url=url, all_tags=tags,)
+        defaults = v.AddLinkDefaults(
+            user=user,
+            name=name,
+            url=url,
+            all_tags=tags,
+        )
         return render(
             "main",
             v.Page(
-                title="login", content=render("add_link", defaults), user=self.user,
+                title="login",
+                content=render("add_link", defaults),
+                user=self.user,
             ),
         )
 
     def api_post(self, user: str):
         u = self.require_authentication(user)
         req = self.request_data(r.Link)
-        l = m.Link.from_request(u, req)
-        return self.api_ok(l.link_url(), l.to_dict())
+        link = m.Link.from_request(u, req)
+        return self.api_ok(link.link_url(), link.to_dict())
 
 
-@endpoint("/u/<string:user>/l/<string:link>")
+@endpoint("/u/<string:user>/l/<string:link_id>")
 class GetLink(Endpoint):
-    def api_get(self, user: str, link: str):
+    def api_get(self, user: str, link_id: str):
         u = self.require_authentication(user)
-        l = u.get_link(int(link))
-        return self.api_ok(l.link_url(), l.to_dict())
+        link = u.get_link(int(link_id))
+        return self.api_ok(link.link_url(), link.to_dict())
 
-    def api_post(self, user: str, link: str):
+    def api_post(self, user: str, link_id: str):
         u = self.require_authentication(user)
-        l = u.get_link(int(link))
+        link = u.get_link(int(link_id))
         req = self.request_data(r.Link)
-        l.update_from_request(u, req)
-        raise e.LCRedirect(l.link_url())
+        link.update_from_request(u, req)
+        raise e.LCRedirect(link.link_url())
 
-    def api_delete(self, user: str, link: str):
+    def api_delete(self, user: str, link_id: str):
         u = self.require_authentication(user)
-        u.get_link(int(link)).delete_instance()
+        u.get_link(int(link_id)).delete_instance()
         return self.api_ok(u.base_url())
 
-    def html(self, user: str, link: str):
-        l = m.User.by_slug(user).get_link(int(link))
+    def html(self, user: str, link_id: str):
+        link = m.User.by_slug(user).get_link(int(link_id))
         return render(
             "main",
             v.Page(
-                title=f"link {l.name}",
+                title=f"link {link.name}",
                 content=render(
-                    "linklist", v.LinkList([l.to_view(self.user)], [], user=user)
+                    "linklist", v.LinkList([link.to_view(self.user)], [], user=user)
                 ),
                 user=self.user,
             ),
         )
 
 
-@endpoint("/u/<string:slug>/l/<string:link>/edit")
+@endpoint("/u/<string:slug>/l/<string:link_id>/edit")
 class EditLink(Endpoint):
-    def html(self, slug: str, link: str):
+    def html(self, slug: str, link_id: str):
         u = self.require_authentication(slug)
         all_tags = u.get_tags()
-        l = u.get_link(int(link))
+        link = u.get_link(int(link_id))
         return render(
             "main",
             v.Page(
                 title="login",
-                content=render("edit_link", v.SingleLink(l, all_tags)),
+                content=render("edit_link", v.SingleLink(link, all_tags)),
                 user=self.user,
             ),
         )
@@ -256,11 +271,13 @@ class GetStringSearch(Endpoint):
 @endpoint("/u/<string:user>/import")
 class PinboardImport(Endpoint):
     def html(self, user: str):
-        u = self.require_authentication(user)
+        _ = self.require_authentication(user)
         return render(
             "main",
             v.Page(
-                title=f"import pinboard data", content=render("import"), user=self.user,
+                title="import pinboard data",
+                content=render("import"),
+                user=self.user,
             ),
         )
 

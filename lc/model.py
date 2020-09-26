@@ -1,5 +1,4 @@
 from contextlib import contextmanager
-from dataclasses import dataclass
 import datetime
 import json
 from passlib.apps import custom_app_context as pwd
@@ -34,7 +33,7 @@ class Meta(Model):
     def fetch():
         try:
             return Meta.get(id=0)
-        except:
+        except Exception:
             meta = Meta.create(id=0)
             return meta
 
@@ -52,7 +51,10 @@ class User(Model):
     def from_request(user: r.User) -> "User":
         passhash = pwd.hash(user.password)
         try:
-            return User.create(name=user.name, passhash=passhash,)
+            return User.create(
+                name=user.name,
+                passhash=passhash,
+            )
         except peewee.IntegrityError:
             raise e.UserExists(name=user.name)
 
@@ -104,10 +106,11 @@ class User(Model):
         self, as_user: Optional["User"], page: int
     ) -> Tuple[List[v.Link], v.Pagination]:
         query = Link.select().where(
-            (Link.user == self) & ((self == as_user) | (Link.private == False))
+            (Link.user == self)
+            & ((self == as_user) | (Link.private == False))  # noqa: E712
         )
         links = query.order_by(-Link.created).paginate(page, c.app.per_page)
-        link_views = [l.to_view(as_user) for l in links]
+        link_views = [link.to_view(as_user) for link in links]
         pagination = v.Pagination.from_total(page, query.count())
         return link_views, pagination
 
@@ -140,38 +143,40 @@ class User(Model):
     def import_pinboard_data(self, stream):
         try:
             links = json.load(stream)
-        except json.decoder.JSONDecodeError as exn:
+        except json.decoder.JSONDecodeError:
             raise e.BadFileUpload("could not parse file as JSON")
 
         if not isinstance(links, list):
-            raise e.BadFileUpload(f"expected a list")
+            raise e.BadFileUpload("expected a list")
 
         # create and (for this session) cache the tags
         tags = {}
-        for l in links:
-            if "tags" not in l:
+        for link in links:
+            if "tags" not in link:
                 raise e.BadFileUpload("missing key {exn.args[0]}")
-            for t in l["tags"].split():
+            for t in link["tags"].split():
                 if t in tags:
                     continue
 
                 tags[t] = Tag.get_or_create_tag(self, t)
 
         with self.atomic():
-            for l in links:
+            for link in links:
                 try:
-                    time = datetime.datetime.strptime(l["time"], "%Y-%m-%dT%H:%M:%SZ")
+                    time = datetime.datetime.strptime(
+                        link["time"], "%Y-%m-%dT%H:%M:%SZ"
+                    )
                     ln = Link.create(
-                        url=l["href"],
-                        name=l["description"],
-                        description=l["extended"],
-                        private=l["shared"] == "no",
+                        url=link["href"],
+                        name=link["description"],
+                        description=link["extended"],
+                        private=link["shared"] == "no",
                         created=time,
                         user=self,
                     )
                 except KeyError as exn:
                     raise e.BadFileUpload(f"missing key {exn.args[0]}")
-                for t in l["tags"].split():
+                for t in link["tags"].split():
                     HasTag.get_or_create(link=ln, tag=tags[t])
 
     def get_tags(self) -> List[v.Tag]:
@@ -181,7 +186,9 @@ class User(Model):
         )
 
     def get_related_tags(self, tag: "Tag") -> List[v.Tag]:
-        # SELECT * from has_tag t1, has_tag t2, link l WHERE t1.link_id == l.id AND t2.link_id == l.id AND t1.id != t2.id AND t1 = self
+        # SELECT * from has_tag t1, has_tag t2, link l
+        #   WHERE t1.link_id == l.id AND t2.link_id == l.id
+        #   AND t1.id != t2.id AND t1 = self
         SelfTag = HasTag.alias()
         query = (
             HasTag.select(HasTag.tag)
@@ -190,7 +197,10 @@ class User(Model):
             .where((SelfTag.tag == tag) & (SelfTag.id != HasTag.id))
             .group_by(HasTag.tag)
         )
-        return sorted((t.tag.to_view() for t in query), key=lambda t: t.name,)
+        return sorted(
+            (t.tag.to_view() for t in query),
+            key=lambda t: t.name,
+        )
 
     def get_string_search(
         self, needle: str, as_user: Optional["User"], page: int
@@ -200,11 +210,11 @@ class User(Model):
         """
         query = Link.select().where(
             (Link.user == self)
-            & ((self == as_user) | (Link.private == False))
+            & ((self == as_user) | (Link.private == False))  # noqa: E712
             & (Link.name.contains(needle) | Link.description.contains(needle))
         )
         links = query.order_by(-Link.created).paginate(page, c.app.per_page)
-        link_views = [l.to_view(as_user) for l in links]
+        link_views = [link.to_view(as_user) for link in links]
         pagination = v.Pagination.from_total(page, query.count())
         return link_views, pagination
 
@@ -237,17 +247,17 @@ class Link(Model):
     ) -> Tuple[List["Link"], v.Pagination]:
         links = (
             Link.select()
-            .where((Link.user == as_user) | (Link.private == False))
+            .where((Link.user == as_user) | (Link.private == False))  # noqa: E712
             .order_by(-Link.created)
             .paginate(page, c.app.per_page)
         )
-        link_views = [l.to_view(as_user) for l in links]
+        link_views = [link.to_view(as_user) for link in links]
         pagination = v.Pagination.from_total(page, Link.select().count())
         return link_views, pagination
 
     @staticmethod
     def from_request(user: User, link: r.Link) -> "Link":
-        l = Link.create(
+        new_link = Link.create(
             url=link.url,
             name=link.name,
             description=link.description,
@@ -257,8 +267,8 @@ class Link(Model):
         )
         for tag_name in link.tags:
             tag = Tag.get_or_create_tag(user, tag_name)
-            HasTag.get_or_create(link=l, tag=tag)
-        return l
+            HasTag.get_or_create(link=new_link, tag=tag)
+        return new_link
 
     def update_from_request(self, user: User, link: r.Link):
         with self.atomic():
@@ -324,7 +334,10 @@ class Tag(Model):
             .join(Link)
             .where(
                 (HasTag.tag == self)
-                & ((HasTag.link.user == as_user) | (HasTag.link.private == False))
+                & (
+                    (HasTag.link.user == as_user)
+                    | (HasTag.link.private == False)  # noqa: E712
+                )
             )
         )
         links = [
@@ -337,7 +350,7 @@ class Tag(Model):
     def get_family(self) -> Iterator["Tag"]:
         yield self
         p = self
-        while (p := p.parent) :
+        while p := p.parent:
             yield p
 
     BAD_TAG_CHARS = set("{}[]\\()#?")
@@ -348,7 +361,7 @@ class Tag(Model):
 
     @staticmethod
     def get_or_create_tag(user: User, tag_name: str) -> "Tag":
-        if (t := Tag.get_or_none(name=tag_name, user=user)) :
+        if t := Tag.get_or_none(name=tag_name, user=user):
             return t
 
         if not Tag.is_valid_tag_name(tag_name):
@@ -406,7 +419,7 @@ class UserInvite(Model):
 
     @staticmethod
     def by_code(token: str) -> "UserInvite":
-        if (u := UserInvite.get_or_none(token=token)) :
+        if u := UserInvite.get_or_none(token=token):
             return u
         raise e.NoSuchInvite(invite=token)
 
@@ -414,7 +427,10 @@ class UserInvite(Model):
     def manufacture(creator: User) -> "UserInvite":
         now = datetime.datetime.now()
         token = c.app.serialize_token(
-            {"created_at": now.timestamp(), "created_by": creator.name,}
+            {
+                "created_at": now.timestamp(),
+                "created_by": creator.name,
+            }
         )
         return UserInvite.create(
             token=token,

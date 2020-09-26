@@ -1,6 +1,6 @@
 from typing import Any, List
 
-import pystache.loader
+import pystache.loader  # noqa: F401
 
 
 class Renderer:

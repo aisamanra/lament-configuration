@@ -1,4 +1,4 @@
-from typing import Any, Optional, TypeVar, Type, List
+from typing import Any, Optional, TypeVar, Type
 
 
 class Expression:

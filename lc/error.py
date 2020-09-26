@@ -72,7 +72,7 @@ class BadPassword(LCException):
 @dataclass
 class NotImplemented(LCException):
     def __str__(self):
-        return f"Bad request: no handler for route."
+        return "Bad request: no handler for route."
 
     def http_code(self) -> int:
         return 404
@@ -81,7 +81,7 @@ class NotImplemented(LCException):
 @dataclass
 class BadPermissions(LCException):
     def __str__(self):
-        return f"Insufficient permissions."
+        return "Insufficient permissions."
 
     def http_code(self) -> int:
         return 403
@@ -123,7 +123,7 @@ class AlreadyUsedInvite(LCException):
 @dataclass
 class MismatchedPassword(LCException):
     def __str__(self):
-        return f"Provided passwords do not match. Please check your passwords."
+        return "Provided passwords do not match. Please check your passwords."
 
     def http_code(self) -> int:
         return 400

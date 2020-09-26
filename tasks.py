@@ -16,8 +16,8 @@ def run(c, port=8080, host="127.0.0.1"):
         env={
             "FLASK_APP": "lament-configuration.py",
             "LC_APP_PATH": f"http://{host}:{port}",
-            "LC_DB_PATH": f"test.db",
-            "LC_SECRET_KEY": f"TESTING_KEY",
+            "LC_DB_PATH": "test.db",
+            "LC_SECRET_KEY": "TESTING_KEY",
         },
     )
 
@@ -26,12 +26,12 @@ def run(c, port=8080, host="127.0.0.1"):
 def migrate(c, port=8080, host="127.0.0.1"):
     """Run migrations to update the database schema"""
     c.run(
-        f"PYTHONPATH=$(pwd) poetry run python3 scripts/migrate.py",
+        "PYTHONPATH=$(pwd) poetry run python3 scripts/migrate.py",
         env={
             "FLASK_APP": "lament-configuration.py",
             "LC_APP_PATH": f"http://{host}:{port}",
-            "LC_DB_PATH": f"test.db",
-            "LC_SECRET_KEY": f"TESTING_KEY",
+            "LC_DB_PATH": "test.db",
+            "LC_SECRET_KEY": "TESTING_KEY",
         },
     )
 
@@ -79,8 +79,16 @@ def tc(c):
 
 
 @task
+def lint(c):
+    """Typecheck with mypy"""
+    c.run("poetry run flake8")
+
+
+@task
 def uwsgi(c, sock="lc.sock"):
     """Run a uwsgi server"""
     c.run(
-        f"poetry run uwsgi --socket {sock} --module lament-configuration:app --processes 4 --threads 2"
+        f"poetry run uwsgi --socket {sock} "
+        "--module lament-configuration:app "
+        "--processes 4 --threads 2"
     )

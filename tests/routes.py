@@ -1,10 +1,4 @@
-import os
-import json
-
-os.environ["LC_DB_PATH"] = ":memory:"
-os.environ["LC_SECRET_KEY"] = "TEST_KEY"
-os.environ["LC_APP_PATH"] = "localhost"
-
+import config  # noqa: F401
 import lc.config as c
 import lc.model as m
 import lc.request as r
@@ -21,7 +15,12 @@ class TestRoutes:
         c.app.close_db()
 
     def mk_user(self, username="gdritter", password="foo") -> m.User:
-        return m.User.from_request(r.User(name=username, password=password,))
+        return m.User.from_request(
+            r.User(
+                name=username,
+                password=password,
+            )
+        )
 
     def test_index(self):
         result = self.app.get("/")
@@ -30,7 +29,7 @@ class TestRoutes:
     def test_successful_api_login(self):
         username = "gdritter"
         password = "bar"
-        u = self.mk_user(username=username, password=password)
+        self.mk_user(username=username, password=password)
         result = self.app.post("/auth", json={"name": username, "password": password})
         assert result.status == "200 OK"
         decoded_token = c.app.load_token(result.json["token"])
@@ -39,14 +38,14 @@ class TestRoutes:
     def test_failed_api_login(self):
         username = "gdritter"
         password = "bar"
-        u = self.mk_user(username=username, password=password)
+        self.mk_user(username=username, password=password)
         result = self.app.post("/auth", json={"name": username, "password": "foo"})
         assert result.status == "403 FORBIDDEN"
 
     def test_successful_web_login(self):
         username = "gdritter"
         password = "bar"
-        u = self.mk_user(username=username, password=password)
+        self.mk_user(username=username, password=password)
         result = self.app.post(
             "/auth",
             data={"username": username, "password": password},
@@ -57,7 +56,7 @@ class TestRoutes:
     def test_failed_web_login(self):
         username = "gdritter"
         password = "bar"
-        u = self.mk_user(username=username, password=password)
+        self.mk_user(username=username, password=password)
         result = self.app.post("/auth", data={"username": username, "password": "foo"})
         assert result.status == "403 FORBIDDEN"
 
@@ -132,19 +131,22 @@ class TestRoutes:
 
         # this should be fine
         check_link = self.app.get(
-            f"/u/{u.name}/l/{link_id}", headers={"Content-Type": "application/json"},
+            f"/u/{u.name}/l/{link_id}",
+            headers={"Content-Type": "application/json"},
         )
         assert check_link.status == "200 OK"
         assert check_link.json["url"] == sample_url
 
         # delete the link
         delete_link = self.app.delete(
-            f"/u/{u.name}/l/{link_id}", headers={"Authorization": f"Bearer {token}"},
+            f"/u/{u.name}/l/{link_id}",
+            headers={"Authorization": f"Bearer {token}"},
         )
         assert delete_link.status == "200 OK"
 
         # make sure it is gone
         bad_result = self.app.get(
-            f"/u/{u.name}/l/{link_id}", headers={"Content-Type": "application/json"},
+            f"/u/{u.name}/l/{link_id}",
+            headers={"Content-Type": "application/json"},
         )
         assert bad_result.status == "404 NOT FOUND"
