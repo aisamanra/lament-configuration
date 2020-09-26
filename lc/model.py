@@ -247,13 +247,13 @@ class Link(Model):
             .order_by(-Link.created)
             .paginate(page, c.app.per_page)
         )
-        link_views = [l.to_view(as_user) for l in links]
+        link_views = [link.to_view(as_user) for link in links]
         pagination = v.Pagination.from_total(page, Link.select().count())
         return link_views, pagination
 
     @staticmethod
     def from_request(user: User, link: r.Link) -> "Link":
-        l = Link.create(
+        new_link = Link.create(
             url=link.url,
             name=link.name,
             description=link.description,
@@ -263,8 +263,8 @@ class Link(Model):
         )
         for tag_name in link.tags:
             tag = Tag.get_or_create_tag(user, tag_name)
-            HasTag.get_or_create(link=l, tag=tag)
-        return l
+            HasTag.get_or_create(link=new_link, tag=tag)
+        return new_link
 
     def update_from_request(self, user: User, link: r.Link):
         with self.atomic():
@@ -343,7 +343,7 @@ class Tag(Model):
     def get_family(self) -> Iterator["Tag"]:
         yield self
         p = self
-        while (p := p.parent) :
+        while p := p.parent:
             yield p
 
     BAD_TAG_CHARS = set("{}[]\\()#?")
@@ -354,7 +354,7 @@ class Tag(Model):
 
     @staticmethod
     def get_or_create_tag(user: User, tag_name: str) -> "Tag":
-        if (t := Tag.get_or_none(name=tag_name, user=user)) :
+        if t := Tag.get_or_none(name=tag_name, user=user):
             return t
 
         if not Tag.is_valid_tag_name(tag_name):
@@ -412,7 +412,7 @@ class UserInvite(Model):
 
     @staticmethod
     def by_code(token: str) -> "UserInvite":
-        if (u := UserInvite.get_or_none(token=token)) :
+        if u := UserInvite.get_or_none(token=token):
             return u
         raise e.NoSuchInvite(invite=token)
 
