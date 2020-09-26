@@ -106,7 +106,8 @@ class User(Model):
         self, as_user: Optional["User"], page: int
     ) -> Tuple[List[v.Link], v.Pagination]:
         query = Link.select().where(
-            (Link.user == self) & ((self == as_user) | (Link.private == False))  # noqa: E712
+            (Link.user == self)
+            & ((self == as_user) | (Link.private == False))  # noqa: E712
         )
         links = query.order_by(-Link.created).paginate(page, c.app.per_page)
         link_views = [link.to_view(as_user) for link in links]
@@ -162,7 +163,9 @@ class User(Model):
         with self.atomic():
             for link in links:
                 try:
-                    time = datetime.datetime.strptime(link["time"], "%Y-%m-%dT%H:%M:%SZ")
+                    time = datetime.datetime.strptime(
+                        link["time"], "%Y-%m-%dT%H:%M:%SZ"
+                    )
                     ln = Link.create(
                         url=link["href"],
                         name=link["description"],
@@ -331,7 +334,10 @@ class Tag(Model):
             .join(Link)
             .where(
                 (HasTag.tag == self)
-                & ((HasTag.link.user == as_user) | (HasTag.link.private == False))  # noqa: E712
+                & (
+                    (HasTag.link.user == as_user)
+                    | (HasTag.link.private == False)  # noqa: E712
+                )
             )
         )
         links = [
