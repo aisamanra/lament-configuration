@@ -32,6 +32,8 @@ class App:
             __name__,
             static_folder=os.path.join(os.getcwd(), config.static_path),
         )
+        # 16MB
+        app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
         app.secret_key = config.secret_key
         return App(
             config=config,

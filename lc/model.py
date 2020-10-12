@@ -353,7 +353,7 @@ class Tag(Model):
         while p := p.parent:
             yield p
 
-    BAD_TAG_CHARS = set("{}[]\\()#?")
+    BAD_TAG_CHARS = set("{}[]\\#?")
 
     @staticmethod
     def is_valid_tag_name(tag_name: str) -> bool:
