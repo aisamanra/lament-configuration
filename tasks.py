@@ -65,9 +65,17 @@ def checkfmt(c):
 
 
 @task
-def populate(c):
+def populate(c, port=8080, host="127.0.0.1"):
     """Populate the test database with fake-ish data"""
-    c.run("PYTHONPATH=$(pwd) poetry run python3 ./scripts/populate.py")
+    c.run(
+        "PYTHONPATH=$(pwd) poetry run python3 ./scripts/populate.py",
+        env={
+            "FLASK_APP": "lament-configuration.py",
+            "LC_APP_PATH": f"http://{host}:{port}",
+            "LC_DB_PATH": "test.db",
+            "LC_SECRET_KEY": "TESTING_KEY",
+        },
+    )
 
 
 @task
