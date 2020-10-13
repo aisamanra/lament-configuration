@@ -33,7 +33,7 @@ class Model:
     def save(self):
         pass
 
-    def delete_instance(self) -> Any:
+    def delete_instance(self, recursive: bool = False) -> Any:
         pass
 
     @classmethod

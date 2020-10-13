@@ -313,6 +313,10 @@ class Link(Model):
             for ht in HasTag().select(Tag.name).join(Tag).where(HasTag.link == self)
         ]
 
+    def full_delete(self):
+        self.delete_instance(recursive=True)
+        Tag.clean()
+
 
 class Tag(Model):
     """

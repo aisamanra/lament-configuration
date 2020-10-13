@@ -198,7 +198,7 @@ class GetLink(Endpoint):
 
     def api_delete(self, user: str, link_id: str):
         u = self.require_authentication(user)
-        u.get_link(int(link_id)).delete_instance()
+        u.get_link(int(link_id)).full_delete()
         return self.api_ok(u.base_url())
 
     def html(self, user: str, link_id: str):
