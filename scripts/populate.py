@@ -8,6 +8,7 @@ import lc.request as r
 
 
 def main():
+    c.app.init_db()
     m.create_tables()
 
     u = m.User.get_or_none(name="gdritter")
