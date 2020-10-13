@@ -6,8 +6,8 @@ function confirmDelete(url, id) {
     let link = $(`#delete_${id}`);
     let confirm = link.append(
         `<span class="deleteconfirm" id="confirm_${id}">Are you sure?
-           <a id="do_delete_${id}">yes</a>
-           <a id="cancel_delete_${id}">no</a>
+           <a id="do_delete_${id}" class="deletelink yesdelete">yes</a>
+           <a id="cancel_delete_${id}" class="deletelink">no</a>
          </span>`);
     $(document).on('click', `a#do_delete_${id}`, function() {
         var req = new XMLHttpRequest();

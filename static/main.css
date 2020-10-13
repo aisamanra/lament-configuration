@@ -177,14 +177,17 @@ form > div {
     margin: 0em 1em;
 }
 
+.deletelink {
+    cursor: pointer;
+}
 
 .deleteconfirm {
     padding-left: 1em;
     font-size: small;
 }
 
-.deleteconfirm a {
-    color: #f00;
+a.yesdelete {
+    color: #f00 !important;
 }
 
 .errorpane {
