@@ -182,7 +182,7 @@ class User(Model):
     def get_tags(self) -> List[v.Tag]:
         return sorted(
             (t.to_view() for t in self.tags),  # type: ignore
-            key=lambda t: t.name,
+            key=lambda t: t.name.upper(),
         )
 
     def get_related_tags(self, tag: "Tag") -> List[v.Tag]:
