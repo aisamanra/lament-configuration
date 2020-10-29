@@ -10,5 +10,8 @@
         <a class="deletelink" onClick="confirmDelete('{{link_url}}', {{id}})" >delete</a>
       </span>
     {{/is_mine}}
+    {{^is_mine}}
+      &mdash; <a href="/u/{{user}}">@{{user}}</a>
+    {{/is_mine}}
   </div>
 </div>
