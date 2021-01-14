@@ -7,10 +7,12 @@ def test(c):
     """Run all the provided tests"""
     c.run("poetry run python -m pytest tests/*.py -W ignore::DeprecationWarning")
 
+
 @task
 def webpack(c):
     """Run the webpack build"""
     c.run("yarn webpack")
+
 
 @task(webpack)
 def run(c, port=8080, host="127.0.0.1"):
