@@ -7,7 +7,7 @@
     {{#is_mine}}
       <a href="{{link_url}}/edit">edit</a>
       <span id="delete_{{id}}">
-        <a class="deletelink" onClick="confirmDelete('{{link_url}}', {{id}})" >delete</a>
+        <a class="deletelink" data-url="{{link_url}}" data-link-id="{{id}}">delete</a>
       </span>
     {{/is_mine}}
     {{^is_mine}}
