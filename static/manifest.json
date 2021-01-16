@@ -1,0 +1,29 @@
+{
+  "short_name": "Lament Configuration",
+  "name": "Lament Configuration",
+  "start_url": "/",
+  "scope": "/",
+  "display": "minimal-ui",
+  "icons": [
+    {
+      "src": "/static/lc_192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/static/lc_512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "share_target": {
+    "action": "/add-link",
+    "method": "GET",
+    "enctype": "application/x-www-form-urlencoded",
+    "params": {
+      "title": "name",
+      "text": "text",
+      "url": "url"
+    }
+  }
+}

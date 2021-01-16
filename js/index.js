@@ -27,6 +27,11 @@ let confirmDelete = (url, id) => {
 };
 
 document.addEventListener("DOMContentLoaded", () => {
+  if ('serviceWorker' in navigator) {
+    // TODO(trevor) does it matter if this fails?
+    navigator.serviceWorker.register('/service-worker.js')
+  }
+
   $(".deletelink").each((idx, elem) => {
     $(elem).on("click", (event) => {
       confirmDelete(event.target.dataset.url, event.target.dataset.linkId);
@@ -67,4 +72,5 @@ document.addEventListener("DOMContentLoaded", () => {
       return false;
     }
   });
+
 });
