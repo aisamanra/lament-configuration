@@ -46,6 +46,7 @@ def migrate(c, port=8080, host="127.0.0.1"):
 def install(c):
     """Install the listed dependencies into a virtualenv"""
     c.run("poetry install")
+    c.run("yarn install")
 
 
 @task
