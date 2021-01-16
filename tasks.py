@@ -9,6 +9,12 @@ def test(c):
 
 
 @task
+def webpack(c):
+    """Run the webpack build"""
+    c.run("yarn webpack")
+
+
+@task(webpack)
 def run(c, port=8080, host="127.0.0.1"):
     """Run a debug server locally"""
     c.run(
@@ -40,6 +46,7 @@ def migrate(c, port=8080, host="127.0.0.1"):
 def install(c):
     """Install the listed dependencies into a virtualenv"""
     c.run("poetry install")
+    c.run("yarn install")
 
 
 @task
@@ -92,7 +99,7 @@ def lint(c):
     c.run("poetry run flake8")
 
 
-@task
+@task(webpack)
 def uwsgi(c, sock="lc.sock"):
     """Run a uwsgi server"""
     c.run(

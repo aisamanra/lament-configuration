@@ -1,2 +1,4 @@
 test.db
 .mypy_cache
+node_modules
+static/*.js
