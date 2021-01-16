@@ -32,11 +32,6 @@ document.addEventListener("DOMContentLoaded", () => {
       confirmDelete(event.target.dataset.url, event.target.dataset.linkId);
     });
   });
-  // for (let link of document.getElementsByClassName('deletelink')) {
-  //   link.onclick = (event) => {
-  //     confirmDelete(event.target.dataset.url, event.target.dataset.linkId);
-  //   }
-  // }
 
   let input = document.querySelector('.tagtest');
   if (input) {
