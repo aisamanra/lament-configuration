@@ -1,5 +1,5 @@
 import Tagify from '@yaireo/tagify';
-import $ from 'jquery';
+import $ from 'cash-dom';
 
 let confirmDelete = (url, id) => {
   if ($(`#confirm_${id}`).length > 0) {
@@ -13,12 +13,13 @@ let confirmDelete = (url, id) => {
            <a id="cancel_delete_${id}" class="deletelink">no</a>
          </span>`);
   $(document).on('click', `a#do_delete_${id}`, function() {
-    var req = new XMLHttpRequest();
-    req.addEventListener("load", function() {
-      $(`#link_${id}`).remove();
-    });
-    req.open("DELETE", url);
-    req.send();
+    fetch(url, {
+      method: 'DELETE',
+      headers: {'Content-Type': 'application/json'},
+      body: 'null',
+    }).then(response => response.text())
+      .then(response => { $(`#link_${id}`).remove()})
+      .catch(err => console.log(err));
   });
   $(document).on('click', `a#cancel_delete_${id}`, function() {
     $(`#confirm_${id}`).remove();
@@ -26,18 +27,23 @@ let confirmDelete = (url, id) => {
 };
 
 document.addEventListener("DOMContentLoaded", () => {
-  for (let link of document.getElementsByClassName('deletelink')) {
-    link.onclick = (event) => {
+  $(".deletelink").each((idx, elem) => {
+    $(elem).on("click", (event) => {
       confirmDelete(event.target.dataset.url, event.target.dataset.linkId);
-    }
-  }
+    });
+  });
+  // for (let link of document.getElementsByClassName('deletelink')) {
+  //   link.onclick = (event) => {
+  //     confirmDelete(event.target.dataset.url, event.target.dataset.linkId);
+  //   }
+  // }
 
   let input = document.querySelector('.tagtest');
   if (input) {
     let tags = new Tagify(input);
 
     let form = $("form[name=\"edit_link\"]")
-    form.submit(event => {
+    form.on('submit', event => {
       event.preventDefault();
       let url = form.attr("action");
       let body = {

@@ -11,6 +11,6 @@
   },
   "dependencies": {
     "@yaireo/tagify": "^3.22.0",
-    "jquery": "^3.5.1"
+    "cash-dom": "^8.1.0"
   }
 }
