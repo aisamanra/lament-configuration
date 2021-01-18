@@ -290,3 +290,29 @@ class PinboardImport(Endpoint):
             raise e.BadFileUpload("no file selected")
         u.import_pinboard_data(file.stream)
         return self.api_ok(u.base_url())
+
+
+@endpoint("/service-worker.js")
+class ServiceWorker(Endpoint):
+    def route(self, *args, **kwargs):
+        return flask.send_file("../js/serviceWorker.js", mimetype="text/javascript")
+
+@endpoint("/add-link")
+class AddLink(Endpoint):
+    def html(self):
+        if not self.user:
+            raise e.LCRedirect("/login")
+
+
+        args = flask.request.args.copy()
+
+        # Android sets the text field to the url only
+        url = args.get("url", None)
+        text = args.get("text", "")
+        if url is None and text.startswith("http"):
+            args["url"] = text
+            del args['text']
+
+        args = "&".join(f"{key}={value}" for key, value in args.items())
+
+        raise e.LCRedirect(f"/u/{self.user.name}/l?{args}")
