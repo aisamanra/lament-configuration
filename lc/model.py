@@ -84,8 +84,8 @@ class User(Model):
 
     @staticmethod
     def login(user: r.User) -> Tuple["User", str]:
-        u = User.by_slug(user.name)
-        if not u.authenticate(user.password):
+        u = User.by_slug(user.name.strip())
+        if not u.authenticate(user.password.strip()):
             raise e.BadPassword(name=user.name)
         return u, user.to_token()
 
