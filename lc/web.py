@@ -162,6 +162,7 @@ class Endpoint:
 # bit. This out method, `endpoint`, takes the route...
 def endpoint(route: str):
     """Route an endpoint using our semi-smart routing machinery"""
+
     # but `endpoint` returns another function which is going to be
     # called with the result of the definition after it. The argument
     # to what we're calling `do_endpoint` here is going to be the

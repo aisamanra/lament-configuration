@@ -70,7 +70,6 @@ if sys.stderr.isatty():
         sys.stderr.write(str(msg))
         sys.stderr.write("\n")
 
-
 else:
 
     def log(msg):

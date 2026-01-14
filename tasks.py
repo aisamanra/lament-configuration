@@ -5,7 +5,7 @@ from invoke import task
 @task
 def test(c):
     """Run all the provided tests"""
-    c.run("poetry run python -m pytest tests/*.py -W ignore::DeprecationWarning")
+    c.run("uv run python -m pytest tests/*.py -W ignore::DeprecationWarning")
 
 
 @task
@@ -18,7 +18,7 @@ def webpack(c):
 def run(c, port=8080, host="127.0.0.1"):
     """Run a debug server locally"""
     c.run(
-        f"poetry run python -m flask run -p {port} -h {host}",
+        f"uv run python -m flask run -p {port} -h {host}",
         env={
             "FLASK_APP": "lament-configuration.py",
             "LC_APP_PATH": f"http://{host}:{port}",
@@ -32,7 +32,7 @@ def run(c, port=8080, host="127.0.0.1"):
 def migrate(c, port=8080, host="127.0.0.1"):
     """Run migrations to update the database schema"""
     c.run(
-        "PYTHONPATH=$(pwd) poetry run python3 scripts/migrate.py",
+        "uv run python scripts/migrate.py",
         env={
             "FLASK_APP": "lament-configuration.py",
             "LC_APP_PATH": f"http://{host}:{port}",
@@ -45,7 +45,7 @@ def migrate(c, port=8080, host="127.0.0.1"):
 @task
 def install(c):
     """Install the listed dependencies into a virtualenv"""
-    c.run("poetry install")
+    c.run("uv install")
     c.run("yarn install")
 
 
@@ -54,7 +54,7 @@ def fmt(c):
     """Automatically format the source code, committing it if it is safe to do so."""
     status = c.run("git status --porcelain", hide="stdout")
     is_clean = status.stdout.strip() == ""
-    c.run("poetry run black $(find lc scripts stubs tests *.py -name '*.py')")
+    c.run("uv run black $(find lc scripts stubs tests *.py -name '*.py')")
 
     if is_clean:
         date = datetime.now().isoformat()
@@ -67,7 +67,7 @@ def fmt(c):
 def checkfmt(c):
     """Automatically format the source code, committing it if it is safe to do so."""
     return c.run(
-        "poetry run black --check $(find lc scripts stubs tests *.py -name '*.py')"
+        "uv run black --check $(find lc scripts stubs tests *.py -name '*.py')"
     )
 
 
@@ -75,7 +75,7 @@ def checkfmt(c):
 def populate(c, port=8080, host="127.0.0.1"):
     """Populate the test database with fake-ish data"""
     c.run(
-        "PYTHONPATH=$(pwd) poetry run python3 ./scripts/populate.py",
+        "uv run python3 ./scripts/populate.py",
         env={
             "FLASK_APP": "lament-configuration.py",
             "LC_APP_PATH": f"http://{host}:{port}",
@@ -89,21 +89,21 @@ def populate(c, port=8080, host="127.0.0.1"):
 def tc(c):
     """Typecheck with mypy"""
     c.run(
-        "MYPYPATH=$(pwd)/stubs poetry run mypy --check-untyped-defs lc/*.py tests/*.py scripts/*.py"
+        "uv run mypy --check-untyped-defs lc/*.py tests/*.py scripts/*.py"
     )
 
 
 @task
 def lint(c):
-    """Typecheck with mypy"""
-    c.run("poetry run flake8")
+    """Lint with flake8"""
+    c.run("uv run flake8")
 
 
 @task(webpack)
 def uwsgi(c, sock="lc.sock"):
     """Run a uwsgi server"""
     c.run(
-        f"poetry run uwsgi --socket {sock} "
+        f"uv run uwsgi --socket {sock} "
         "--module lament-configuration:app "
         "--processes 4 --threads 2"
     )
