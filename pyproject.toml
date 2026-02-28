@@ -26,3 +26,6 @@ dev = [
     "types-peewee>=3.19.0.20260109",
     "uwsgi>=2.0.31",
 ]
+
+[tool.setuptools]
+packages = ["lc"]
