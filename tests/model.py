@@ -1,5 +1,6 @@
 import pytest
-import config  # noqa: F401
+from . import config  # noqa: F401
+import sys
 
 import lc.config as c
 import lc.error as e
@@ -182,3 +183,6 @@ class Testdb:
         assert link2.private
         assert link2.created != req.created
         self.check_tags(link2, req.tags)
+
+if __name__ == '__main__':
+    sys.exit(pytest.main([__file__]))

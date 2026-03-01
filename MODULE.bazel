@@ -1,0 +1,20 @@
+module(name = "lament_configuration")
+
+bazel_dep(name = "rules_python", version = "1.8.5")
+
+python = use_extension("@rules_python//python/extensions:python.bzl", "python")
+python.toolchain(python_version = "3.14.2")
+
+use_repo(
+    python,
+    python_3_14 = "python_3_14_2",
+)
+
+pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
+pip.parse(
+    download_only = True,
+    hub_name = "pypi",
+    python_version = "3.14.2",
+    requirements_lock = "//:requirements.txt",
+)
+use_repo(pip, "pypi")

@@ -3,3 +3,4 @@ test.db
 node_modules
 static/*.js
 __pycache__
+bazel-*

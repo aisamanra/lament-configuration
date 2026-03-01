@@ -1,8 +1,10 @@
-import config  # noqa: F401
+from . import config  # noqa: F401
 import lc.config as c
 import lc.model as m
 import lc.request as r
 import lc.app as a
+import pytest
+import sys
 
 
 class TestRoutes:
@@ -150,3 +152,6 @@ class TestRoutes:
             headers={"Content-Type": "application/json"},
         )
         assert bad_result.status == "404 NOT FOUND"
+
+if __name__ == '__main__':
+    sys.exit(pytest.main([__file__]))

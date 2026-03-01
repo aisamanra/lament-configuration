@@ -1,0 +1,42 @@
+load("@rules_python//python:pip.bzl", "compile_pip_requirements")
+load("@rules_python//python:defs.bzl", "py_library", "py_test")
+
+compile_pip_requirements(
+    name = "requirements",
+    requirements_txt = "requirements.txt",
+)
+
+py_library(
+    name = "lc",
+    srcs = glob(["lc/*.py"]),
+    deps = [
+        "@pypi//dataclasses_json:pkg",
+        "@pypi//environ_config:pkg",
+        "@pypi//flask:pkg",
+        "@pypi//itsdangerous:pkg",
+        "@pypi//passlib:pkg",
+        "@pypi//peewee:pkg",
+        "@pypi//pystache:pkg",
+    ],
+    data = glob(["templates/*.mustache"]),
+)
+
+py_test(
+    name = "model_test",
+    main_module = "tests.model",
+    srcs = ["//:tests/model.py", "//:tests/config.py"],
+    deps = [
+        "//:lc",
+        "@pypi//pytest:pkg",
+    ],
+)
+
+py_test(
+    name = "routes_test",
+    main_module = "tests.routes",
+    srcs = ["//:tests/routes.py", "//:tests/config.py"],
+    deps = [
+        "//:lc",
+        "@pypi//pytest:pkg",
+    ],
+)
