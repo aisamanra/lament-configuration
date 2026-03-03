@@ -4,7 +4,7 @@
 
 ![lament configuration logo](/static/lc_64.png)
 
-Bookmark organizing for pinheads. Lament Configuration is [primarily developed on a self-hosted Gogs instance](https://git.infinitenegativeutility.com/getty/lament-configuration) but is [mirrored on Github](https://github.com/aisamanra/lament-configuration) for easier issue reporting.
+Bookmark organizing for pinheads. Lament Configuration is [primarily developed on Codeberg](https://codeberg.org/aysamanra/lament-configuration) but is [mirrored on Github](https://github.com/aisamanra/lament-configuration) for easier issue reporting.
 
 Lament Configuration is a barebones [Pinboard](https://pinboard.in/)-like bookmark organizing service. It's currently in unstable alpha state, but current features include:
 - The ability to create, edit, and delete lists of links along with their metadata
