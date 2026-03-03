@@ -41,7 +41,7 @@
       <ul>
         {{#invites}}
           {{#claimed}}
-            <li><span class="invite">{{token}}</span> claimed: <span class="user"><a href="/u/{{claimant}}">@{{claimant}}</a></span></li>
+            <li><span class="invite">{{token}}</span> claimed: <span class="user"><a href="/u/{{claimant}}">{{claimant}}</a></span></li>
           {{/claimed}}
           {{^claimed}}
             <li>Token <span class="invite"><a href="/u?token={{token}}">{{token}}</a></invite></li>
