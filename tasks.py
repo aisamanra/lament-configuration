@@ -11,7 +11,7 @@ def test(c):
 @task
 def webpack(c):
     """Run the webpack build"""
-    c.run("yarn webpack")
+    c.run("pnpm webpack")
 
 
 @task(webpack)
@@ -45,7 +45,7 @@ def migrate(c, port=8080, host="127.0.0.1"):
 @task
 def install(c):
     """Install the listed dependencies into a virtualenv"""
-    c.run("yarn install")
+    c.run("pnpm install")
 
 
 @task
