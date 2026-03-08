@@ -7,6 +7,7 @@
     <link rel="stylesheet" type="text/css" href="/static/main.css" />
     <link rel="stylesheet" type="text/css" href="/static/tagify.css" />
     <link rel="manifest" href="/static/manifest.json" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <script type="text/javascript" src="/static/lc.js" defer></script>
   </head>
   <body>
@@ -25,25 +26,19 @@
           <input data-user="{{name}}" type="text" id="search_text"/>
         </div>
         {{/user}}
-        <div class="srclink">
-          <a href="https://git.infinitenegativeutility.com/getty/lament-configuration">source</a>
-        </div>
-        {{#user}}
-          <div class="addlink">
+        <div class="nav">
+          <nav>
+            <a href="https://git.infinitenegativeutility.com/getty/lament-configuration">source</a>
+            {{#user}}
             <a href="/u/{{name}}/l">add link</a>
-          </div>
-          <div>
             <a href="/u/{{name}}/config">settings</a>
-          </div>
-          <div class="login">
             <a href="/logout">log out</a>
-          </div>
-        {{/user}}
-        {{^user}}
-          <div class="login">
+            {{/user}}
+            {{^user}}
             <a href="/login">log in</a>
-          </div>
-        {{/user}}
+            {{/user}}
+          </nav>
+        </div>
       </div>
     </div>
     <div class="content">

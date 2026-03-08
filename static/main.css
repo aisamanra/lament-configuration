@@ -3,20 +3,83 @@
     src: url("/static/leaguespartan-bold.ttf");
 }
 
+@media (min-width: 900px) {
+    .columns {
+        grid-template-columns: 60% 40%;
+    }
+
+    .header {
+        padding: 0.2em 2em;
+        margin: 0em 1em;
+
+        .left .user {
+            padding: 0em 1em;
+        }
+
+        .login {
+            padding: 0em 1em;
+        }
+    }
+
+    .linklist {
+        padding: 1em 2em;
+    }
+
+    .link {
+        padding: 0.4em 1em;
+    }
+
+    label {
+        display: inline-block;
+        width: 6em;
+        text-align: right;
+        padding-right: 0.6em;
+    }
+
+    input[type="text"], input[type="password"] {
+        width: 40em;
+    }
+
+    input[type="submit"] {
+        width: 10em;
+    }
+}
+
+@media (max-width: 900px) {
+    .header {
+        flex-direction: column;
+        & > .right {
+            flex-direction: column;
+        }
+    }
+
+    .sitename {
+        display: none;
+    }
+
+    .link {
+        padding: 0.5em;
+    }
+
+    .columns > .tags {
+        padding: 0.5em;
+    }
+
+    form {
+        width: 100%;
+    }
+
+    label {
+        display: block;
+    }
+
+    input[type="text"], input[type="password"] {
+        width: 98%;
+    }
+}
+
 body {
     font-family: "Arial", "Helvetica", sans-serif;
-}
-
-.linklist {
-    padding: 1em 2em;
-}
-
-.addlink {
-    padding: 0em 1em;
-}
-
-.login {
-    padding: 0em 1em;
 }
 
 .user > a {
@@ -28,12 +91,11 @@ body {
 }
 
 .private {
+    margin-top: 5px;
     background-color: #ddd;
 }
 
 .link {
-    padding: 0.4em 1em;
-
     .text {
         padding-right: 1em;
         display: block;
@@ -74,26 +136,32 @@ a {
 
 .header {
     display: flex;
-    align-items: center;
+    flex-wrap: wrap;
     border-bottom: solid black;
-    padding: 0.2em 2em;
-    margin: 0em 1em;
     justify-content: space-between;
 
-    .left {
+    & > .left {
         align-items: center;
         display: flex;
-
-        .user {
-            padding: 0em 1em;
-        }
     }
 
-    .right {
+    & > .right {
         align-items: center;
         display: flex;
         justify-content: flex-end;
     }
+}
+
+.right nav {
+  padding: 10px 0px;
+
+  a {
+    padding-right: 1em;
+  }
+
+  a:last-child {
+    padding-right: 0em;
+  }
 }
 
 .logo {
@@ -133,25 +201,6 @@ a {
 .invite {
     font-size: small;
     color: #444;
-}
-
-label {
-    display: inline-block;
-    width: 6em;
-    text-align: right;
-    padding-right: 0.6em;
-}
-
-input[type="text"] {
-    width: 40em;
-}
-
-input[type="password"] {
-    width: 40em;
-}
-
-input[type="submit"] {
-    width: 10em;
 }
 
 form > div {
@@ -212,12 +261,10 @@ a.yesdelete {
 
 .columns {
     display: grid;
-    grid-template-columns: 60% 40%;
-}
 
-.tags {
-    padding: 2em;
-    word-spacing: 1em;
+    & > .tags {
+        word-spacing: 1em;
+    }
 }
 
 .tag_container {
