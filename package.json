@@ -6,6 +6,7 @@
   "author": "Getty Ritter <gettylefou@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "prettier": "^3.8.1",
     "webpack": "^5.14.0",
     "webpack-cli": "^4.3.1"
   },

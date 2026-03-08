@@ -7,10 +7,11 @@
 Bookmark organizing for pinheads. Lament Configuration is [primarily developed on Codeberg](https://codeberg.org/aysamanra/lament-configuration) but is [mirrored on Github](https://github.com/aisamanra/lament-configuration) for easier issue reporting.
 
 Lament Configuration is a barebones [Pinboard](https://pinboard.in/)-like bookmark organizing service. It's currently in unstable alpha state, but current features include:
+
 - The ability to create, edit, and delete lists of links along with their metadata
 - A tagging system for categorizing and retrieving links.
-    - Lament-Configuration tags are always _hierarchical_: the tag `#food/bread` implies the tag `#food`
-    - Hierarchical tags are also displayed in a "unix-like" way, i.e. two tags `#book/scifi` and `#book/fantasy` will be rendered together as `#book/{scifi,fantasy}`.
+  - Lament-Configuration tags are always _hierarchical_: the tag `#food/bread` implies the tag `#food`
+  - Hierarchical tags are also displayed in a "unix-like" way, i.e. two tags `#book/scifi` and `#book/fantasy` will be rendered together as `#book/{scifi,fantasy}`.
 - A work-in-progress REST API
 - Multi-user support via manual invitation links
 - A bookmarklet to easily add new links
@@ -22,6 +23,7 @@ Lament Configuration is a barebones [Pinboard](https://pinboard.in/)-like bookma
 ## Planned Features
 
 The following features are planned but not yet implemented.
+
 - Cleaner design and better responsibity, but also graceful degradation in the face of disabled JavaScript.
 - A stable and expressive REST API.
 - Better admin features, including the ability to bless secondary admins.

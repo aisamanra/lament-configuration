@@ -54,6 +54,7 @@ def fmt(c):
     status = c.run("git status --porcelain", hide="stdout")
     is_clean = status.stdout.strip() == ""
     c.run("uv run black $(find lc scripts stubs tests *.py -name '*.py')")
+    c.run("pnpm exec prettier --write .")
 
     if is_clean:
         date = datetime.now().isoformat()
@@ -65,7 +66,7 @@ def fmt(c):
 @task
 def checkfmt(c):
     """Automatically format the source code, committing it if it is safe to do so."""
-    return c.run(
+    return c.run("pnpm exec prettier --check .") and c.run(
         "uv run black --check $(find lc scripts stubs tests *.py -name '*.py')"
     )
 
@@ -87,9 +88,7 @@ def populate(c, port=8080, host="127.0.0.1"):
 @task
 def tc(c):
     """Typecheck with mypy"""
-    c.run(
-        "uv run mypy --check-untyped-defs lc/*.py tests/*.py scripts/*.py"
-    )
+    c.run("uv run mypy --check-untyped-defs lc/*.py tests/*.py scripts/*.py")
 
 
 @task

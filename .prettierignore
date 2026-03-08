@@ -1,0 +1,4 @@
+.venv/**/*
+pnpm-lock.yaml
+static/tagify.css
+scripts/aisamanra.json

@@ -1,155 +1,158 @@
 @font-face {
-    font-family: league-spartan;
-    src: url("/static/leaguespartan-bold.ttf");
+  font-family: league-spartan;
+  src: url("/static/leaguespartan-bold.ttf");
 }
 
 @media (min-width: 900px) {
-    .columns {
-        grid-template-columns: 60% 40%;
+  .columns {
+    grid-template-columns: 60% 40%;
+  }
+
+  .header {
+    padding: 0.2em 2em;
+    margin: 0em 1em;
+
+    .left .user {
+      padding: 0em 1em;
     }
 
-    .header {
-        padding: 0.2em 2em;
-        margin: 0em 1em;
-
-        .left .user {
-            padding: 0em 1em;
-        }
-
-        .login {
-            padding: 0em 1em;
-        }
+    .login {
+      padding: 0em 1em;
     }
+  }
 
-    .linklist {
-        padding: 1em 2em;
-    }
+  .linklist {
+    padding: 1em 2em;
+  }
 
-    .link {
-        padding: 0.4em 1em;
-    }
+  .link {
+    padding: 0.4em 1em;
+  }
 
-    label {
-        display: inline-block;
-        width: 6em;
-        text-align: right;
-        padding-right: 0.6em;
-    }
+  label {
+    display: inline-block;
+    width: 6em;
+    text-align: right;
+    padding-right: 0.6em;
+  }
 
-    input[type="text"], input[type="password"] {
-        width: 40em;
-    }
+  input[type="text"],
+  input[type="password"] {
+    width: 40em;
+  }
 
-    input[type="submit"] {
-        width: 10em;
-    }
+  input[type="submit"] {
+    width: 10em;
+  }
 }
 
 @media (max-width: 900px) {
-    .header {
-        flex-direction: column;
-        & > .right {
-            flex-direction: column;
-        }
+  .header {
+    flex-direction: column;
+    & > .right {
+      flex-direction: column;
     }
+  }
 
-    .sitename {
-        display: none;
-    }
+  .sitename {
+    display: none;
+  }
 
-    .link {
-        padding: 0.5em;
-    }
+  .link {
+    padding: 0.5em;
+  }
 
-    .columns > .tags {
-        padding: 0.5em;
-    }
+  .columns > .tags {
+    padding: 0.5em;
+  }
 
-    form {
-        width: 100%;
-    }
+  form {
+    width: 100%;
+  }
 
-    label {
-        display: block;
-    }
+  label {
+    display: block;
+  }
 
-    input[type="text"], input[type="password"] {
-        width: 98%;
-    }
+  input[type="text"],
+  input[type="password"] {
+    width: 98%;
+  }
 }
 
 body {
-    font-family: "Arial", "Helvetica", sans-serif;
+  font-family: "Arial", "Helvetica", sans-serif;
 }
 
 .user > a {
-    text-decoration: none;
+  text-decoration: none;
 
-    &:before {
-        content: "@";
-    }
+  &:before {
+    content: "@";
+  }
 }
 
 .private {
-    margin-top: 5px;
-    background-color: #ddd;
+  margin-top: 5px;
+  background-color: #ddd;
 }
 
 .link {
-    .text {
-        padding-right: 1em;
-        display: block;
+  .text {
+    padding-right: 1em;
+    display: block;
+  }
+
+  .url {
+    padding-left: 0.5em;
+
+    a {
+      color: #999;
+      font-size: small;
     }
+  }
 
-    .url {
-        padding-left: 0.5em;
-
-        a {
-            color: #999;
-            font-size: small;
-        }
-    }
-
-    .datetime a {
-        color: #999;
-        font-size: small;
-        text-decoration: none;
-    }
-
+  .datetime a {
+    color: #999;
+    font-size: small;
+    text-decoration: none;
+  }
 }
 
 a {
-    color: #8800aaff;
+  color: #8800aaff;
 }
 
-.taglist { display: flex; }
+.taglist {
+  display: flex;
+}
 
 .tag {
-    color: #555;
-    padding-right: 0.4em;
+  color: #555;
+  padding-right: 0.4em;
 
-    &:before {
-        color: #8800aaff;
-        content: "#";
-    }
+  &:before {
+    color: #8800aaff;
+    content: "#";
+  }
 }
 
 .header {
+  display: flex;
+  flex-wrap: wrap;
+  border-bottom: solid black;
+  justify-content: space-between;
+
+  & > .left {
+    align-items: center;
     display: flex;
-    flex-wrap: wrap;
-    border-bottom: solid black;
-    justify-content: space-between;
+  }
 
-    & > .left {
-        align-items: center;
-        display: flex;
-    }
-
-    & > .right {
-        align-items: center;
-        display: flex;
-        justify-content: flex-end;
-    }
+  & > .right {
+    align-items: center;
+    display: flex;
+    justify-content: flex-end;
+  }
 }
 
 .right nav {
@@ -165,124 +168,124 @@ a {
 }
 
 .logo {
-    padding: 0.5em;
+  padding: 0.5em;
 }
 
 .sitename {
-    padding-left: 0.5em;
-    font-size: large;
-    font-family: league-spartan;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
+  padding-left: 0.5em;
+  font-size: large;
+  font-family: league-spartan;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
 
-    a {
-        color: #000;
-        text-decoration: none;
-    }
+  a {
+    color: #000;
+    text-decoration: none;
+  }
 }
 
 .loginform {
-    padding: 2em;
-    display: flex;
-    justify-content: center;
+  padding: 2em;
+  display: flex;
+  justify-content: center;
 }
 
 .config-pane {
-    display: flex;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
 }
 
 .config {
-    margin: 2em;
-    padding: 2em;
-    border: solid black 1px;
+  margin: 2em;
+  padding: 2em;
+  border: solid black 1px;
 }
 
 .invite {
-    font-size: small;
-    color: #444;
+  font-size: small;
+  color: #444;
 }
 
 form > div {
-    padding: 0.2em;
+  padding: 0.2em;
 }
 
 .submit {
-    text-align: center;
+  text-align: center;
 }
 
 .msgpage {
-    padding: 4em;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  padding: 4em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-    h1 {
-        font-family: league-spartan;
-        text-transform: uppercase;
-        letter-spacing: 0.2em;
-    }
+  h1 {
+    font-family: league-spartan;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+  }
 }
 
 .pagination {
-    border-top: solid black;
-    display: flex;
-    justify-content: space-around;
-    font-size: large;
-    padding: 0.2em 2em;
-    margin: 0em 1em;
+  border-top: solid black;
+  display: flex;
+  justify-content: space-around;
+  font-size: large;
+  padding: 0.2em 2em;
+  margin: 0em 1em;
 }
 
 .deletelink {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .deleteconfirm {
-    padding-left: 1em;
-    font-size: small;
+  padding-left: 1em;
+  font-size: small;
 }
 
 a.yesdelete {
-    color: #f00 !important;
+  color: #f00 !important;
 }
 
 .errorpane {
-    display: flex;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
 }
 
 .error {
-    width: 50%;
+  width: 50%;
 }
 
 .error p {
-    margin-left: 2em;
+  margin-left: 2em;
 }
 
 .columns {
-    display: grid;
+  display: grid;
 
-    & > .tags {
-        word-spacing: 1em;
-    }
+  & > .tags {
+    word-spacing: 1em;
+  }
 }
 
 .tag_container {
-    display: flex;
-    flex-wrap: wrap;
+  display: flex;
+  flex-wrap: wrap;
 
-    span {
-        display: block;
-        text-indent: -1em;
-        margin-left: 1em;
-        padding-left: 0.3em;
-    }
+  span {
+    display: block;
+    text-indent: -1em;
+    margin-left: 1em;
+    padding-left: 0.3em;
+  }
 }
 
 .search {
-    padding: 0em 2em;
+  padding: 0em 2em;
 }
 
 #search_text {
-    width: 20em;
+  width: 20em;
 }
