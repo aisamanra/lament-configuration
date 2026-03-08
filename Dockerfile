@@ -9,6 +9,7 @@ RUN pnpm webpack
 FROM ghcr.io/astral-sh/uv:debian-slim
 RUN mkdir -p /opt/run
 WORKDIR /opt
+RUN useradd -ms /bin/bash http && usermod -d /opt http
 COPY static/* static/.
 COPY --from=base /opt/static/lc.js static/lc.js
 COPY js/serviceWorker.js js/.
@@ -17,5 +18,7 @@ COPY templates/*.mustache templates/.
 COPY lament-configuration.py pyproject.toml uv.lock .
 ENV LC_APP_PATH=http://remember.when.computer
 ENV LC_DB_PATH=/opt/run/prod.db
-RUN uv build
-CMD uv run gunicorn --workers=2 --bind $SOCKET -m 007 lament-configuration:app
+RUN chown -R http:http .
+USER http
+RUN uv build && uv sync
+CMD uv run --no-cache gunicorn --workers=2 --bind $SOCKET -m 007 lament-configuration:app
