@@ -74,7 +74,7 @@ def checkfmt(c):
 def populate(c, port=8080, host="127.0.0.1"):
     """Populate the test database with fake-ish data"""
     c.run(
-        "uv run python ./scripts/populate.py",
+        "uv run python -s ./scripts/populate.py",
         env={
             "FLASK_APP": "lament-configuration.py",
             "LC_APP_PATH": f"http://{host}:{port}",
@@ -98,11 +98,17 @@ def lint(c):
     c.run("uv run flake8")
 
 
-@task(webpack)
-def uwsgi(c, sock="lc.sock"):
-    """Run a uwsgi server"""
-    c.run(
-        f"uv run uwsgi --socket {sock} "
-        "--module lament-configuration:app "
-        "--processes 4 --threads 2"
-    )
+@task
+def docker(c, container_name="lc"):
+    c.run(f"docker build . -t {container_name}")
+
+
+@task(docker, populate)
+def run_dev_server(c, port=8080):
+    env_vars = {
+        "LC_SECRET_KEY": "TESTING_KEY",
+        "LC_DB_PATH": "/opt/run/test.db",
+        "SOCKET": f":{port}",
+    }
+    env_vars = " ".join((f"-e {k}={v}" for (k, v) in env_vars.items()))
+    c.run(f"docker run -t -i -v $(pwd):/opt/run {env_vars} -p {port}:{port} lc")

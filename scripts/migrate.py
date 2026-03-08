@@ -1,5 +1,7 @@
+import os
 import sys
 import playhouse.migrate
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import lc.config as c
 import lc.model as m
