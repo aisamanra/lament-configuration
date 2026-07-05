@@ -301,7 +301,7 @@ class Link(Model):
             description=self.description,
             private=self.private,
             tags=self.get_tags_view(),
-            created=self.created,
+            created=self.created.strftime("%Y-%m-%d"),
             is_mine=self.user.id == as_user.id if as_user else False,
             link_url=self.link_url(),
             user=self.user.name,

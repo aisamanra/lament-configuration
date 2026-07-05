@@ -132,7 +132,7 @@ class Link(View):
     description: str
     private: bool
     tags: List[Tag]
-    created: datetime
+    created: str
     is_mine: bool
     link_url: str
     user: str

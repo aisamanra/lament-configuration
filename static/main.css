@@ -3,6 +3,26 @@
   src: url("/static/leaguespartan-bold.ttf");
 }
 
+:root {
+    --accent: #8800aa;
+    --alert: #f00;
+    --bg-color: #eee;
+    --fg-color: #111;
+    --light: #999;
+    --private: #ddd;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --accent: #dd44ff;
+        --alert: #f00;
+        --bg-color: #222;
+        --fg-color: #eee;
+        --light: #aaa;
+        --private: #333;
+    }
+}
+
 @media (min-width: 900px) {
   .columns {
     grid-template-columns: 60% 40%;
@@ -26,7 +46,7 @@
   }
 
   .link {
-    padding: 0.4em 1em;
+    padding: 0.5em 2em;
   }
 
   label {
@@ -81,7 +101,9 @@
 }
 
 body {
-  font-family: "Arial", "Helvetica", sans-serif;
+    font-family: "Arial", "Helvetica", sans-serif;
+    color: var(--fg-color);
+    background-color: var(--bg-color);
 }
 
 .user > a {
@@ -94,33 +116,54 @@ body {
 
 .private {
   margin-top: 5px;
-  background-color: #ddd;
+  background-color: var(--private);
+  border-radius: 1em;
 }
 
 .link {
+  margin: 0.5em;
+
+  div {
+      margin: 0.2em 0em;
+  }
+
+  .url, .taglist, .utils {
+      padding-left: 0.5em;
+  }
+
   .text {
     padding-right: 1em;
     display: block;
+    font-size: large;
   }
 
-  .url {
-    padding-left: 0.5em;
-
-    a {
-      color: #999;
-      font-size: small;
-    }
-  }
-
-  .datetime a {
-    color: #999;
+  .url a {
+    color: var(--light);
     font-size: small;
-    text-decoration: none;
+  }
+
+  .utils {
+      a {
+          color: var(--light);
+          font-size: small;
+          text-decoration: none;
+      }
+
+      .controls:before, .user:before {
+          padding: 0em 0.5em;
+          content: "·";
+      }
+  }
+
+  .controls a {
+      border: solid 1px var(--light);
+      padding: 0.1em 0.2em;
+      border-radius: 0.5em;
   }
 }
 
 a {
-  color: #8800aaff;
+  color: var(--accent);
 }
 
 .taglist {
@@ -128,11 +171,11 @@ a {
 }
 
 .tag {
-  color: #555;
+  color: var(--light);
   padding-right: 0.4em;
 
   &:before {
-    color: #8800aaff;
+    color: var(--accent);
     content: "#";
   }
 }
@@ -140,7 +183,7 @@ a {
 .header {
   display: flex;
   flex-wrap: wrap;
-  border-bottom: solid black;
+  border-bottom: solid var(--fg-color);
   justify-content: space-between;
 
   & > .left {
@@ -179,7 +222,7 @@ a {
   letter-spacing: 0.2em;
 
   a {
-    color: #000;
+    color: var(--fg-color);
     text-decoration: none;
   }
 }
@@ -198,12 +241,12 @@ a {
 .config {
   margin: 2em;
   padding: 2em;
-  border: solid black 1px;
+  border: solid var(--fg-color) 1px;
 }
 
 .invite {
   font-size: small;
-  color: #444;
+  color: var(--light);
 }
 
 form > div {
@@ -228,7 +271,7 @@ form > div {
 }
 
 .pagination {
-  border-top: solid black;
+  border-top: solid var(--fg-color);
   display: flex;
   justify-content: space-around;
   font-size: large;
@@ -246,7 +289,7 @@ form > div {
 }
 
 a.yesdelete {
-  color: #f00 !important;
+  color: var(--alert) !important;
 }
 
 .errorpane {

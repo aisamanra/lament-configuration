@@ -10,7 +10,6 @@ FROM ghcr.io/astral-sh/uv:debian-slim
 RUN mkdir -p /opt/run
 WORKDIR /opt
 RUN useradd -ms /bin/bash http && usermod -d /opt http
-COPY static/* static/.
 COPY --from=base /opt/static/lc.js static/lc.js
 COPY js/serviceWorker.js js/.
 COPY lc/*.py lc/.
@@ -21,4 +20,5 @@ ENV LC_DB_PATH=/opt/run/prod.db
 RUN chown -R http:http .
 USER http
 RUN uv build && uv sync
+COPY static/* static/.
 CMD uv run --no-cache gunicorn --workers=2 --bind $SOCKET -m 007 lament-configuration:app

@@ -2,16 +2,20 @@
   <div class="text"><a href="{{url}}">{{name}}</a></div>
   <div class="url"><a href="{{url}}">{{url}}</a></div>
   <div class="taglist">{{{ hier_tags }}}</div>
-  <div class="datetime">
-    <a href="{{link_url}}">{{created}}</a>
+  <div class="utils">
+    <span class="datetime">
+      <a href="{{link_url}}">{{created}}</a>
+    </span>
     {{#is_mine}}
-      <a href="{{link_url}}/edit">edit</a>
-      <span id="delete_{{id}}">
-        <a class="deletelink" data-url="{{link_url}}" data-link-id="{{id}}">delete</a>
+      <span class="controls">
+        <a href="{{link_url}}/edit">edit</a>
+        <span id="delete_{{id}}">
+          <a class="deletelink" data-url="{{link_url}}" data-link-id="{{id}}">delete</a>
+        </span>
       </span>
     {{/is_mine}}
     {{^is_mine}}
-      &mdash; <span class="user"><a href="/u/{{user}}">{{user}}</a></span>
+      <span class="user"><a href="/u/{{user}}">{{user}}</a></span>
     {{/is_mine}}
   </div>
 </div>
